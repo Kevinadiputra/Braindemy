@@ -1,0 +1,171 @@
+@import "tailwindcss";
+
+@theme {
+  --font-fredoka: var(--font-fredoka);
+  --font-outfit: var(--font-outfit);
+  --font-space-grotesk: var(--font-space-grotesk);
+  
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float-delayed 8s ease-in-out infinite;
+  --animate-wobble: wobble 5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(12px); }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-1deg) scale(1); }
+  50% { transform: rotate(1deg) scale(1.02); }
+}
+
+/* Scholar Dashboard Grid */
+.scholar-grid {
+  background-size: 30px 30px;
+  background-image: 
+    linear-gradient(to right, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+}
+
+/* Kid Dashboard Grid (Radial Dot Pattern) */
+.kid-grid {
+  background-size: 24px 24px;
+  background-image: 
+    radial-gradient(circle, rgba(236, 72, 153, 0.08) 1.5px, transparent 1.5px);
+  background-color: #fefcf6; /* warm cream bg */
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.01);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.4);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.6);
+}
+
+/* Custom Glassmorphism Glows */
+.glass-panel {
+  background: rgba(10, 15, 30, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.kid-glass-panel {
+  background: #ffffff;
+  border: 4px solid #1E293B;
+  box-shadow: 8px 8px 0px #1E293B;
+}
+
+/* 3D Toy button styling */
+.btn-toy-primary {
+  background-color: #ec4899; /* pink */
+  color: white;
+  border: 4px solid #1e293b;
+  border-radius: 20px;
+  box-shadow: 0px 6px 0px #1e293b;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.btn-toy-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 0px #1e293b;
+  background-color: #f43f5e;
+}
+.btn-toy-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0px 2px 0px #1e293b;
+}
+
+.btn-toy-secondary {
+  background-color: #3b82f6; /* blue */
+  color: white;
+  border: 4px solid #1e293b;
+  border-radius: 20px;
+  box-shadow: 0px 6px 0px #1e293b;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.btn-toy-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 0px #1e293b;
+  background-color: #2563eb;
+}
+.btn-toy-secondary:active {
+  transform: translateY(4px);
+  box-shadow: 0px 2px 0px #1e293b;
+}
+
+.btn-toy-accent {
+  background-color: #fbbf24; /* yellow */
+  color: #1e293b;
+  border: 4px solid #1e293b;
+  border-radius: 20px;
+  box-shadow: 0px 6px 0px #1e293b;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.btn-toy-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 0px #1e293b;
+  background-color: #f59e0b;
+}
+.btn-toy-accent:active {
+  transform: translateY(4px);
+  box-shadow: 0px 2px 0px #1e293b;
+}
+
+/* Card 3D effects */
+.card-toy {
+  background: white;
+  border: 4px solid #1e293b;
+  border-radius: 24px;
+  box-shadow: 6px 6px 0px #1e293b;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card-toy:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 10px 10px 0px #1e293b;
+}
+
+/* Adventure Line Path Styling */
+.adventure-path-svg {
+  filter: drop-shadow(0px 4px 0px rgba(30, 41, 59, 0.3));
+}
+
+/* Glowing Pulse Ring for active node */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 0.4; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+.active-pulse-ring {
+  animation: pulse-ring 2s infinite ease-in-out;
+}
+
+/* Floating animation for avatar */
+@keyframes avatar-bob {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+.avatar-bobbing {
+  animation: avatar-bob 3s infinite ease-in-out;
+}
+
+
