@@ -129,17 +129,17 @@ function DashboardContent() {
 
   // Popular topics lists
   const kidPopular = [
-    { title: 'Tata Surya 🪐', query: 'Tata Surya dan Planet' },
-    { title: 'Dinosaurus 🦖', query: 'Dinosaurus jaman purba' },
-    { title: 'Metamorfosis 🦋', query: 'Metamorfosis Kupu-Kupu dan Katak' },
-    { title: 'Gunung Berapi 🌋', query: 'Cara Kerja Gunung Berapi Meletus' }
+    { title: 'Tata Surya', query: 'Tata Surya dan Planet' },
+    { title: 'Dinosaurus', query: 'Dinosaurus jaman purba' },
+    { title: 'Metamorfosis', query: 'Metamorfosis Kupu-Kupu dan Katak' },
+    { title: 'Gunung Berapi', query: 'Cara Kerja Gunung Berapi Meletus' }
   ];
 
   const scholarPopular = [
-    { title: 'Data Structures & Algorithms 💻', query: 'Struktur Data dan Algoritma Dasar' },
-    { title: 'Quantum Computing ⚛️', query: 'Pengenalan Algoritma Kuantum' },
-    { title: 'Machine Learning 🤖', query: 'Pengenalan Deep Learning dan Artificial Intelligence' },
-    { title: 'System Architecture 🏗️', query: 'Arsitektur Sistem Microservices dan Cloud Scalability' }
+    { title: 'Data Structures & Algorithms', query: 'Struktur Data dan Algoritma Dasar' },
+    { title: 'Quantum Computing', query: 'Pengenalan Algoritma Kuantum' },
+    { title: 'Machine Learning', query: 'Pengenalan Deep Learning dan Artificial Intelligence' },
+    { title: 'System Architecture', query: 'Arsitektur Sistem Microservices dan Cloud Scalability' }
   ];
 
   const currentLevel = xpStats?.current_level || 1;
@@ -177,7 +177,7 @@ function DashboardContent() {
                 {mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-lg text-slate-800 truncate">Halo {profile?.full_name}! 👋</p>
+                <p className="font-black text-lg text-slate-800 truncate">Halo {profile?.full_name}!</p>
                 <div className="flex items-center gap-1.5 mt-1">
                   <span className="text-xs font-black text-indigo-700 bg-white px-2.5 py-0.5 rounded-full border border-slate-800/10">Lvl {currentLevel} Explorer</span>
                 </div>
@@ -217,7 +217,6 @@ function DashboardContent() {
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold font-space-grotesk tracking-wide text-white flex items-center gap-2">
                 <span>Halo, {profile?.full_name}</span>
-                <span className="animate-wiggle">👋</span>
               </h1>
               <p className="text-sm text-slate-400 mt-1.5 font-medium">Selamat datang kembali di Pusat Komando Akademik Anda.</p>
             </div>
@@ -321,8 +320,8 @@ function DashboardContent() {
               >
                 <span>
                   {isCompleted 
-                    ? isKidMode ? 'Lihat Peta Kelulusan! 🌟' : 'Review Finished Roadmap'
-                    : isKidMode ? 'Lanjutkan Petualangan! 🚀' : 'Resume Roadmap'
+                    ? isKidMode ? 'Lihat Peta Kelulusan!' : 'Review Finished Roadmap'
+                    : isKidMode ? 'Lanjutkan Petualangan!' : 'Resume Roadmap'
                   }
                 </span>
                 <ArrowRight className="w-4 h-4" />

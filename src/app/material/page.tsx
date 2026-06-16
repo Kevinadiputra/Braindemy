@@ -286,7 +286,7 @@ function MaterialContent() {
       setShowConfetti(true);
       
       setCompletionPopupData({
-        title: correctCount === 3 ? 'SKOR SEMPURNA! ⭐⭐⭐' : 'Hebat! Level Selesai! 🎉',
+        title: correctCount === 3 ? 'SKOR SEMPURNA!' : 'Hebat! Level Selesai!',
         xp: 50,
         coins: 25,
         stars: 3,
@@ -387,7 +387,7 @@ function MaterialContent() {
               }`}
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>{isKidMode ? 'Kembali ke Peta 🗺️' : 'Back to Roadmap'}</span>
+              <span>{isKidMode ? 'Kembali ke Peta' : 'Back to Roadmap'}</span>
             </button>
           </div>
 
@@ -400,7 +400,7 @@ function MaterialContent() {
             }`}>
               <div className="flex-1 min-w-0 text-left">
                 <p className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
-                  {isKidMode ? `Langkah ${nodeIndex + 1} dari ${roadmap.nodes.length} 🚀` : `NODE INDEX: 0${nodeIndex + 1} // TOTAL: 0${roadmap.nodes.length}`}
+                  {isKidMode ? `Langkah ${nodeIndex + 1} dari ${roadmap.nodes.length}` : `NODE INDEX: 0${nodeIndex + 1} // TOTAL: 0${roadmap.nodes.length}`}
                 </p>
                 <div className="w-full bg-slate-200 dark:bg-slate-950 rounded-full h-2.5 mt-1 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
                   <div 
@@ -424,7 +424,7 @@ function MaterialContent() {
               <>
                 <KidMascot state="thinking" type="robot" />
                 <p className="text-xl font-black text-slate-800 mt-6 animate-pulse font-fredoka">
-                  Buku ajaib sedang dibuka... Tunggu sebentar ya! 📖✨
+                  Buku ajaib sedang dibuka... Tunggu sebentar ya!
                 </p>
               </>
             ) : (
@@ -449,7 +449,7 @@ function MaterialContent() {
               <div className="flex items-center gap-2.5 mb-6 border-b pb-4 border-slate-800/10 dark:border-slate-800/50">
                 <BookOpenCheck className={`w-5 h-5 ${isKidMode ? 'text-pink-500 animate-bounce' : 'text-violet-400'}`} />
                 <span className={`text-xs font-black uppercase tracking-widest ${isKidMode ? 'text-pink-500 font-fredoka' : 'text-violet-400 font-mono'}`}>
-                  {isKidMode ? 'Buku Panduan Belajar 📖' : 'Section Textbook Documentation'}
+                  {isKidMode ? 'Buku Panduan Belajar' : 'Section Textbook Documentation'}
                 </span>
               </div>
 
@@ -516,7 +516,7 @@ function MaterialContent() {
                   isKidMode ? 'text-slate-800 font-fredoka' : 'text-violet-400 font-space-grotesk'
                 }`}>
                   <Target className="w-5 h-5 text-pink-500" />
-                  <span>{isKidMode ? 'Bintang Kunci ⭐' : 'Key Concepts'}</span>
+                  <span>{isKidMode ? 'Bintang Kunci' : 'Key Concepts'}</span>
                 </h3>
                 <ul className="space-y-3 text-sm">
                   {material.keyPoints.map((point: string, idx: number) => (
@@ -619,7 +619,7 @@ function MaterialContent() {
                                   : 'bg-violet-600 border-violet-500 hover:bg-violet-500 text-white hover:shadow-[0_0_15px_rgba(124,58,237,0.3)]'
                             }`}
                           >
-                            {isKidMode ? 'Kirim Jawaban Pilihanmu! 🌟' : 'Verify Answer'}
+                            {isKidMode ? 'Kirim Jawaban Pilihanmu!' : 'Verify Answer'}
                           </button>
                         ) : (
                           <div className={`mt-4 p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 ${
@@ -671,7 +671,7 @@ function MaterialContent() {
                     ) : (
                       <>
                         <Award className="w-5 h-5 animate-bounce" />
-                        <span>Selesaikan & Klaim Bintang! ⭐</span>
+                        <span>Selesaikan & Klaim Bintang</span>
                       </>
                     )}
                   </button>
@@ -758,7 +758,7 @@ function MaterialContent() {
                   : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all border border-violet-500/20 shadow-lg'
               }`}
             >
-              Klaim & Lanjutkan! 🚀
+              Klaim & Lanjutkan!
             </button>
           </div>
         </div>

@@ -167,7 +167,7 @@ function RoadmapContent() {
             <h1 className={`text-3xl md:text-4xl font-black ${
               isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'
             }`}>
-              {isKidMode ? `Petualangan ${roadmap.title} 🗺️` : roadmap.title}
+              {isKidMode ? `Petualangan ${roadmap.title}` : roadmap.title}
             </h1>
             <p className={`text-sm mt-1.5 max-w-xl ${isKidMode ? 'text-slate-600' : 'text-slate-400'}`}>
               {roadmap.description}
@@ -244,7 +244,7 @@ function RoadmapContent() {
                           <div className="flex-1 min-w-0">
                             <p className="font-black text-sm text-slate-800 truncate">{node.title}</p>
                             <p className="text-[10px] font-bold text-slate-500 mt-0.5">
-                              {isCompleted ? '✅ Selesai' : isActive ? '▶ Sedang Dipelajari' : '🔒 Selesaikan tahap sebelumnya'}
+                              {isCompleted ? 'Selesai' : isActive ? 'Sedang Dipelajari' : 'Selesaikan tahap sebelumnya'}
                             </p>
                             <p className="text-[9px] text-slate-400 mt-0.5">{coords.themeName}</p>
                           </div>
@@ -357,7 +357,7 @@ function RoadmapContent() {
                       }`}>
                         <p className="font-black text-xs text-slate-800 line-clamp-1">{node.title}</p>
                         <p className="text-[9px] font-bold text-slate-500 uppercase mt-0.5">
-                          {isCompleted ? '✅ Selesai' : isActive ? '▶ Sedang Dipelajari' : '🔒 Selesaikan tahap sebelumnya'}
+                          {isCompleted ? 'Selesai' : isActive ? 'Sedang Dipelajari' : 'Selesaikan tahap sebelumnya'}
                         </p>
                       </div>
                     </button>
@@ -417,12 +417,12 @@ function RoadmapContent() {
                         <div className="flex flex-wrap items-center gap-2">
                           {isCompleted && (
                             <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/30 px-2.5 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
-                              ✅ Selesai
+                              Selesai
                             </span>
                           )}
                           {isActive && (
                             <span className="text-[10px] text-violet-400 font-bold bg-violet-950/30 px-2.5 py-0.5 rounded-full border border-violet-500/20 animate-pulse whitespace-nowrap">
-                              ▶ Sedang Dipelajari
+                              Sedang Dipelajari
                             </span>
                           )}
                           {!isUnlocked && (
@@ -529,7 +529,7 @@ function RoadmapContent() {
               </span>
               
               <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-slate-800' : 'text-white font-space-grotesk'}`}>
-                {isKidMode ? `🌟 ${selectedNodeData.node.title}` : selectedNodeData.node.title}
+                {selectedNodeData.node.title}
               </h3>
               <p className={`text-xs mt-1 uppercase font-bold ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
                 {isKidMode 
@@ -550,7 +550,7 @@ function RoadmapContent() {
                   <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-slate-800" />
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white" />
                   <p className="text-xs font-bold text-slate-700 text-center leading-relaxed">
-                    &quot;Ayo kita selesaikan tantangan ini untuk meraih bintang dan lencana baru! Aku yakin kamu pasti bisa! 🤖👍&quot;
+                    &quot;Ayo kita selesaikan tantangan ini untuk meraih bintang dan lencana baru! Aku yakin kamu pasti bisa!&quot;
                   </p>
                 </>
               ) : (
@@ -570,7 +570,7 @@ function RoadmapContent() {
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold text-slate-500">Bonus Sempurna</p>
-                <p className="text-sm font-black text-amber-500">⭐⭐⭐ Bintang</p>
+                <p className="text-sm font-black text-amber-500">Tiga Bintang</p>
               </div>
             </div>
 
