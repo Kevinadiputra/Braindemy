@@ -57,6 +57,24 @@ function RoadmapContent() {
     };
 
     fetchProgress();
+    refreshUserData(); // Keep data in sync on mount
+
+    // Realtime updates to progress
+    const progressChannel = supabase
+      .channel('roadmap-progress-sync')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'progress', filter: `user_id=eq.${user.id}` },
+        async () => {
+          await fetchProgress();
+          await refreshUserData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(progressChannel);
+    };
   }, [user, roadmap, router]);
 
   if (!roadmap || loadingProgress) {

@@ -32,9 +32,10 @@ function DashboardContent() {
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) return;
+
     // Fetch achievements count from Supabase
     const fetchAchievements = async () => {
-      if (!user) return;
       const { data, count, error } = await supabase
         .from('achievements')
         .select('achievement_id', { count: 'exact' })
@@ -45,7 +46,37 @@ function DashboardContent() {
         setUnlockedBadges(data.map(a => a.achievement_id));
       }
     };
+
     fetchAchievements();
+    refreshUserData(); // Fetch latest profile and XP on mount
+
+    // Realtime subscriptions to auto-refresh when db updates
+    const xpChannel = supabase
+      .channel('dashboard-xp-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'xp', filter: `user_id=eq.${user.id}` },
+        async () => {
+          await refreshUserData();
+        }
+      )
+      .subscribe();
+
+    const achievementChannel = supabase
+      .channel('dashboard-achievement-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'achievements', filter: `user_id=eq.${user.id}` },
+        async () => {
+          await fetchAchievements();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(xpChannel);
+      supabase.removeChannel(achievementChannel);
+    };
   }, [user]);
 
   const handleGenerate = async (selectedTopic?: string) => {
@@ -233,33 +264,72 @@ function DashboardContent() {
         </div>
 
         {/* Active Roadmap continue block */}
-        {profile?.current_roadmap && (
-          <div className={`w-full max-w-2xl p-6 mb-8 text-left ${
-            isKidMode 
-              ? 'card-toy bg-gradient-to-r from-pink-50 to-indigo-50' 
-              : 'glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'
-          }`}>
-            <div>
-              <h3 className={`text-xl font-black ${isKidMode ? 'text-slate-800' : 'text-white font-space-grotesk'}`}>
-                🗺️ {profile.current_roadmap.title}
-              </h3>
-              <p className={`text-sm mt-1.5 ${isKidMode ? 'text-slate-600' : 'text-slate-400'}`}>
-                {profile.current_roadmap.description}
-              </p>
+        {profile?.current_roadmap && (() => {
+          const isCompleted = profile.current_roadmap.completed === true;
+          return (
+            <div className={`w-full max-w-2xl p-6 mb-8 text-left transition-all duration-300 ${
+              isKidMode 
+                ? isCompleted
+                  ? 'card-toy bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-400 shadow-[6px_6px_0_#065F46]'
+                  : 'card-toy bg-gradient-to-r from-pink-50 to-indigo-50' 
+                : isCompleted
+                  ? 'glass-panel p-6 rounded-2xl border border-emerald-500/30 bg-emerald-950/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'
+                  : 'glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'
+            }`}>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xl">{isCompleted ? '🏆' : '🗺️'}</span>
+                  <h3 className={`text-xl font-black ${
+                    isKidMode 
+                      ? isCompleted ? 'text-emerald-950' : 'text-slate-800' 
+                      : isCompleted ? 'text-emerald-400 font-space-grotesk' : 'text-white font-space-grotesk'
+                  }`}>
+                    {profile.current_roadmap.title}
+                  </h3>
+                  {isCompleted && (
+                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
+                      isKidMode ? 'bg-emerald-100 text-emerald-800 border-2 border-emerald-800' : 'bg-emerald-950/30 text-emerald-400 border border-emerald-500/20'
+                    }`}>
+                      Selesai
+                    </span>
+                  )}
+                </div>
+                <p className={`text-sm mt-1.5 ${
+                  isKidMode 
+                    ? isCompleted ? 'text-emerald-800 font-semibold' : 'text-slate-600' 
+                    : isCompleted ? 'text-slate-350' : 'text-slate-400'
+                }`}>
+                  {isCompleted 
+                    ? isKidMode 
+                      ? 'Luar biasa! Kamu sudah menyelesaikan seluruh tantangan di petualangan ini! Ayo buat petualangan seru yang baru!'
+                      : 'Congratulations! You have completed all nodes in this curriculum and passed the academic assessments.'
+                    : profile.current_roadmap.description
+                  }
+                </p>
+              </div>
+              <button 
+                onClick={handleContinueRoadmap}
+                className={`px-6 py-3 font-bold text-center cursor-pointer flex items-center justify-center gap-2 min-h-[44px] whitespace-nowrap self-start sm:self-auto ${
+                  isKidMode 
+                    ? isCompleted
+                      ? 'btn-toy-accent mt-4 w-full sm:w-auto shadow-[4px_4px_0_#065F46]'
+                      : 'btn-toy-primary mt-4 w-full sm:w-auto' 
+                    : isCompleted
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm transition-all border border-emerald-500/30'
+                      : 'bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm transition-all'
+                }`}
+              >
+                <span>
+                  {isCompleted 
+                    ? isKidMode ? 'Lihat Peta Kelulusan! 🌟' : 'Review Finished Roadmap'
+                    : isKidMode ? 'Lanjutkan Petualangan! 🚀' : 'Resume Roadmap'
+                  }
+                </span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-            <button 
-              onClick={handleContinueRoadmap}
-              className={`px-6 py-3 font-bold text-center cursor-pointer flex items-center justify-center gap-2 min-h-[44px] ${
-                isKidMode 
-                  ? 'btn-toy-primary mt-4 w-full sm:w-auto' 
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm transition-all'
-              }`}
-            >
-              <span>{isKidMode ? 'Lanjutkan Petualangan! 🚀' : 'Resume Roadmap'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Topic Input Bar */}
         <div className="w-full max-w-2xl text-left">

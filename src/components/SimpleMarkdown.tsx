@@ -10,13 +10,45 @@ interface SimpleMarkdownProps {
 
 export default function SimpleMarkdown({ content, isKidMode }: SimpleMarkdownProps) {
   const parseMarkdown = (text: string) => {
-    let html = text;
+    // Normalize line endings
+    let html = text.replace(/\r\n/g, '\n');
     
     // Code blocks extraction
     const codeBlocks: string[] = [];
     html = html.replace(/```([\s\S]*?)```/g, (_, code) => {
       codeBlocks.push(code.trim());
       return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+    });
+
+    // Custom Learning Callouts
+    const calloutTypes = [
+      { key: 'Fun Fact', icon: '💡', bgKid: 'bg-amber-50 border-amber-400 text-amber-950', bgScholar: 'bg-amber-950/20 border-amber-500/30 text-amber-300' },
+      { key: 'Remember', icon: '🧠', bgKid: 'bg-indigo-50 border-indigo-400 text-indigo-950', bgScholar: 'bg-indigo-950/20 border-indigo-500/30 text-indigo-300' },
+      { key: 'Warning', icon: '⚠️', bgKid: 'bg-red-50 border-red-400 text-red-950', bgScholar: 'bg-rose-950/20 border-rose-500/30 text-rose-350' },
+      { key: 'Challenge', icon: '🎯', bgKid: 'bg-purple-50 border-purple-400 text-purple-950', bgScholar: 'bg-violet-950/20 border-violet-500/30 text-violet-300' },
+      { key: 'Reward', icon: '🏆', bgKid: 'bg-emerald-50 border-emerald-400 text-emerald-950', bgScholar: 'bg-emerald-950/20 border-emerald-500/30 text-emerald-300' },
+    ];
+
+    calloutTypes.forEach(({ key, icon, bgKid, bgScholar }) => {
+      const regex = new RegExp(`### ${key}\\s*\\n([\\s\\S]*?)(?=\\n###|\\n##|\\n__CODE_BLOCK_||$)`, 'g');
+      html = html.replace(regex, (_, contentText) => {
+        const bg = isKidMode ? bgKid : bgScholar;
+        const border = isKidMode ? 'border-4 border-slate-800 shadow-[3px_3px_0px_#1E293B]' : 'border border-current/25';
+        const titleClass = isKidMode ? 'font-fredoka font-black text-lg' : 'font-space-grotesk font-bold text-base';
+        
+        let formattedText = contentText.trim()
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/^-\s(.*)/gm, '<li>$1</li>');
+
+        return `<div class="p-4.5 my-6 rounded-2xl ${bg} ${border} text-left flex gap-3.5 items-start">
+          <span class="text-2xl flex-shrink-0 mt-0.5">${icon}</span>
+          <div>
+            <h4 class="${titleClass} mb-1.5">${key}</h4>
+            <div class="text-sm leading-relaxed">${formattedText}</div>
+          </div>
+        </div>`;
+      });
     });
 
     // Replace basic tags
