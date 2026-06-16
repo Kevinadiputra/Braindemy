@@ -116,10 +116,10 @@ function DashboardContent() {
   const currentStreak = xpStats?.streak || 1;
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className="min-h-screen flex flex-col relative z-10 overflow-hidden">
       <Header isKidMode={isKidMode} />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto px-3 sm:px-4 py-8 relative z-10">
         
         {/* Error notification */}
         {errorMessage && (
@@ -130,7 +130,7 @@ function DashboardContent() {
               <X className="w-5 h-5 flex-shrink-0" />
               <p className="text-sm font-bold">{errorMessage}</p>
             </div>
-            <button onClick={() => setErrorMessage('')} className="p-1 hover:opacity-80">
+            <button onClick={() => setErrorMessage('')} className="p-1 hover:opacity-80 touch-target">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -139,9 +139,9 @@ function DashboardContent() {
         {/* Dashboard Top Statistics Header */}
         {isKidMode ? (
           /* KIDS MODE BENTO HEADER */
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8 w-full">
             {/* Nickname card */}
-            <div className="col-span-2 card-toy p-4 flex items-center gap-4 bg-gradient-to-br from-amber-50 to-pink-50 text-left">
+            <div className="col-span-1 sm:col-span-2 card-toy p-4 flex items-center gap-4 bg-gradient-to-br from-amber-50 to-pink-50 text-left">
               <div className="w-14 h-14 rounded-full border-4 border-slate-800 bg-pink-100 flex items-center justify-center text-3xl">
                 {mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}
               </div>
@@ -172,7 +172,7 @@ function DashboardContent() {
             </div>
 
             {/* Achievements card */}
-            <div className="card-toy p-4 flex flex-col items-center justify-center text-center bg-amber-50">
+            <div className="card-toy p-4 flex flex-col items-center justify-center text-center bg-amber-50 sm:col-span-2 lg:col-span-1">
               <div className="flex items-center gap-1.5 text-amber-500">
                 <Award className="w-5 h-5" />
                 <span className="text-xl font-black">{achievementsCount}</span>
@@ -184,22 +184,22 @@ function DashboardContent() {
           /* SCHOLAR MODE HEADER */
           <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8 border-b border-slate-800 pb-6">
             <div>
-              <h1 className="text-3xl font-bold font-space-grotesk tracking-wide text-white flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-bold font-space-grotesk tracking-wide text-white flex items-center gap-2">
                 <span>Halo, {profile?.full_name}</span>
                 <span className="animate-wiggle">👋</span>
               </h1>
               <p className="text-sm text-slate-400 mt-1.5 font-medium">Selamat datang kembali di Pusat Komando Akademik Anda.</p>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="bg-slate-900/50 border border-slate-800/80 px-4.5 py-2.5 rounded-2xl flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <div className="bg-slate-900/50 border border-slate-800/80 px-4.5 py-2.5 rounded-2xl flex items-center gap-3 flex-1 min-w-[140px]">
                 <div className="text-right">
                   <p className="text-[9px] uppercase font-bold text-slate-500">Pembelajaran</p>
                   <p className="text-sm font-bold text-white font-mono">{currentXp} XP</p>
                 </div>
                 <Trophy className="w-5 h-5 text-indigo-400" />
               </div>
-              <div className="bg-slate-900/50 border border-slate-800/80 px-4.5 py-2.5 rounded-2xl flex items-center gap-3">
+              <div className="bg-slate-900/50 border border-slate-800/80 px-4.5 py-2.5 rounded-2xl flex items-center gap-3 flex-1 min-w-[140px]">
                 <div className="text-right">
                   <p className="text-[9px] uppercase font-bold text-slate-500">Streak Belajar</p>
                   <p className="text-sm font-bold text-white font-mono">{currentStreak} Hari</p>
@@ -215,7 +215,7 @@ function DashboardContent() {
           {isKidMode ? (
             <>
               <KidMascot state={mascotState} type={profile?.role === 'SD' ? 'robot' : 'cat'} />
-              <div className="relative mt-4 bg-white border-4 border-slate-800 p-4 rounded-2xl shadow-[4px_4px_0_#1E293B]">
+              <div className="relative mt-4 bg-white border-4 border-slate-800 p-4 rounded-2xl shadow-[4px_4px_0_#1E293B] max-w-full">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-b-[12px] border-b-slate-800" />
                 <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-b-white" />
                 <p className="text-sm font-black text-slate-800">
@@ -249,7 +249,7 @@ function DashboardContent() {
             </div>
             <button 
               onClick={handleContinueRoadmap}
-              className={`px-6 py-3 font-bold text-center cursor-pointer flex items-center justify-center gap-2 ${
+              className={`px-6 py-3 font-bold text-center cursor-pointer flex items-center justify-center gap-2 min-h-[44px] ${
                 isKidMode 
                   ? 'btn-toy-primary mt-4 w-full sm:w-auto' 
                   : 'bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm transition-all'
@@ -266,41 +266,44 @@ function DashboardContent() {
           <h3 className={`text-lg font-black mb-2.5 ${isKidMode ? 'text-slate-800' : 'text-slate-300 font-space-grotesk'}`}>
             {profile?.current_roadmap ? 'Atau Buat Petualangan Baru:' : 'Buat Peta Belajarmu:'}
           </h3>
-          <div className="relative mb-8">
-            <input 
-              type="text"
-              value={topicInput}
-              onChange={(e) => setTopicInput(e.target.value)}
-              placeholder={isKidMode ? 'Contoh: Cara kerja gunung berapi, perkalian pecahan...' : 'Contoh: Machine Learning Basics, React Hooks, Aljabar Linear...'}
-              disabled={isGenerating}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleGenerate();
-              }}
-              className={`w-full px-6 py-5 rounded-3xl outline-none text-lg transition-all ${
-                isKidMode 
-                  ? 'border-4 border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-200 shadow-[6px_6px_0px_#1E293B] font-fredoka' 
-                  : 'border border-slate-800 bg-slate-950 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-950/20 font-outfit'
-              }`}
-            />
-            
-            <button 
-              onClick={() => handleGenerate()}
-              disabled={isGenerating || !topicInput.trim()}
-              className={`absolute right-3.5 top-3.5 px-6 py-2.5 rounded-2xl font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                isKidMode
-                  ? 'btn-toy-primary text-sm disabled:opacity-50'
-                  : 'bg-violet-600 hover:bg-violet-500 text-white text-sm border border-violet-500/30 shadow-lg disabled:opacity-50'
-              }`}
-            >
-              {isGenerating ? (
-                <RefreshCw className="w-5 h-5 animate-spin" />
-              ) : (
-                <>
-                  <span>{isKidMode ? 'Ayo Mulai!' : 'Buat'}</span>
-                  <Sparkles className="w-4 h-4" />
-                </>
-              )}
-            </button>
+          <div className="mb-8">
+            {/* Mobile: flex-col layout; sm+: relative positioning for absolute button */}
+            <div className="flex flex-col sm:relative gap-3 sm:gap-0">
+              <input 
+                type="text"
+                value={topicInput}
+                onChange={(e) => setTopicInput(e.target.value)}
+                placeholder={isKidMode ? 'Contoh: Cara kerja gunung berapi, perkalian pecahan...' : 'Contoh: Machine Learning Basics, React Hooks, Aljabar Linear...'}
+                disabled={isGenerating}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleGenerate();
+                }}
+                className={`w-full px-5 sm:px-6 py-4 sm:py-5 rounded-3xl outline-none text-base sm:text-lg transition-all ${
+                  isKidMode 
+                    ? 'border-4 border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-200 shadow-[6px_6px_0px_#1E293B] font-fredoka' 
+                    : 'border border-slate-800 bg-slate-950 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-950/20 font-outfit'
+                }`}
+              />
+              
+              <button 
+                onClick={() => handleGenerate()}
+                disabled={isGenerating || !topicInput.trim()}
+                className={`w-full sm:w-auto sm:absolute sm:right-3.5 sm:top-3.5 px-6 py-2.5 rounded-2xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[44px] ${
+                  isKidMode
+                    ? 'btn-toy-primary text-sm disabled:opacity-50'
+                    : 'bg-violet-600 hover:bg-violet-500 text-white text-sm border border-violet-500/30 shadow-lg disabled:opacity-50'
+                }`}
+              >
+                {isGenerating ? (
+                  <RefreshCw className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <span>{isKidMode ? 'Ayo Mulai!' : 'Buat'}</span>
+                    <Sparkles className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -320,7 +323,7 @@ function DashboardContent() {
                   setTopicInput(item.query);
                   handleGenerate(item.query);
                 }}
-                className={`p-4.5 rounded-2xl cursor-pointer transition-all duration-200 text-left ${
+                className={`p-4.5 rounded-2xl cursor-pointer transition-all duration-200 text-left min-h-[44px] ${
                   isKidMode 
                     ? 'bg-white border-4 border-slate-800 text-slate-800 font-black text-base shadow-[4px_4px_0_#1E293B] hover:-translate-y-1 hover:shadow-[6px_6px_0_#1E293B]' 
                     : 'bg-slate-950 border border-slate-900 text-slate-300 text-sm hover:border-violet-500/50 hover:bg-slate-900/40 hover:text-white'
@@ -343,7 +346,7 @@ function DashboardContent() {
               <span>Lencanamu ({unlockedBadges.length}/5)</span>
             </h3>
             
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-4">
               {[
                 { id: 'First Lesson', title: 'Petualangan Pertama 🏅', desc: 'Berhasil memulai langkah pertamamu!' },
                 { id: 'Math Explorer', title: 'Penjelajah Angka 🌌', desc: 'Menyelesaikan 3 subtopik pembelajaran.' },

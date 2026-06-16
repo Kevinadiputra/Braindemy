@@ -123,20 +123,20 @@ function RoadmapContent() {
   const avatarCoords = getCoordinates(avatarIndex);
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className="min-h-screen flex flex-col relative z-10 overflow-hidden">
       <Header isKidMode={isKidMode} />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8 relative z-10">
         
         {/* Navigation Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 border-b pb-6 border-slate-800/10 w-full text-left">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 border-b pb-4 sm:pb-6 border-slate-800/10 w-full text-left">
           <div>
             <button 
               onClick={() => {
                 if (isKidMode) playSynthSound('click');
                 router.push('/dashboard');
               }}
-              className={`inline-flex items-center gap-1 px-4 py-2.5 rounded-2xl text-xs mb-3 border-4 transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1 px-4 py-2.5 rounded-2xl text-xs mb-3 border-4 transition-all cursor-pointer touch-target ${
                 isKidMode 
                   ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
                   : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
@@ -157,13 +157,13 @@ function RoadmapContent() {
           </div>
 
           {/* Badges metadata */}
-          <div className="flex gap-3">
-            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black ${
+          <div className="flex flex-wrap gap-2 sm:gap-3">
+            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black whitespace-nowrap ${
               isKidMode ? 'bg-emerald-50 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-950 border-slate-800 text-cyan-400'
             }`}>
               Kesulitan: {roadmap.difficulty}
             </div>
-            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black ${
+            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black whitespace-nowrap ${
               isKidMode ? 'bg-amber-50 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-950 border-slate-800 text-amber-400'
             }`}>
               Estimasi: {roadmap.duration}
@@ -173,110 +173,188 @@ function RoadmapContent() {
 
         {/* DUAL ROADMAP PATHS */}
         {isKidMode ? (
-          /* KIDS MODE: Space Island Winding 2D Map */
-          <div className="relative py-16 px-4 bg-gradient-to-b from-sky-50 to-indigo-100 border-4 border-slate-800 rounded-[36px] shadow-[8px_8px_0px_#1E293B] overflow-hidden w-full max-w-lg md:max-w-2xl mx-auto min-h-[520px]">
-            {/* Visual landmarks */}
-            <div className="absolute top-10 left-6 text-4xl opacity-35 pointer-events-none select-none">🌳</div>
-            <div className="absolute top-1/2 left-10 text-4xl opacity-35 pointer-events-none select-none">🏰</div>
-            <div className="absolute top-1/3 right-10 text-4xl opacity-35 pointer-events-none select-none">🛸</div>
-            <div className="absolute bottom-10 right-16 text-4xl opacity-35 pointer-events-none select-none">🌋</div>
-            <div className="absolute top-6 right-20 text-4xl opacity-35 pointer-events-none select-none">👑</div>
+          /* KIDS MODE: Dual layout — mobile vertical timeline + desktop 2D map */
+          <>
+            {/* ===== MOBILE VERTICAL TIMELINE (below md) ===== */}
+            <div className="md:hidden w-full max-w-md mx-auto px-2">
+              <div className="relative">
+                {/* Vertical dashed connector line */}
+                <div className="absolute left-6 top-8 bottom-8 w-0.5 border-l-2 border-dashed border-slate-400 z-0" />
 
-            {/* SVG curve path line */}
-            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none">
-              <path 
-                d={generateSvgCurve(roadmap.nodes.length)} 
-                fill="none" 
-                stroke="#1E293B" 
-                strokeWidth="4.5" 
-                strokeDasharray="8 8"
-                className="adventure-path-svg"
-              />
-            </svg>
+                <div className="space-y-4">
+                  {roadmap.nodes.map((node: any, index: number) => {
+                    const isCompleted = completedNodes.includes(node.id);
+                    const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
+                    const isActive = isUnlocked && !isCompleted;
+                    const isAvatarHere = index === avatarIndex;
+                    const coords = getCoordinates(index);
 
-            {/* Character Avatar glides along path */}
-            <div 
-              className="absolute w-16 h-16 z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
-              style={{ left: `${avatarCoords.x}%`, top: `${avatarCoords.y}%` }}
-            >
-              <div className="w-full h-full bg-pink-500 rounded-full border-4 border-slate-800 flex items-center justify-center shadow-lg relative">
-                <span className="text-3xl">🐱</span>
-                <div className="absolute -inset-2 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none" />
+                    return (
+                      <div key={node.id} className="relative z-10">
+                        <button
+                          onClick={() => handleNodeClick(node, index)}
+                          className={`w-full flex items-center gap-3 p-3 rounded-2xl border-4 transition-all text-left min-h-[60px] touch-target ${
+                            !isUnlocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer active:scale-[0.98]'
+                          } ${
+                            isCompleted
+                              ? 'bg-emerald-50 border-slate-800 shadow-[3px_3px_0_#1E293B]'
+                              : isActive
+                                ? 'bg-pink-50 border-pink-500 shadow-[3px_3px_0_#1E293B] ring-2 ring-pink-300/50'
+                                : isUnlocked
+                                  ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B]'
+                                  : 'bg-slate-200 border-slate-400 shadow-[2px_2px_0_#94A3B8]'
+                          }`}
+                        >
+                          {/* Circle node icon */}
+                          <div className={`w-12 h-12 rounded-full border-4 border-slate-800 flex items-center justify-center flex-shrink-0 relative ${
+                            isCompleted
+                              ? 'bg-emerald-400'
+                              : isActive
+                                ? 'bg-pink-400'
+                                : isUnlocked
+                                  ? 'bg-white'
+                                  : 'bg-slate-300'
+                          }`}>
+                            {/* Number badge */}
+                            <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full border-2 border-slate-800 bg-amber-400 text-slate-800 flex items-center justify-center font-black text-[10px]">
+                              {index + 1}
+                            </div>
+                            <NodeIcon type={node.iconType} className="w-6 h-6" />
+                          </div>
+
+                          {/* Card content */}
+                          <div className="flex-1 min-w-0">
+                            <p className="font-black text-sm text-slate-800 truncate">{node.title}</p>
+                            <p className="text-[10px] font-bold text-slate-500 mt-0.5">
+                              {isCompleted ? '✅ Selesai' : isActive ? '▶ Sedang Dipelajari' : '🔒 Selesaikan tahap sebelumnya'}
+                            </p>
+                            <p className="text-[9px] text-slate-400 mt-0.5">{coords.themeName}</p>
+                          </div>
+
+                          {/* Status indicator / avatar */}
+                          <div className="flex-shrink-0">
+                            {isAvatarHere && (
+                              <div className="w-10 h-10 bg-pink-500 rounded-full border-3 border-slate-800 flex items-center justify-center shadow-md">
+                                <span className="text-xl">🐱</span>
+                              </div>
+                            )}
+                            {!isAvatarHere && isCompleted && <CheckCircle className="w-6 h-6 text-emerald-600" />}
+                            {!isAvatarHere && !isUnlocked && <Lock className="w-5 h-5 text-slate-400" />}
+                            {!isAvatarHere && isUnlocked && !isCompleted && !isActive && <ChevronRight className="w-5 h-5 text-slate-400" />}
+                          </div>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            {/* Checkpoints with large clickable container */}
-            {roadmap.nodes.map((node: any, index: number) => {
-              const isCompleted = completedNodes.includes(node.id);
-              const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
-              const isActive = isUnlocked && !isCompleted;
-              
-              const coords = getCoordinates(index);
-              
-              return (
-                <div 
-                  key={node.id}
-                  className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
-                  style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
-                >
-                  {/* Clickable container: entire node area & lesson card are clickable and hoverable */}
-                  <button 
-                    onClick={() => handleNodeClick(node, index)}
-                    className={`group flex flex-col items-center cursor-pointer transition-all duration-300 relative select-none focus:outline-none hover:scale-[1.04] ${
-                      !isUnlocked ? 'cursor-not-allowed opacity-75' : ''
-                    }`}
+            {/* ===== DESKTOP 2D MAP (md and above) ===== */}
+            <div className="hidden md:block relative py-16 px-4 bg-gradient-to-b from-sky-50 to-indigo-100 border-4 border-slate-800 rounded-[36px] shadow-[8px_8px_0px_#1E293B] overflow-hidden w-full max-w-lg md:max-w-2xl mx-auto min-h-[520px]">
+              {/* Visual landmarks */}
+              <div className="absolute top-10 left-6 text-4xl opacity-35 pointer-events-none select-none">🌳</div>
+              <div className="absolute top-1/2 left-10 text-4xl opacity-35 pointer-events-none select-none">🏰</div>
+              <div className="absolute top-1/3 right-10 text-4xl opacity-35 pointer-events-none select-none">🛸</div>
+              <div className="absolute bottom-10 right-16 text-4xl opacity-35 pointer-events-none select-none">🌋</div>
+              <div className="absolute top-6 right-20 text-4xl opacity-35 pointer-events-none select-none">👑</div>
+
+              {/* SVG curve path line */}
+              <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none">
+                <path 
+                  d={generateSvgCurve(roadmap.nodes.length)} 
+                  fill="none" 
+                  stroke="#1E293B" 
+                  strokeWidth="4.5" 
+                  strokeDasharray="8 8"
+                  className="adventure-path-svg"
+                />
+              </svg>
+
+              {/* Character Avatar glides along path */}
+              <div 
+                className="absolute w-16 h-16 z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
+                style={{ left: `${avatarCoords.x}%`, top: `${avatarCoords.y}%` }}
+              >
+                <div className="w-full h-full bg-pink-500 rounded-full border-4 border-slate-800 flex items-center justify-center shadow-lg relative">
+                  <span className="text-3xl">🐱</span>
+                  <div className="absolute -inset-2 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Checkpoints with large clickable container */}
+              {roadmap.nodes.map((node: any, index: number) => {
+                const isCompleted = completedNodes.includes(node.id);
+                const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
+                const isActive = isUnlocked && !isCompleted;
+                
+                const coords = getCoordinates(index);
+                
+                return (
+                  <div 
+                    key={node.id}
+                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
+                    style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
                   >
-                    {/* Circle Node: minimum touch target 48x48px (actual size 72x72px) */}
-                    <div 
-                      className={`w-18 h-18 rounded-full border-4 border-slate-800 flex items-center justify-center transition-all duration-300 relative ${
-                        isCompleted 
-                          ? 'bg-emerald-400 text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-emerald-300/50' 
-                          : isActive
-                            ? 'bg-pink-400 text-white shadow-[0_6px_0_#1E293B] group-hover:shadow-[0_8px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-pink-300/50 active-pulse-ring animate-[bounce-slow_2.5s_infinite]'
-                            : isUnlocked
-                              ? 'bg-white text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-indigo-300/50'
-                              : 'bg-slate-300 text-slate-500 shadow-[0_2px_0_#1E293B]'
+                    {/* Clickable container: entire node area & lesson card are clickable and hoverable */}
+                    <button 
+                      onClick={() => handleNodeClick(node, index)}
+                      className={`group flex flex-col items-center cursor-pointer transition-all duration-300 relative select-none focus:outline-none hover:scale-[1.04] ${
+                        !isUnlocked ? 'cursor-not-allowed opacity-75' : ''
                       }`}
-                      style={{ minWidth: '48px', minHeight: '48px' }}
                     >
-                      {/* Number banner */}
-                      <div className="absolute -top-3 -right-3 w-7 h-7 rounded-full border-2 border-slate-800 bg-amber-400 text-slate-800 flex items-center justify-center font-black text-xs">
-                        {index + 1}
+                      {/* Circle Node: minimum touch target 48x48px (actual size 72x72px) */}
+                      <div 
+                        className={`w-18 h-18 rounded-full border-4 border-slate-800 flex items-center justify-center transition-all duration-300 relative ${
+                          isCompleted 
+                            ? 'bg-emerald-400 text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-emerald-300/50' 
+                            : isActive
+                              ? 'bg-pink-400 text-white shadow-[0_6px_0_#1E293B] group-hover:shadow-[0_8px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-pink-300/50 active-pulse-ring animate-[bounce-slow_2.5s_infinite]'
+                              : isUnlocked
+                                ? 'bg-white text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-indigo-300/50'
+                                : 'bg-slate-300 text-slate-500 shadow-[0_2px_0_#1E293B]'
+                        }`}
+                        style={{ minWidth: '48px', minHeight: '48px' }}
+                      >
+                        {/* Number banner */}
+                        <div className="absolute -top-3 -right-3 w-7 h-7 rounded-full border-2 border-slate-800 bg-amber-400 text-slate-800 flex items-center justify-center font-black text-xs">
+                          {index + 1}
+                        </div>
+
+                        {/* Node Icon */}
+                        <NodeIcon type={node.iconType} className="w-8 h-8" />
+
+                        {/* Locked/Unlocked Overlay status icons */}
+                        {!isUnlocked && <Lock className="absolute -bottom-2.5 w-5.5 h-5.5 text-slate-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
+                        {isCompleted && <CheckCircle className="absolute -bottom-2.5 w-6 h-6 text-emerald-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
                       </div>
 
-                      {/* Node Icon */}
-                      <NodeIcon type={node.iconType} className="w-8 h-8" />
+                      {/* Lesson Card text tooltip: entirely clickable and responds to parent hover */}
+                      <div className={`absolute top-20 left-1/2 -translate-x-1/2 w-40 max-w-[calc(100vw-2rem)] bg-white border-2 border-slate-800 p-2 rounded-2xl shadow-[3px_3px_0_#1E293B] text-center transition-all duration-300 ${
+                        isActive 
+                          ? 'border-pink-500 group-hover:shadow-[5px_5px_0_#1E293B] group-hover:border-pink-600' 
+                          : isUnlocked
+                            ? 'border-indigo-500 group-hover:shadow-[5px_5px_0_#1E293B]'
+                            : 'opacity-70 border-slate-300'
+                      }`}>
+                        <p className="font-black text-xs text-slate-800 line-clamp-1">{node.title}</p>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase mt-0.5">
+                          {isCompleted ? '✅ Selesai' : isActive ? '▶ Sedang Dipelajari' : '🔒 Selesaikan tahap sebelumnya'}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                );
+              })}
 
-                      {/* Locked/Unlocked Overlay status icons */}
-                      {!isUnlocked && <Lock className="absolute -bottom-2.5 w-5.5 h-5.5 text-slate-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
-                      {isCompleted && <CheckCircle className="absolute -bottom-2.5 w-6 h-6 text-emerald-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
-                    </div>
-
-                    {/* Lesson Card text tooltip: entirely clickable and responds to parent hover */}
-                    <div className={`absolute top-20 left-1/2 -translate-x-1/2 w-40 bg-white border-2 border-slate-800 p-2 rounded-2xl shadow-[3px_3px_0_#1E293B] text-center transition-all duration-300 ${
-                      isActive 
-                        ? 'border-pink-500 group-hover:shadow-[5px_5px_0_#1E293B] group-hover:border-pink-600' 
-                        : isUnlocked
-                          ? 'border-indigo-500 group-hover:shadow-[5px_5px_0_#1E293B]'
-                          : 'opacity-70 border-slate-300'
-                    }`}>
-                      <p className="font-black text-xs text-slate-800 line-clamp-1">{node.title}</p>
-                      <p className="text-[9px] font-bold text-slate-500 uppercase mt-0.5">
-                        {isCompleted ? '✅ Selesai' : isActive ? '▶ Sedang Dipelajari' : '🔒 Selesaikan tahap sebelumnya'}
-                      </p>
-                    </div>
-                  </button>
-                </div>
-              );
-            })}
-
-          </div>
+            </div>
+          </>
         ) : (
           /* SCHOLAR MODE: Advanced Bento timeline & certifications panel */
-          <div className="grid lg:grid-cols-3 gap-8 w-full">
+          <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full">
             
             {/* Academic Roadmap timeline (2 cols) */}
-            <div className="lg:col-span-2 space-y-6 relative before:absolute before:left-7 before:top-5 before:bottom-5 before:w-0.5 before:bg-slate-800">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6 relative before:absolute before:left-5 sm:before:left-7 before:top-5 before:bottom-5 before:w-0.5 before:bg-slate-800">
               {roadmap.nodes.map((node: any, index: number) => {
                 const isCompleted = completedNodes.includes(node.id);
                 const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
@@ -286,7 +364,7 @@ function RoadmapContent() {
                   <div 
                     key={node.id}
                     onClick={() => handleNodeClick(node, index)}
-                    className={`group relative flex items-start gap-6 p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
+                    className={`group relative flex items-start gap-3 sm:gap-6 p-3 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
                       isCompleted
                         ? 'bg-slate-950/40 border-emerald-500/20 text-slate-300 hover:border-emerald-500/40 hover:scale-[1.03] hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]'
                         : isActive
@@ -297,7 +375,7 @@ function RoadmapContent() {
                     }`}
                   >
                     {/* Ring node */}
-                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all relative z-10 ${
+                    <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center border-2 transition-all relative z-10 flex-shrink-0 ${
                       isCompleted
                         ? 'bg-emerald-950/40 border-emerald-500 text-emerald-400'
                         : isActive
@@ -306,7 +384,7 @@ function RoadmapContent() {
                             ? 'bg-slate-900 border-slate-800 text-slate-400'
                             : 'bg-slate-950 border-slate-900 text-slate-750'
                     }`}>
-                      <NodeIcon type={node.iconType} className="w-6 h-6" />
+                      <NodeIcon type={node.iconType} className="w-5 h-5 sm:w-6 sm:h-6" />
                       <span className="absolute -top-2.5 -left-2.5 text-[9px] px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded-md text-slate-400 font-mono">
                         {String(index + 1).padStart(2, '0')}
                       </span>
@@ -314,34 +392,34 @@ function RoadmapContent() {
 
                     {/* Node details */}
                     <div className="flex-1 min-w-0 text-left">
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className={`font-bold text-lg tracking-wide ${isActive ? 'text-violet-300' : 'text-slate-100'}`}>
+                      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+                        <h3 className={`font-bold text-base sm:text-lg tracking-wide ${isActive ? 'text-violet-300' : 'text-slate-100'}`}>
                           {node.title}
                         </h3>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           {isCompleted && (
-                            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/30 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/30 px-2.5 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
                               ✅ Selesai
                             </span>
                           )}
                           {isActive && (
-                            <span className="text-[10px] text-violet-400 font-bold bg-violet-950/30 px-2.5 py-0.5 rounded-full border border-violet-500/20 animate-pulse">
+                            <span className="text-[10px] text-violet-400 font-bold bg-violet-950/30 px-2.5 py-0.5 rounded-full border border-violet-500/20 animate-pulse whitespace-nowrap">
                               ▶ Sedang Dipelajari
                             </span>
                           )}
                           {!isUnlocked && (
-                            <span className="text-[10px] text-slate-500 font-bold bg-slate-950 px-2.5 py-0.5 rounded-full border border-slate-800 flex items-center gap-1">
+                            <span className="text-[10px] text-slate-500 font-bold bg-slate-950 px-2.5 py-0.5 rounded-full border border-slate-800 flex items-center gap-1 whitespace-nowrap">
                               <Lock className="w-3 h-3" />
-                              <span>🔒 Selesaikan tahap sebelumnya</span>
+                              <span>🔒 Terkunci</span>
                             </span>
                           )}
                         </div>
                       </div>
-                      <p className="text-slate-400 text-sm mt-1.5">{node.shortDesc}</p>
+                      <p className="text-slate-400 text-xs sm:text-sm mt-1.5 line-clamp-2 sm:line-clamp-none">{node.shortDesc}</p>
                     </div>
 
                     {isUnlocked && (
-                      <div className="self-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="self-center opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
                         <ChevronRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
                       </div>
                     )}
@@ -351,10 +429,10 @@ function RoadmapContent() {
             </div>
 
             {/* Academic Analytics Sidebar (1 col) */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               
               {/* Bento Progress Gauge */}
-              <div className="glass-panel p-6 rounded-2xl text-left">
+              <div className="glass-panel p-4 sm:p-6 rounded-2xl text-left">
                 <h3 className="text-sm font-bold tracking-wider border-b border-slate-800 pb-3 mb-4 text-violet-400 font-space-grotesk uppercase">
                   Academic Analytics
                 </h3>
@@ -386,12 +464,12 @@ function RoadmapContent() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-950/75 border border-slate-900 p-3.5 rounded-xl text-center">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="bg-slate-950/75 border border-slate-900 p-3 sm:p-3.5 rounded-xl text-center">
                     <p className="text-[10px] text-slate-500 uppercase font-semibold">Study Pace</p>
                     <p className="text-base font-bold font-space-grotesk text-slate-300 mt-1">2.4 hr/day</p>
                   </div>
-                  <div className="bg-slate-950/75 border border-slate-900 p-3.5 rounded-xl text-center">
+                  <div className="bg-slate-950/75 border border-slate-900 p-3 sm:p-3.5 rounded-xl text-center">
                     <p className="text-[10px] text-slate-500 uppercase font-semibold">Quiz Accuracy</p>
                     <p className="text-base font-bold font-space-grotesk text-emerald-400 mt-1">94.2%</p>
                   </div>
@@ -399,7 +477,7 @@ function RoadmapContent() {
               </div>
 
               {/* Syllabus Guidelines */}
-              <div className="glass-panel p-6 rounded-2xl text-xs leading-relaxed text-slate-400 text-left">
+              <div className="glass-panel p-4 sm:p-6 rounded-2xl text-xs leading-relaxed text-slate-400 text-left">
                 <p className="font-bold text-slate-200 mb-2 font-space-grotesk uppercase tracking-wider text-violet-400">Academic Guidelines</p>
                 <p>Roadmaps are generated using generative logic. Every subtopic node contains core textbook readings, mathematical proofs, and critical quiz sets. Completion requires at least 2 correct answers per quiz.</p>
               </div>
@@ -412,8 +490,8 @@ function RoadmapContent() {
 
       {/* ADVENTURE LESSON PRE-START CARD MODAL (Dual Mode UI) */}
       {selectedNodeData && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={`w-full max-w-sm p-6 relative overflow-hidden ${
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className={`w-full max-w-sm p-4 sm:p-6 relative overflow-hidden modal-responsive ${
             isKidMode 
               ? 'card-toy bg-gradient-to-b from-white to-pink-50' 
               : 'glass-panel border border-slate-800 rounded-3xl text-left'
@@ -421,8 +499,8 @@ function RoadmapContent() {
             {isKidMode && <div className="absolute top-0 right-0 w-24 h-24 bg-pink-200 rounded-full blur-2xl opacity-50" />}
             
             {/* Mascot / Icon header */}
-            <div className="text-center mb-5">
-              <span className="text-5xl block animate-bounce mb-3">
+            <div className="text-center mb-4 sm:mb-5">
+              <span className="text-4xl sm:text-5xl block animate-bounce mb-2 sm:mb-3">
                 {selectedNodeData.node.iconType === 'rocket' ? '🚀' :
                  selectedNodeData.node.iconType === 'brain' ? '🧠' :
                  selectedNodeData.node.iconType === 'lightbulb' ? '💡' :
@@ -432,7 +510,7 @@ function RoadmapContent() {
                  selectedNodeData.node.iconType === 'compass' ? '🧭' : '🔬'}
               </span>
               
-              <h3 className={`text-2xl font-black ${isKidMode ? 'text-slate-800' : 'text-white font-space-grotesk'}`}>
+              <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-slate-800' : 'text-white font-space-grotesk'}`}>
                 {isKidMode ? `🌟 ${selectedNodeData.node.title}` : selectedNodeData.node.title}
               </h3>
               <p className={`text-xs mt-1 uppercase font-bold ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
@@ -444,7 +522,7 @@ function RoadmapContent() {
             </div>
 
             {/* Instruction description card / Speech Bubble */}
-            <div className={`p-4 rounded-2xl mb-6 relative border-2 ${
+            <div className={`p-3 sm:p-4 rounded-2xl mb-4 sm:mb-6 relative border-2 ${
               isKidMode 
                 ? 'bg-white border-slate-800' 
                 : 'bg-slate-950 border-slate-900 text-slate-300 text-sm'
@@ -454,7 +532,7 @@ function RoadmapContent() {
                   <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-slate-800" />
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white" />
                   <p className="text-xs font-bold text-slate-700 text-center leading-relaxed">
-                    "Ayo kita selesaikan tantangan ini untuk meraih bintang dan lencana baru! Aku yakin kamu pasti bisa! 🤖👍"
+                    &quot;Ayo kita selesaikan tantangan ini untuk meraih bintang dan lencana baru! Aku yakin kamu pasti bisa! 🤖👍&quot;
                   </p>
                 </>
               ) : (
@@ -465,7 +543,7 @@ function RoadmapContent() {
             </div>
 
             {/* Rewards details */}
-            <div className={`grid grid-cols-2 gap-3 mb-6 p-3.5 rounded-2xl text-center border-2 ${
+            <div className={`grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6 p-3 sm:p-3.5 rounded-2xl text-center border-2 ${
               isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-950 border-slate-900'
             }`}>
               <div>
@@ -482,7 +560,7 @@ function RoadmapContent() {
             <div className="space-y-3">
               <button 
                 onClick={() => handleStartLesson(selectedNodeData.node.id)}
-                className={`w-full py-3 text-center font-bold text-base cursor-pointer ${
+                className={`w-full py-3 text-center font-bold text-base cursor-pointer touch-target ${
                   isKidMode 
                     ? 'btn-toy-primary' 
                     : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all'
@@ -495,7 +573,7 @@ function RoadmapContent() {
                   if (isKidMode) playSynthSound('click');
                   setSelectedNodeData(null);
                 }}
-                className={`w-full py-2.5 text-center font-bold text-sm cursor-pointer ${
+                className={`w-full py-2.5 text-center font-bold text-sm cursor-pointer touch-target ${
                   isKidMode 
                     ? 'btn-toy-secondary' 
                     : 'bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition-all'

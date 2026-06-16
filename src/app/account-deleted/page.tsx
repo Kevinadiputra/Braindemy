@@ -17,7 +17,7 @@ export default function AccountDeletedPage() {
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center px-4 text-center">
       <div className="absolute inset-0 scholar-grid pointer-events-none opacity-20" />
       
-      <div className="w-full max-w-md p-8 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl relative z-10">
+      <div className="w-full max-w-md p-5 sm:p-8 bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl relative z-10">
         <div className="w-16 h-16 bg-red-950/40 border border-red-500/30 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
           <ShieldAlert className="w-8 h-8" />
         </div>
@@ -32,7 +32,7 @@ export default function AccountDeletedPage() {
 
         <button 
           onClick={handleGoHome}
-          className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 border border-slate-700"
+          className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2 border border-slate-700 touch-target"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Halaman Utama</span>

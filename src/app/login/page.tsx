@@ -117,21 +117,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 relative">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center items-center px-4 relative overflow-hidden">
       <div className="absolute inset-0 scholar-grid pointer-events-none opacity-40" />
       
       <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-violet-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-cyan-600 rounded-full blur-3xl opacity-10 pointer-events-none" />
 
       {/* Main Auth Container */}
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10">
+      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-8 shadow-2xl relative z-10">
         
         {/* Brand header */}
         <div className="flex flex-col items-center mb-6 text-center">
           <div className="p-3 bg-violet-950 border border-violet-500/30 text-violet-400 rounded-2xl mb-3 animate-pulse">
             <Brain className="w-8 h-8" />
           </div>
-          <h2 className="text-3xl font-black font-space-grotesk tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">
+          <h2 className="text-2xl sm:text-3xl font-black font-space-grotesk tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-cyan-400">
             braindemy
           </h2>
           <p className="text-xs text-slate-400 mt-1.5 font-medium">Platform Peta Belajar Pintar Ditenagai AI</p>
@@ -155,7 +155,7 @@ export default function LoginPage() {
         <div className="mb-6">
           <button 
             onClick={handleGoogleSignIn}
-            className="w-full py-3.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-3 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-200"
+            className="touch-target w-full py-3.5 px-4 rounded-xl bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-3 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-200"
           >
             {/* Google Icon SVG */}
             <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none">
@@ -179,13 +179,13 @@ export default function LoginPage() {
         <div className="grid grid-cols-2 p-1.5 bg-slate-950 border border-slate-800 rounded-2xl mb-6">
           <button 
             onClick={() => handleTabChange('signin')}
-            className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'signin' ? 'bg-violet-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`touch-target min-h-[44px] py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'signin' ? 'bg-violet-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
           >
             Masuk dengan Email
           </button>
           <button 
             onClick={() => handleTabChange('signup')}
-            className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'signup' ? 'bg-violet-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`touch-target min-h-[44px] py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${activeTab === 'signup' ? 'bg-violet-600 text-white shadow-lg' : 'text-slate-400 hover:text-slate-200'}`}
           >
             Daftar Akun Baru
           </button>
@@ -203,7 +203,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
+                  className="touch-target w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
                 />
                 <Mail className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
               </div>
@@ -218,7 +218,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
+                  className="touch-target w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
                 />
                 <Lock className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
               </div>
@@ -227,7 +227,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="touch-target w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Masuk Ke Dashboard'}
             </button>
@@ -246,7 +246,7 @@ export default function LoginPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Kevin Andrian"
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
+                  className="touch-target w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
                 />
                 <User className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
               </div>
@@ -261,7 +261,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@email.com"
                   required
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
+                  className="touch-target w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
                 />
                 <Mail className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
               </div>
@@ -277,7 +277,7 @@ export default function LoginPage() {
                   placeholder="Minimal 6 karakter"
                   required
                   minLength={6}
-                  className="w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
+                  className="touch-target w-full pl-11 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-950"
                 />
                 <Lock className="absolute left-4 top-3.5 w-4 h-4 text-slate-500" />
               </div>
@@ -289,14 +289,14 @@ export default function LoginPage() {
                 <button 
                   type="button"
                   onClick={() => { playSynthSound('click'); setRole('SD'); }}
-                  className={`py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${role === 'SD' ? 'bg-pink-900/30 border-pink-500 text-pink-400' : 'bg-slate-950 border-slate-800 text-slate-400'}`}
+                  className={`touch-target min-h-[44px] py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${role === 'SD' ? 'bg-pink-900/30 border-pink-500 text-pink-400' : 'bg-slate-950 border-slate-800 text-slate-400'}`}
                 >
                   Anak SD 🪐
                 </button>
                 <button 
                   type="button"
                   onClick={() => { playSynthSound('click'); setRole('Mahasiswa'); }}
-                  className={`py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${role === 'Mahasiswa' ? 'bg-cyan-900/30 border-cyan-500 text-cyan-400' : 'bg-slate-950 border-slate-800 text-slate-400'}`}
+                  className={`touch-target min-h-[44px] py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${role === 'Mahasiswa' ? 'bg-cyan-900/30 border-cyan-500 text-cyan-400' : 'bg-slate-950 border-slate-800 text-slate-400'}`}
                 >
                   Mahasiswa ⚡
                 </button>
@@ -306,7 +306,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2"
+              className="touch-target w-full py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Buat Akun Baru'}
             </button>

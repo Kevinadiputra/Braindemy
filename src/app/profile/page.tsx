@@ -68,16 +68,16 @@ function ProfileContent() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col relative z-10 ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
       <Header isKidMode={isKidMode} />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8 relative z-10">
         
         {/* Back Button */}
         <div className="w-full text-left mb-6">
           <button 
             onClick={handleBack}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
+            className={`touch-target inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
                 : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
@@ -89,7 +89,7 @@ function ProfileContent() {
         </div>
 
         {/* Profile Card */}
-        <div className={`w-full max-w-2xl p-8 rounded-[32px] text-left ${
+        <div className={`w-full max-w-2xl p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[32px] text-left ${
           isKidMode 
             ? 'bg-white border-4 border-slate-800 shadow-[6px_6px_0px_#1E293B]' 
             : 'glass-panel border border-slate-800'
@@ -109,7 +109,7 @@ function ProfileContent() {
               </div>
             )}
             
-            <div className="text-center sm:text-left flex-1">
+            <div className="text-center sm:text-left flex-1 min-w-0">
               <h2 className={`text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'}`}>
                 {profile?.full_name || 'User'}
               </h2>
@@ -122,30 +122,30 @@ function ProfileContent() {
           <div className="space-y-6">
             {/* Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 ${
+              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
                 isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
               }`}>
-                <Mail className={`w-5 h-5 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <Mail className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
                 <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500">Email</p>
                   <p className="text-sm font-semibold truncate">{profile?.email}</p>
                 </div>
               </div>
 
-              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 ${
+              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
                 isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
               }`}>
-                <Shield className={`w-5 h-5 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <Shield className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
                 <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500">User ID</p>
                   <p className="text-xs font-mono truncate">{profile?.id}</p>
                 </div>
               </div>
 
-              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 ${
+              <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
                 isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
               }`}>
-                <User className={`w-5 h-5 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <User className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
                 <div className="min-w-0">
                   <p className="text-[10px] uppercase font-bold text-slate-500">Provider</p>
                   <p className="text-sm font-semibold truncate">
@@ -166,7 +166,7 @@ function ProfileContent() {
                 <span>Statistik Belajar</span>
               </h3>
               
-              <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div className={`p-3 rounded-xl border shadow-sm flex flex-col items-center justify-center ${
                   isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-900 border-slate-800 text-slate-200'
                 }`}>
@@ -210,7 +210,7 @@ function ProfileContent() {
                   setDeleteConfirmText('');
                   setDeleteError('');
                 }}
-                className="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-md"
+                className="touch-target px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-md"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Hapus Akun Saya</span>
@@ -225,7 +225,7 @@ function ProfileContent() {
       {/* DELETE ACCOUNT CONFIRMATION MODALS (Step 1, 2, 3) */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={`w-full max-w-md p-6 relative overflow-hidden ${
+          <div className={`modal-responsive w-full max-w-md p-6 relative overflow-hidden ${
             isKidMode 
               ? 'card-toy bg-gradient-to-b from-white to-red-50 text-slate-800' 
               : 'glass-panel border border-red-950 rounded-3xl text-left text-slate-200'
@@ -235,7 +235,7 @@ function ProfileContent() {
                 if (isKidMode) playSynthSound('click');
                 setIsDeleteModalOpen(false);
               }}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-200"
+              className="touch-target absolute top-4 right-4 text-slate-400 hover:text-slate-200"
             >
               <X className="w-5 h-5" />
             </button>
@@ -263,7 +263,7 @@ function ProfileContent() {
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     placeholder="Masukkan alamat email Anda"
-                    className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-950"
+                    className="touch-target w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-950"
                   />
 
                   <button 
@@ -272,7 +272,7 @@ function ProfileContent() {
                       setDeleteStep(2);
                     }}
                     disabled={deleteConfirmText !== profile?.email}
-                    className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-all cursor-pointer"
+                    className="touch-target w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-all cursor-pointer"
                   >
                     Lanjutkan Ke Tahap Akhir
                   </button>
@@ -296,21 +296,21 @@ function ProfileContent() {
                   <li>• Seluruh riwayat pelajaran & kuis</li>
                 </ul>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <button 
                     onClick={() => {
                       if (isKidMode) playSynthSound('click');
                       setIsDeleteModalOpen(false);
                     }}
                     disabled={isDeleting}
-                    className="flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer border border-slate-700"
+                    className="touch-target flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer border border-slate-700"
                   >
                     Batal
                   </button>
                   <button 
                     onClick={handleDeleteAccount}
                     disabled={isDeleting}
-                    className="flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="touch-target flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     {isDeleting ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />

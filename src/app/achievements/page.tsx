@@ -50,16 +50,16 @@ function AchievementsContent() {
   ];
 
   return (
-    <div className={`min-h-screen flex flex-col relative z-10 ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
       <Header isKidMode={isKidMode} />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8 relative z-10">
         
         {/* Back Button */}
         <div className="w-full text-left mb-6">
           <button 
             onClick={handleBack}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
+            className={`touch-target inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
                 : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
@@ -72,7 +72,7 @@ function AchievementsContent() {
 
         {/* Title */}
         <div className="w-full text-left mb-6">
-          <h1 className={`text-3xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'}`}>
+          <h1 className={`text-2xl sm:text-3xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'}`}>
             {isKidMode ? '🏆 Galeri Lencana Ajaib' : 'Academic Credentials & Achievements'}
           </h1>
           <p className={`text-sm mt-1.5 ${isKidMode ? 'text-slate-600' : 'text-slate-400'}`}>
@@ -97,7 +97,7 @@ function AchievementsContent() {
               return (
                 <div 
                   key={badge.id}
-                  className={`p-6 rounded-[28px] border-4 text-left transition-all duration-300 ${
+                  className={`p-4 sm:p-6 rounded-2xl sm:rounded-[28px] border-4 text-left transition-all duration-300 ${
                     isUnlocked
                       ? isKidMode 
                         ? 'bg-white border-slate-800 shadow-[4px_4px_0_#1E293B] hover:-translate-y-1 hover:shadow-[6px_6px_0_#1E293B]' 

@@ -226,11 +226,11 @@ function MaterialContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
+    <div className="min-h-screen flex flex-col relative z-10 overflow-hidden">
       <Header isKidMode={isKidMode} />
       <ConfettiCanvas active={showConfetti} />
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-8 relative z-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-3 sm:px-4 py-8 relative z-10">
         
         {/* Back button */}
         <div className="w-full text-left mb-6">
@@ -239,7 +239,7 @@ function MaterialContent() {
               if (isKidMode) playSynthSound('click');
               router.push('/roadmap');
             }}
-            className={`inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-sm border-4 transition-all cursor-pointer ${
+            className={`touch-target inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-sm border-4 transition-all cursor-pointer ${
               isKidMode 
                 ? 'bg-white border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B] active:translate-y-0.5 active:shadow-none font-bold' 
                 : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
@@ -251,7 +251,7 @@ function MaterialContent() {
         </div>
 
         {isGenerating ? (
-          <div className="text-center py-12 max-w-md mx-auto w-full">
+          <div className="text-center py-12 max-w-md mx-auto w-full px-4">
             {isKidMode ? (
               <>
                 <KidMascot state="thinking" type="robot" />
@@ -270,10 +270,10 @@ function MaterialContent() {
           </div>
         ) : material ? (
           /* Workspace layout */
-          <div className="grid lg:grid-cols-3 gap-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 w-full">
             
             {/* Textbook Reading Material */}
-            <div className={`lg:col-span-2 p-6 md:p-8 rounded-[32px] text-left ${
+            <div className={`lg:col-span-2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[32px] text-left ${
               isKidMode 
                 ? 'bg-white border-4 border-slate-800 shadow-[6px_6px_0_#1E293B]' 
                 : 'glass-panel'
@@ -289,10 +289,10 @@ function MaterialContent() {
             </div>
 
             {/* Quiz Workspace Panel */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               
               {/* Target Key Points */}
-              <div className={`p-6 rounded-3xl border-4 text-left ${
+              <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-4 text-left ${
                 isKidMode 
                   ? 'bg-amber-100 border-slate-800 shadow-[4px_4px_0_#1E293B]' 
                   : 'bg-slate-950 border-slate-900 text-slate-300'
@@ -314,7 +314,7 @@ function MaterialContent() {
               </div>
 
               {/* Interactive Quiz container */}
-              <div className={`p-6 rounded-[32px] border-4 ${
+              <div className={`p-4 sm:p-6 rounded-2xl sm:rounded-[32px] border-4 ${
                 isKidMode 
                   ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
                   : 'bg-slate-950/80 border-slate-800'
@@ -377,13 +377,13 @@ function MaterialContent() {
                                 key={optIdx}
                                 disabled={isAnswered}
                                 onClick={() => handleOptionClick(qIdx, optIdx)}
-                                className={`w-full text-left px-4.5 py-3 rounded-2xl border-2 text-sm transition-all duration-200 cursor-pointer ${optClass}`}
+                                className={`touch-target w-full text-left px-3 sm:px-4 py-3 rounded-2xl border-2 text-sm transition-all duration-200 cursor-pointer ${optClass}`}
                               >
-                                <div className="flex items-center gap-3">
-                                  <span className="font-mono font-bold opacity-50">
+                                <div className="flex items-start gap-3">
+                                  <span className="font-mono font-bold opacity-50 flex-shrink-0">
                                     {String.fromCharCode(65 + optIdx)}.
                                   </span>
-                                  <span>{opt}</span>
+                                  <span className="break-words">{opt}</span>
                                 </div>
                               </button>
                             );
@@ -395,7 +395,7 @@ function MaterialContent() {
                           <button
                             disabled={selectedOpt === undefined}
                             onClick={() => handleSubmitAnswer(qIdx)}
-                            className={`w-full text-center mt-4 py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
+                            className={`touch-target w-full text-center mt-4 py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
                               selectedOpt === undefined 
                                 ? 'opacity-40 cursor-not-allowed bg-slate-100 border-slate-800/10 text-slate-400'
                                 : isKidMode
@@ -428,7 +428,7 @@ function MaterialContent() {
                   <button
                     onClick={handleFinishModule}
                     disabled={Object.keys(quizSubmitted).length < 3}
-                    className={`w-full py-4 rounded-2xl border-4 text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                    className={`touch-target w-full py-4 rounded-2xl border-4 text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
                       Object.keys(quizSubmitted).length < 3
                         ? 'opacity-40 cursor-not-allowed bg-slate-100 border-slate-800/10 text-slate-400'
                         : isKidMode
@@ -453,7 +453,7 @@ function MaterialContent() {
       {/* REWARD COMPLETE POPUP MODAL (Kids and Scholar UI) */}
       {showCompletionPopup && completionPopupData && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className={`w-full max-w-sm text-center relative overflow-hidden ${
+          <div className={`modal-responsive w-full max-w-sm text-center relative overflow-hidden ${
             isKidMode 
               ? 'card-toy p-6 bg-gradient-to-b from-yellow-50 to-pink-50 animate-[wobble_1s_infinite]' 
               : 'glass-panel p-6 border border-slate-800 rounded-3xl'
@@ -510,7 +510,7 @@ function MaterialContent() {
 
             <button 
               onClick={handleDismissCompletionPopup}
-              className={`w-full py-3 text-center font-black text-base cursor-pointer ${
+              className={`touch-target w-full py-3 text-center font-black text-base cursor-pointer ${
                 isKidMode 
                   ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
                   : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all'
