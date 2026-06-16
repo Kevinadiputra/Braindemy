@@ -5,25 +5,28 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Lock, CheckCircle, Play, ChevronRight, Award, Trophy, Target, 
-  HelpCircle, Laptop, ShieldCheck, Star, RefreshCw
+  HelpCircle, Star, RefreshCw, Sparkles, BookOpen, ShieldAlert, User
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import ProtectedRoute, { useAuth } from '@/components/ProtectedRoute';
 import Header from '@/components/Header';
 import { playSynthSound } from '@/components/SoundHelper';
 import NodeIcon from '@/components/NodeIcon';
+import ConfettiCanvas from '@/components/ConfettiCanvas';
 
 function RoadmapContent() {
   const router = useRouter();
-  const { user, profile, refreshUserData } = useAuth();
+  const { user, profile, refreshUserData, xpStats, coins, stars } = useAuth();
   const isKidMode = profile?.role === 'SD';
   const roadmap = profile?.current_roadmap;
 
   const [completedNodes, setCompletedNodes] = useState<string[]>([]);
   const [loadingProgress, setLoadingProgress] = useState(true);
-  const [selectedNodeData, setSelectedNodeData] = useState<any>(null); // For lesson pre-start card popup
+  const [selectedNodeData, setSelectedNodeData] = useState<any>(null); // For lesson pre-start modal
   const [avatarIndex, setAvatarIndex] = useState(0);
+  const [showCompletionCelebration, setShowCompletionCelebration] = useState(false);
 
+  // Sync completion progress
   useEffect(() => {
     if (!roadmap) {
       router.push('/dashboard');
@@ -48,6 +51,12 @@ function RoadmapContent() {
           // Position avatar on first uncompleted node index
           const nextIndex = roadmap.nodes.findIndex((n: any) => !completed.includes(n.id));
           setAvatarIndex(nextIndex === -1 ? roadmap.nodes.length - 1 : nextIndex);
+
+          // If all nodes are completed, show completion celebration screen
+          const allCompleted = roadmap.nodes.every((n: any) => completed.includes(n.id));
+          if (allCompleted) {
+            setShowCompletionCelebration(true);
+          }
         }
       } catch (err) {
         console.error('Error fetching progress:', err);
@@ -57,9 +66,9 @@ function RoadmapContent() {
     };
 
     fetchProgress();
-    refreshUserData(); // Keep data in sync on mount
+    refreshUserData(); // Refresh profile caches on mount
 
-    // Realtime updates to progress
+    // Realtime progress channel sync
     const progressChannel = supabase
       .channel('roadmap-progress-sync')
       .on(
@@ -87,13 +96,13 @@ function RoadmapContent() {
   }
 
   const handleNodeClick = (node: any, index: number) => {
-    // Check linear progression lock
+    // Linear progression lock check
     if (index > 0) {
       const prevNodeId = roadmap.nodes[index - 1].id;
       if (!completedNodes.includes(prevNodeId)) {
         if (isKidMode) playSynthSound('fail');
         alert(isKidMode 
-          ? 'Wah, level ini masih terkunci! Selesaikan petualangan sebelumnya dulu ya! 🔒' 
+          ? 'Wah, level ini masih terkunci! Selesaikan petualangan sebelumnya dulu ya!' 
           : 'Langkah terkunci. Selesaikan modul sebelumnya terlebih dahulu.'
         );
         return;
@@ -101,8 +110,6 @@ function RoadmapContent() {
     }
 
     if (isKidMode) playSynthSound('click');
-    
-    // Set clicked node data to trigger pre-start popup modal
     setSelectedNodeData({ node, index });
   };
 
@@ -111,495 +118,413 @@ function RoadmapContent() {
     router.push(`/material?nodeId=${nodeId}`);
   };
 
-  const getCoordinates = (index: number) => {
-    const steps = [
-      { x: 20, y: 80, themeName: '🏠 Village (Kampung Pintar)', bg: 'from-emerald-400 to-teal-400' },
-      { x: 72, y: 68, themeName: '🌳 Forest (Hutan Penjumlahan)', bg: 'from-green-400 to-emerald-500' },
-      { x: 28, y: 50, themeName: '🏰 Castle (Istana Perkalian)', bg: 'from-amber-400 to-orange-500' },
-      { x: 76, y: 32, themeName: '🚀 Space Station (Stasiun Angkasa)', bg: 'from-sky-400 to-indigo-500' },
-      { x: 50, y: 12, themeName: '👑 Master Challenge (Tantangan Raja)', bg: 'from-yellow-400 to-pink-500' },
-      { x: 88, y: 8, themeName: '🌌 Final Portal (Gerbang Ajaib)', bg: 'from-violet-500 to-purple-600' }
+  // Fixed viewBox calculations for the Winding Zig-Zag Wavy Path
+  const rowHeight = 140;
+  const paddingY = 70;
+  const mapHeight = roadmap.nodes.length * rowHeight;
+
+  // Build coordinate sequence: Left (120), Center (200), Right (280), Center (200)
+  const getCoordinates = (idx: number) => {
+    const pattern = [
+      { x: 120, leftPercent: '30%', xShift: '-40px' }, // Left
+      { x: 200, leftPercent: '50%', xShift: '0px' },   // Center
+      { x: 280, leftPercent: '70%', xShift: '40px' },  // Right
+      { x: 200, leftPercent: '50%', xShift: '0px' }    // Center
     ];
-    return steps[index] || steps[steps.length - 1];
+    return pattern[idx % 4];
   };
 
-  const generateSvgCurve = (nodesCount: number) => {
-    if (nodesCount === 5) {
-      return "M 20 80 C 45 82, 65 74, 72 68 C 78 62, 45 56, 28 50 C 12 44, 65 38, 76 32 C 86 26, 60 16, 50 12";
-    } else if (nodesCount === 6) {
-      return "M 20 80 C 45 82, 65 74, 72 68 C 78 62, 45 56, 28 50 C 12 44, 65 38, 76 32 C 86 26, 60 16, 50 12 C 42 8, 75 5, 88 8";
-    } else {
-      let d = "";
-      for (let i = 0; i < nodesCount; i++) {
-        const coords = getCoordinates(i);
-        d += `${i === 0 ? 'M' : 'L'} ${coords.x} ${coords.y} `;
+  const getSvgPathD = () => {
+    let d = "";
+    for (let i = 0; i < roadmap.nodes.length; i++) {
+      const coords = getCoordinates(i);
+      const y = i * rowHeight + paddingY;
+      
+      if (i === 0) {
+        d += `M ${coords.x} ${y}`;
+      } else {
+        const prevCoords = getCoordinates(i - 1);
+        const prevY = (i - 1) * rowHeight + paddingY;
+        const controlY1 = prevY + rowHeight * 0.45;
+        const controlY2 = y - rowHeight * 0.45;
+        d += ` C ${prevCoords.x} ${controlY1}, ${coords.x} ${controlY2}, ${coords.x} ${y}`;
       }
-      return d;
     }
+    return d;
   };
 
-  const avatarCoords = getCoordinates(avatarIndex);
+  const activeAvatarCoords = getCoordinates(avatarIndex);
+  const activeAvatarY = avatarIndex * rowHeight + paddingY;
+  const completedPercent = Math.round((completedNodes.length / roadmap.nodes.length) * 100);
 
   return (
-    <div className="min-h-screen flex flex-col relative z-10 overflow-hidden">
-      <Header isKidMode={isKidMode} />
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${
+      isKidMode ? 'bg-[#FFFBEB] text-slate-800' : 'bg-slate-950 text-slate-200'
+    }`}>
+      {/* Visual background grids */}
+      {!isKidMode && <div className="absolute inset-0 scholar-grid pointer-events-none opacity-20" />}
+      {!isKidMode && <div className="absolute top-20 left-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />}
+      {!isKidMode && <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />}
 
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8 relative z-10">
+      <Header isKidMode={isKidMode} />
+      <ConfettiCanvas active={showCompletionCelebration} />
+
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-6 sm:py-8 relative z-10">
         
-        {/* Navigation Bar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 border-b pb-4 sm:pb-6 border-slate-800/10 w-full text-left">
+        {/* Top Header Dashboard / Navigation HUD */}
+        <div className="w-full flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 border-b pb-6 border-slate-800/10 dark:border-slate-800/40 text-left">
           <div>
             <button 
               onClick={() => {
                 if (isKidMode) playSynthSound('click');
                 router.push('/dashboard');
               }}
-              className={`inline-flex items-center gap-1 px-4 py-2.5 rounded-2xl text-xs mb-3 border-4 transition-all cursor-pointer touch-target ${
+              className={`touch-target inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs mb-3 border-4 transition-all cursor-pointer font-black ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
-                  : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none' 
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
               }`}
             >
-              <ArrowLeft className="w-3.5 h-3.5" />
+              <ArrowLeft className="w-4 h-4" />
               <span>Dashboard</span>
             </button>
             
-            <h1 className={`text-3xl md:text-4xl font-black ${
+            <h1 className={`text-2xl sm:text-3xl font-black flex items-center gap-2 ${
               isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'
             }`}>
-              {isKidMode ? `Petualangan ${roadmap.title}` : roadmap.title}
+              {roadmap.title}
             </h1>
-            <p className={`text-sm mt-1.5 max-w-xl ${isKidMode ? 'text-slate-600' : 'text-slate-400'}`}>
+            <p className={`text-sm mt-1 max-w-xl ${isKidMode ? 'text-slate-650' : 'text-slate-400'}`}>
               {roadmap.description}
             </p>
           </div>
 
-          {/* Badges metadata */}
-          <div className="flex flex-wrap gap-2 sm:gap-3">
-            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black whitespace-nowrap ${
-              isKidMode ? 'bg-emerald-50 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-950 border-slate-800 text-cyan-400'
-            }`}>
-              Kesulitan: {roadmap.difficulty}
+          {/* Premium Progress Dashboard Card */}
+          <div className={`p-4 rounded-3xl border-4 text-left min-w-[280px] lg:max-w-xs flex-1 ${
+            isKidMode 
+              ? 'bg-white border-slate-800 shadow-[4px_4px_0_#1E293B]' 
+              : 'bg-slate-900/50 border-slate-850 backdrop-blur-sm'
+          }`}>
+            <div className="flex justify-between items-center mb-2.5">
+              <span className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
+                {isKidMode ? `Lvl ${xpStats?.current_level || 1} Penjelajah` : `LEVEL 0${xpStats?.current_level || 1} EXPLO`}
+              </span>
+              <span className={`text-xs font-black flex items-center gap-1 ${isKidMode ? 'text-amber-500' : 'text-amber-400'}`}>
+                <Star className="w-4 h-4 fill-current" />
+                <span>{xpStats?.total_xp || 0} XP</span>
+              </span>
             </div>
-            <div className={`px-4 py-2.5 rounded-2xl border-4 text-xs font-black whitespace-nowrap ${
-              isKidMode ? 'bg-amber-50 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-950 border-slate-800 text-amber-400'
-            }`}>
-              Estimasi: {roadmap.duration}
+            
+            <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-350 dark:border-slate-850">
+              <div 
+                className={`h-full rounded-full transition-all duration-700 ${
+                  isKidMode ? 'bg-gradient-to-r from-pink-400 to-indigo-500' : 'bg-gradient-to-r from-violet-600 to-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]'
+                }`}
+                style={{ width: `${completedPercent}%` }}
+              />
+            </div>
+            
+            <div className="flex justify-between items-center mt-2.5 text-[10px] font-bold opacity-80">
+              <span>{completedNodes.length} / {roadmap.nodes.length} Modul Selesai</span>
+              <span>{completedPercent}%</span>
             </div>
           </div>
         </div>
 
-        {/* DUAL ROADMAP PATHS */}
-        {isKidMode ? (
-          /* KIDS MODE: Dual layout — mobile vertical timeline + desktop 2D map */
-          <>
-            {/* ===== MOBILE VERTICAL TIMELINE (below md) ===== */}
-            <div className="md:hidden w-full max-w-md mx-auto px-2">
-              <div className="relative">
-                {/* Vertical dashed connector line */}
-                <div className="absolute left-6 top-8 bottom-8 w-0.5 border-l-2 border-dashed border-slate-400 z-0" />
+        {/* Winding Zig-Zag Roadmap Path container */}
+        <div 
+          className="relative w-full max-w-[400px] mx-auto z-10 my-4"
+          style={{ height: `${mapHeight}px` }}
+        >
+          {/* Background curved path line */}
+          <svg 
+            viewBox={`0 0 400 ${mapHeight}`} 
+            className="absolute inset-0 w-full h-full pointer-events-none z-0"
+            preserveAspectRatio="none"
+          >
+            <path 
+              d={getSvgPathD()} 
+              fill="none" 
+              stroke={isKidMode ? '#1E293B' : '#6366F1'} 
+              strokeWidth={isKidMode ? '7' : '4'} 
+              strokeLinecap="round"
+              strokeDasharray={isKidMode ? 'none' : '10 8'}
+              className={isKidMode ? 'adventure-path-svg' : 'shadow-lg shadow-indigo-500/20'}
+              opacity={isKidMode ? 1 : 0.45}
+            />
+          </svg>
 
-                <div className="space-y-4">
-                  {roadmap.nodes.map((node: any, index: number) => {
-                    const isCompleted = completedNodes.includes(node.id);
-                    const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
-                    const isActive = isUnlocked && !isCompleted;
-                    const isAvatarHere = index === avatarIndex;
-                    const coords = getCoordinates(index);
-
-                    return (
-                      <div key={node.id} className="relative z-10">
-                        <button
-                          onClick={() => handleNodeClick(node, index)}
-                          className={`w-full flex items-center gap-3 p-3 rounded-2xl border-4 transition-all text-left min-h-[60px] touch-target ${
-                            !isUnlocked ? 'cursor-not-allowed opacity-60' : 'cursor-pointer active:scale-[0.98]'
-                          } ${
-                            isCompleted
-                              ? 'bg-emerald-50 border-slate-800 shadow-[3px_3px_0_#1E293B]'
-                              : isActive
-                                ? 'bg-pink-50 border-pink-500 shadow-[3px_3px_0_#1E293B] ring-2 ring-pink-300/50'
-                                : isUnlocked
-                                  ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B]'
-                                  : 'bg-slate-200 border-slate-400 shadow-[2px_2px_0_#94A3B8]'
-                          }`}
-                        >
-                          {/* Circle node icon */}
-                          <div className={`w-12 h-12 rounded-full border-4 border-slate-800 flex items-center justify-center flex-shrink-0 relative ${
-                            isCompleted
-                              ? 'bg-emerald-400'
-                              : isActive
-                                ? 'bg-pink-400'
-                                : isUnlocked
-                                  ? 'bg-white'
-                                  : 'bg-slate-300'
-                          }`}>
-                            {/* Number badge */}
-                            <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full border-2 border-slate-800 bg-amber-400 text-slate-800 flex items-center justify-center font-black text-[10px]">
-                              {index + 1}
-                            </div>
-                            <NodeIcon type={node.iconType} className="w-6 h-6" />
-                          </div>
-
-                          {/* Card content */}
-                          <div className="flex-1 min-w-0">
-                            <p className="font-black text-sm text-slate-800 truncate">{node.title}</p>
-                            <p className="text-[10px] font-bold text-slate-500 mt-0.5">
-                              {isCompleted ? 'Selesai' : isActive ? 'Sedang Dipelajari' : 'Selesaikan tahap sebelumnya'}
-                            </p>
-                            <p className="text-[9px] text-slate-400 mt-0.5">{coords.themeName}</p>
-                          </div>
-
-                          {/* Status indicator / avatar */}
-                          <div className="flex-shrink-0">
-                            {isAvatarHere && (
-                              <div className="w-10 h-10 bg-pink-500 rounded-full border-3 border-slate-800 flex items-center justify-center shadow-md">
-                                <span className="text-xl">🐱</span>
-                              </div>
-                            )}
-                            {!isAvatarHere && isCompleted && <CheckCircle className="w-6 h-6 text-emerald-600" />}
-                            {!isAvatarHere && !isUnlocked && <Lock className="w-5 h-5 text-slate-400" />}
-                            {!isAvatarHere && isUnlocked && !isCompleted && !isActive && <ChevronRight className="w-5 h-5 text-slate-400" />}
-                          </div>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+          {/* Bobbing Character Avatar */}
+          <div 
+            className="absolute w-16 h-16 z-30 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
+            style={{ 
+              left: `${getCoordinates(avatarIndex).x / 4}%`, 
+              top: `${activeAvatarY}px`
+            }}
+          >
+            <div className={`w-full h-full rounded-full border-4 border-slate-800 flex items-center justify-center shadow-lg relative ${
+              isKidMode ? 'bg-pink-500' : 'bg-violet-600 border-violet-400'
+            }`}>
+              {isKidMode ? (
+                <span className="text-3xl">🐱</span>
+              ) : (
+                <User className="w-7 h-7 text-white" />
+              )}
+              <div className="absolute -inset-2.5 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none" />
             </div>
-
-            {/* ===== DESKTOP 2D MAP (md and above) ===== */}
-            <div className="hidden md:block relative py-16 px-4 bg-gradient-to-b from-sky-50 to-indigo-100 border-4 border-slate-800 rounded-[36px] shadow-[8px_8px_0px_#1E293B] overflow-hidden w-full max-w-lg md:max-w-2xl mx-auto min-h-[520px]">
-              {/* Visual landmarks */}
-              <div className="absolute top-10 left-6 text-4xl opacity-35 pointer-events-none select-none">🌳</div>
-              <div className="absolute top-1/2 left-10 text-4xl opacity-35 pointer-events-none select-none">🏰</div>
-              <div className="absolute top-1/3 right-10 text-4xl opacity-35 pointer-events-none select-none">🛸</div>
-              <div className="absolute bottom-10 right-16 text-4xl opacity-35 pointer-events-none select-none">🌋</div>
-              <div className="absolute top-6 right-20 text-4xl opacity-35 pointer-events-none select-none">👑</div>
-
-              {/* SVG curve path line */}
-              <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none">
-                <path 
-                  d={generateSvgCurve(roadmap.nodes.length)} 
-                  fill="none" 
-                  stroke="#1E293B" 
-                  strokeWidth="4.5" 
-                  strokeDasharray="8 8"
-                  className="adventure-path-svg"
-                />
-              </svg>
-
-              {/* Character Avatar glides along path */}
-              <div 
-                className="absolute w-16 h-16 z-20 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
-                style={{ left: `${avatarCoords.x}%`, top: `${avatarCoords.y}%` }}
-              >
-                <div className="w-full h-full bg-pink-500 rounded-full border-4 border-slate-800 flex items-center justify-center shadow-lg relative">
-                  <span className="text-3xl">🐱</span>
-                  <div className="absolute -inset-2 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Checkpoints with large clickable container */}
-              {roadmap.nodes.map((node: any, index: number) => {
-                const isCompleted = completedNodes.includes(node.id);
-                const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
-                const isActive = isUnlocked && !isCompleted;
-                
-                const coords = getCoordinates(index);
-                
-                return (
-                  <div 
-                    key={node.id}
-                    className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
-                    style={{ left: `${coords.x}%`, top: `${coords.y}%` }}
-                  >
-                    {/* Clickable container: entire node area & lesson card are clickable and hoverable */}
-                    <button 
-                      onClick={() => handleNodeClick(node, index)}
-                      className={`group flex flex-col items-center cursor-pointer transition-all duration-300 relative select-none focus:outline-none hover:scale-[1.04] ${
-                        !isUnlocked ? 'cursor-not-allowed opacity-75' : ''
-                      }`}
-                    >
-                      {/* Circle Node: minimum touch target 48x48px (actual size 72x72px) */}
-                      <div 
-                        className={`w-18 h-18 rounded-full border-4 border-slate-800 flex items-center justify-center transition-all duration-300 relative ${
-                          isCompleted 
-                            ? 'bg-emerald-400 text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-emerald-300/50' 
-                            : isActive
-                              ? 'bg-pink-400 text-white shadow-[0_6px_0_#1E293B] group-hover:shadow-[0_8px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-pink-300/50 active-pulse-ring animate-[bounce-slow_2.5s_infinite]'
-                              : isUnlocked
-                                ? 'bg-white text-slate-800 shadow-[0_4px_0_#1E293B] group-hover:shadow-[0_6px_0_#1E293B] group-hover:translate-y-[-2px] group-hover:ring-4 group-hover:ring-indigo-300/50'
-                                : 'bg-slate-300 text-slate-500 shadow-[0_2px_0_#1E293B]'
-                        }`}
-                        style={{ minWidth: '48px', minHeight: '48px' }}
-                      >
-                        {/* Number banner */}
-                        <div className="absolute -top-3 -right-3 w-7 h-7 rounded-full border-2 border-slate-800 bg-amber-400 text-slate-800 flex items-center justify-center font-black text-xs">
-                          {index + 1}
-                        </div>
-
-                        {/* Node Icon */}
-                        <NodeIcon type={node.iconType} className="w-8 h-8" />
-
-                        {/* Locked/Unlocked Overlay status icons */}
-                        {!isUnlocked && <Lock className="absolute -bottom-2.5 w-5.5 h-5.5 text-slate-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
-                        {isCompleted && <CheckCircle className="absolute -bottom-2.5 w-6 h-6 text-emerald-800 bg-white rounded-full p-0.5 border-2 border-slate-800" />}
-                      </div>
-
-                      {/* Lesson Card text tooltip: entirely clickable and responds to parent hover */}
-                      <div className={`absolute top-20 left-1/2 -translate-x-1/2 w-40 max-w-[calc(100vw-2rem)] bg-white border-2 border-slate-800 p-2 rounded-2xl shadow-[3px_3px_0_#1E293B] text-center transition-all duration-300 ${
-                        isActive 
-                          ? 'border-pink-500 group-hover:shadow-[5px_5px_0_#1E293B] group-hover:border-pink-600' 
-                          : isUnlocked
-                            ? 'border-indigo-500 group-hover:shadow-[5px_5px_0_#1E293B]'
-                            : 'opacity-70 border-slate-300'
-                      }`}>
-                        <p className="font-black text-xs text-slate-800 line-clamp-1">{node.title}</p>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase mt-0.5">
-                          {isCompleted ? 'Selesai' : isActive ? 'Sedang Dipelajari' : 'Selesaikan tahap sebelumnya'}
-                        </p>
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
-
-            </div>
-          </>
-        ) : (
-          /* SCHOLAR MODE: Advanced Bento timeline & certifications panel */
-          <div className="grid lg:grid-cols-3 gap-4 sm:gap-8 w-full">
-            
-            {/* Academic Roadmap timeline (2 cols) */}
-            <div className="lg:col-span-2 space-y-4 sm:space-y-6 relative before:absolute before:left-5 sm:before:left-7 before:top-5 before:bottom-5 before:w-0.5 before:bg-slate-800">
-              {roadmap.nodes.map((node: any, index: number) => {
-                const isCompleted = completedNodes.includes(node.id);
-                const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
-                const isActive = isUnlocked && !isCompleted;
-
-                return (
-                  <div 
-                    key={node.id}
-                    onClick={() => handleNodeClick(node, index)}
-                    className={`group relative flex items-start gap-3 sm:gap-6 p-3 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer ${
-                      isCompleted
-                        ? 'bg-slate-950/40 border-emerald-500/20 text-slate-300 hover:border-emerald-500/40 hover:scale-[1.03] hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]'
-                        : isActive
-                          ? 'bg-gradient-to-r from-violet-950/40 to-slate-900 border-violet-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.1)] hover:scale-[1.03] hover:shadow-[0_8px_24px_rgba(124,58,237,0.2)]'
-                          : isUnlocked
-                            ? 'bg-slate-950/70 border-slate-800 text-slate-200 hover:border-slate-700 hover:scale-[1.03] hover:shadow-[0_8px_24px_rgba(0,0,0,0.4)]'
-                            : 'bg-slate-950/15 border-slate-900 text-slate-650 opacity-40 cursor-not-allowed'
-                    }`}
-                  >
-                    {/* Ring node */}
-                    <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center border-2 transition-all relative z-10 flex-shrink-0 ${
-                      isCompleted
-                        ? 'bg-emerald-950/40 border-emerald-500 text-emerald-400'
-                        : isActive
-                          ? 'bg-violet-950 border-violet-400 text-violet-300 animate-pulse'
-                          : isUnlocked
-                            ? 'bg-slate-900 border-slate-800 text-slate-400'
-                            : 'bg-slate-950 border-slate-900 text-slate-750'
-                    }`}>
-                      <NodeIcon type={node.iconType} className="w-5 h-5 sm:w-6 sm:h-6" />
-                      <span className="absolute -top-2.5 -left-2.5 text-[9px] px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded-md text-slate-400 font-mono">
-                        {String(index + 1).padStart(2, '0')}
-                      </span>
-                    </div>
-
-                    {/* Node details */}
-                    <div className="flex-1 min-w-0 text-left">
-                      <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-                        <h3 className={`font-bold text-base sm:text-lg tracking-wide ${isActive ? 'text-violet-300' : 'text-slate-100'}`}>
-                          {node.title}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-2">
-                          {isCompleted && (
-                            <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/30 px-2.5 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
-                              Selesai
-                            </span>
-                          )}
-                          {isActive && (
-                            <span className="text-[10px] text-violet-400 font-bold bg-violet-950/30 px-2.5 py-0.5 rounded-full border border-violet-500/20 animate-pulse whitespace-nowrap">
-                              Sedang Dipelajari
-                            </span>
-                          )}
-                          {!isUnlocked && (
-                            <span className="text-[10px] text-slate-500 font-bold bg-slate-950 px-2.5 py-0.5 rounded-full border border-slate-800 flex items-center gap-1 whitespace-nowrap">
-                              <Lock className="w-3 h-3" />
-                              <span>🔒 Terkunci</span>
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <p className="text-slate-400 text-xs sm:text-sm mt-1.5 line-clamp-2 sm:line-clamp-none">{node.shortDesc}</p>
-                    </div>
-
-                    {isUnlocked && (
-                      <div className="self-center opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">
-                        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Academic Analytics Sidebar (1 col) */}
-            <div className="space-y-4 sm:space-y-6">
-              
-              {/* Bento Progress Gauge */}
-              <div className="glass-panel p-4 sm:p-6 rounded-2xl text-left">
-                <h3 className="text-sm font-bold tracking-wider border-b border-slate-800 pb-3 mb-4 text-violet-400 font-space-grotesk uppercase">
-                  Academic Analytics
-                </h3>
-                
-                {/* Completion ring */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="relative w-16 h-16 flex-shrink-0">
-                    <svg className="w-full h-full transform -rotate-90">
-                      <circle cx="32" cy="32" r="28" fill="none" stroke="#1E293B" strokeWidth="6" />
-                      <circle cx="32" cy="32" r="28" fill="none" stroke="url(#cyanGlow)" strokeWidth="6" 
-                        strokeDasharray={2 * Math.PI * 28} 
-                        strokeDashoffset={2 * Math.PI * 28 * (1 - completedNodes.length / roadmap.nodes.length)}
-                        strokeLinecap="round"
-                      />
-                      <defs>
-                        <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" stopColor="#6366F1" />
-                          <stop offset="100%" stopColor="#22D3EE" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-sm font-bold font-mono">
-                      {Math.round((completedNodes.length / roadmap.nodes.length) * 100)}%
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400">Total Completion Rate</p>
-                    <p className="text-sm font-bold text-slate-200 mt-0.5">{completedNodes.length} of {roadmap.nodes.length} Modules</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  <div className="bg-slate-950/75 border border-slate-900 p-3 sm:p-3.5 rounded-xl text-center">
-                    <p className="text-[10px] text-slate-500 uppercase font-semibold">Study Pace</p>
-                    <p className="text-base font-bold font-space-grotesk text-slate-300 mt-1">2.4 hr/day</p>
-                  </div>
-                  <div className="bg-slate-950/75 border border-slate-900 p-3 sm:p-3.5 rounded-xl text-center">
-                    <p className="text-[10px] text-slate-500 uppercase font-semibold">Quiz Accuracy</p>
-                    <p className="text-base font-bold font-space-grotesk text-emerald-400 mt-1">94.2%</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Syllabus Guidelines */}
-              <div className="glass-panel p-4 sm:p-6 rounded-2xl text-xs leading-relaxed text-slate-400 text-left">
-                <p className="font-bold text-slate-200 mb-2 font-space-grotesk uppercase tracking-wider text-violet-400">Academic Guidelines</p>
-                <p>Roadmaps are generated using generative logic. Every subtopic node contains core textbook readings, mathematical proofs, and critical quiz sets. Completion requires at least 2 correct answers per quiz.</p>
-              </div>
-            </div>
-
           </div>
-        )}
+
+          {/* Node check-points */}
+          {roadmap.nodes.map((node: any, index: number) => {
+            const isCompleted = completedNodes.includes(node.id);
+            const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
+            const isActive = isUnlocked && !isCompleted;
+            const isLocked = !isUnlocked;
+            const coords = getCoordinates(index);
+            const nodeY = index * rowHeight + paddingY;
+
+            let nodeStyles = "";
+            let innerContent = null;
+
+            if (isCompleted) {
+              // COMPLETED: Bright color, checkmark icon, glow effect
+              nodeStyles = isKidMode
+                ? 'bg-emerald-400 border-slate-800 text-slate-800 shadow-[0_4px_0_#1E293B] hover:shadow-[0_6px_0_#1E293B] hover:translate-y-[-2px] ring-4 ring-emerald-300/50'
+                : 'bg-emerald-600 border-emerald-400 text-white hover:bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-[1.04]';
+              innerContent = <CheckCircle className="w-8 h-8 flex-shrink-0" />;
+            } else if (isActive) {
+              // CURRENT: Pulsing, bobbing, glowing, larger size
+              nodeStyles = isKidMode
+                ? 'bg-pink-500 border-slate-800 text-white shadow-[0_6px_0_#1E293B] hover:shadow-[0_8px_0_#1E293B] hover:translate-y-[-2px] ring-4 ring-pink-300 animate-[pulse_2s_infinite] scale-[1.12]'
+                : 'bg-violet-600 border-violet-400 text-white hover:bg-violet-500 shadow-[0_0_25px_rgba(124,58,237,0.5)] hover:scale-[1.14] scale-[1.12]';
+              innerContent = <NodeIcon type={node.iconType} className="w-8 h-8 animate-bounce" />;
+            } else if (isUnlocked) {
+              // UPCOMING: Visible but muted/simple
+              nodeStyles = isKidMode
+                ? 'bg-white border-slate-800 text-slate-800 shadow-[0_4px_0_#1E293B] hover:shadow-[0_6px_0_#1E293B] hover:translate-y-[-2px]'
+                : 'bg-slate-900 border-slate-800 text-slate-350 hover:bg-slate-800/80';
+              innerContent = <NodeIcon type={node.iconType} className="w-7 h-7" />;
+            } else {
+              // LOCKED: Grayed out, lock icon
+              nodeStyles = isKidMode
+                ? 'bg-slate-200 border-slate-400 text-slate-400 shadow-[0_2px_0_#94A3B8] cursor-not-allowed opacity-70'
+                : 'bg-slate-950 border-slate-900 text-slate-600 cursor-not-allowed opacity-40';
+              innerContent = <Lock className="w-5 h-5" />;
+            }
+
+            return (
+              <div 
+                key={node.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                style={{ 
+                  left: `${coords.x / 4}%`, 
+                  top: `${nodeY}px` 
+                }}
+              >
+                <button
+                  onClick={() => handleNodeClick(node, index)}
+                  className={`w-16 h-16 sm:w-18 sm:h-18 rounded-full border-4 flex items-center justify-center transition-all duration-350 relative touch-target select-none ${nodeStyles}`}
+                >
+                  {/* Step index circle number */}
+                  <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full border-2 border-slate-800 text-slate-800 flex items-center justify-center font-black text-[9px] ${
+                    isCompleted ? 'bg-emerald-300' : isLocked ? 'bg-slate-400' : 'bg-amber-400'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  
+                  {innerContent}
+                </button>
+
+                {/* Subtopic description label card */}
+                <div 
+                  className={`absolute top-[80px] w-28 text-center px-2 py-1.5 rounded-xl border-2 transition-all ${
+                    isCompleted
+                      ? isKidMode ? 'bg-emerald-50 border-emerald-400' : 'bg-emerald-950/20 border-emerald-500/20 text-slate-300'
+                      : isActive
+                        ? isKidMode ? 'bg-pink-50 border-pink-500 shadow-[2px_2px_0_#1E293B]' : 'bg-violet-950/30 border-violet-500/40 text-white'
+                        : isLocked
+                          ? 'opacity-40 border-transparent text-slate-500'
+                          : isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/60 border-slate-800/80 text-slate-350'
+                  }`}
+                >
+                  <p className="font-black text-[10px] truncate leading-tight">{node.title}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
       </main>
 
-      {/* ADVENTURE LESSON PRE-START CARD MODAL (Dual Mode UI) */}
+      {/* ADVENTURE LESSON PRE-START MODAL (with Reward previews and unlocks) */}
       {selectedNodeData && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className={`w-full max-w-sm p-4 sm:p-6 relative overflow-hidden modal-responsive ${
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`w-full max-w-sm p-6 relative overflow-hidden modal-responsive transition-all duration-300 ${
             isKidMode 
-              ? 'card-toy bg-gradient-to-b from-white to-pink-50' 
-              : 'glass-panel border border-slate-800 rounded-3xl text-left'
+              ? 'card-toy bg-gradient-to-b from-white to-pink-50 border-4 border-slate-800 shadow-[8px_8px_0_#1E293B]' 
+              : 'glass-panel border border-slate-800/80 rounded-3xl text-left bg-slate-900/60 shadow-2xl'
           }`}>
             {isKidMode && <div className="absolute top-0 right-0 w-24 h-24 bg-pink-200 rounded-full blur-2xl opacity-50" />}
-            
-            {/* Mascot / Icon header */}
-            <div className="text-center mb-4 sm:mb-5">
-              <span className="text-4xl sm:text-5xl block animate-bounce mb-2 sm:mb-3">
-                {selectedNodeData.node.iconType === 'rocket' ? '🚀' :
-                 selectedNodeData.node.iconType === 'brain' ? '🧠' :
-                 selectedNodeData.node.iconType === 'lightbulb' ? '💡' :
-                 selectedNodeData.node.iconType === 'code' ? '💻' :
-                 selectedNodeData.node.iconType === 'book' ? '📘' :
-                 selectedNodeData.node.iconType === 'star' ? '⭐' :
-                 selectedNodeData.node.iconType === 'compass' ? '🧭' : '🔬'}
-              </span>
+            <div className="text-center mb-5">
+              <div className="flex justify-center mb-3">
+                <div className={`p-4 rounded-full ${isKidMode ? 'bg-pink-100 text-pink-500 border-2 border-slate-800 animate-bounce' : 'bg-slate-800/80 text-violet-400 border border-slate-700 hover:shadow-[0_0_15px_rgba(139,92,246,0.25)]'} transition-all`}>
+                  <NodeIcon type={selectedNodeData.node.iconType} className="w-10 h-10" />
+                </div>
+              </div>
               
-              <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-slate-800' : 'text-white font-space-grotesk'}`}>
+              <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk'}`}>
                 {selectedNodeData.node.title}
               </h3>
-              <p className={`text-xs mt-1 uppercase font-bold ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              <p className={`text-xs mt-1 uppercase font-bold tracking-wider ${isKidMode ? 'text-indigo-600' : 'text-violet-400'}`}>
                 {isKidMode 
-                  ? `Tujuan ke-${selectedNodeData.index + 1}: ${getCoordinates(selectedNodeData.index).themeName.split(' ')[0]}`
-                  : `Module step ${selectedNodeData.index + 1} of ${roadmap.nodes.length}`
+                  ? `Petualangan Tahap ${selectedNodeData.index + 1}`
+                  : `Curriculum Module step ${selectedNodeData.index + 1} of ${roadmap.nodes.length}`
                 }
               </p>
             </div>
 
-            {/* Instruction description card / Speech Bubble */}
-            <div className={`p-3 sm:p-4 rounded-2xl mb-4 sm:mb-6 relative border-2 ${
+            {/* Description / Speech Bubble */}
+            <div className={`p-4 rounded-2xl mb-5 relative border-2 ${
               isKidMode 
-                ? 'bg-white border-slate-800' 
-                : 'bg-slate-950 border-slate-900 text-slate-300 text-sm'
+                ? 'bg-white border-slate-800 text-slate-700 font-bold text-xs' 
+                : 'bg-slate-950 border-slate-900 text-slate-400 text-xs leading-relaxed'
             }`}>
               {isKidMode ? (
                 <>
                   <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-slate-800" />
                   <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-white" />
-                  <p className="text-xs font-bold text-slate-700 text-center leading-relaxed">
-                    &quot;Ayo kita selesaikan tantangan ini untuk meraih bintang dan lencana baru! Aku yakin kamu pasti bisa!&quot;
+                  <p className="text-center">
+                    &quot;Ayo kita buka level baru, dapatkan bintang, koin, dan lencana petualangan ini! Kamu pasti bisa!&quot;
                   </p>
                 </>
               ) : (
-                <p className="text-xs leading-relaxed text-slate-400">
-                  {selectedNodeData.node.shortDesc} Pelajari materi secara kritis dan jawablah set pertanyaan evaluasi kelulusan modul.
+                <p>
+                  {selectedNodeData.node.shortDesc} Master the core concepts, read textbook documentation, and clear the evaluation quiz sets.
                 </p>
               )}
             </div>
 
-            {/* Rewards details */}
-            <div className={`grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6 p-3 sm:p-3.5 rounded-2xl text-center border-2 ${
-              isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-950 border-slate-900'
+            {/* Motivational Rewards Preview Widget */}
+            <div className={`p-4 rounded-2xl mb-6 border-2 text-left ${
+              isKidMode ? 'bg-white border-slate-800' : 'bg-slate-950 border-slate-900'
             }`}>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-slate-500">Hadiah Kelulusan</p>
-                <p className="text-sm font-black text-indigo-500">+50 XP 🏆</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase font-bold text-slate-500">Bonus Sempurna</p>
-                <p className="text-sm font-black text-amber-500">Tiga Bintang</p>
+              <h4 className={`text-xs font-black uppercase tracking-wider mb-2.5 ${isKidMode ? 'text-slate-800' : 'text-violet-400'}`}>
+                Target Rewards & Unlocks:
+              </h4>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100 dark:border-slate-900">
+                  <span className="opacity-75">Bonus Kelulusan:</span>
+                  <span className="font-extrabold text-indigo-500">+50 XP</span>
+                </div>
+                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100 dark:border-slate-900">
+                  <span className="opacity-75">Bonus Koin:</span>
+                  <span className="font-extrabold text-amber-500">+25 Koin</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="opacity-75">Lencana Target:</span>
+                  <span className="font-extrabold text-pink-500">
+                    {selectedNodeData.index === 0 ? 'First Lesson' :
+                     selectedNodeData.index === 2 ? 'Math Explorer' :
+                     selectedNodeData.index === 4 ? 'Problem Solver' :
+                     selectedNodeData.index === roadmap.nodes.length - 1 ? 'Roadmap Master' : 'Explorer Badge'}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Buttons action */}
+            {/* Action buttons */}
             <div className="space-y-3">
               <button 
                 onClick={() => handleStartLesson(selectedNodeData.node.id)}
-                className={`w-full py-3 text-center font-bold text-base cursor-pointer touch-target ${
+                className={`w-full py-3 text-center font-black text-base cursor-pointer touch-target ${
                   isKidMode 
-                    ? 'btn-toy-primary' 
-                    : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all'
+                    ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
+                    : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all border border-violet-500/20'
                 }`}
               >
-                {isKidMode ? 'Mulai Petualangan! 🚀' : 'Start Lesson'}
+                Mulai Petualangan!
               </button>
               <button 
                 onClick={() => {
                   if (isKidMode) playSynthSound('click');
                   setSelectedNodeData(null);
                 }}
-                className={`w-full py-2.5 text-center font-bold text-sm cursor-pointer touch-target ${
+                className={`w-full py-2.5 text-center font-black text-sm cursor-pointer touch-target ${
                   isKidMode 
-                    ? 'btn-toy-secondary' 
-                    : 'bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl transition-all'
+                    ? 'btn-toy-secondary shadow-[3px_3px_0_#1E293B]' 
+                    : 'bg-slate-900 hover:bg-slate-800 text-slate-350 rounded-xl transition-all border border-slate-800'
                 }`}
               >
-                {isKidMode ? 'Kembali ke Peta' : 'Cancel'}
+                Kembali ke Peta
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* FULL-SCREEN GRADUATION CELEBRATION MODAL */}
+      {showCompletionCelebration && (
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-xl text-center py-8 px-4 sm:px-8 relative my-auto">
+            
+            <Trophy className="w-16 h-16 mx-auto text-amber-500 animate-bounce mb-6" />
+            
+            <h2 className={`text-3xl sm:text-4xl font-black mb-3 ${isKidMode ? 'text-amber-400 font-fredoka' : 'text-emerald-400 font-space-grotesk'}`}>
+              Petualangan Lengkap!
+            </h2>
+            <p className="text-sm text-slate-300 max-w-md mx-auto mb-8 font-medium">
+              Luar biasa! Kamu telah menyelesaikan 100% langkah kurikulum dan menamatkan seluruh roadmap belajar ini.
+            </p>
+
+            {/* Simulated certificate card */}
+            <div className="bg-white text-slate-800 border-8 border-amber-400 p-6 sm:p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden mb-8 max-w-lg mx-auto">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-full blur-2xl opacity-50" />
+              
+              <div className="border-2 border-slate-800/20 p-4 sm:p-6 rounded-2xl relative">
+                <Award className="w-12 h-12 mx-auto text-indigo-500 mb-3" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Sertifikat Kelulusan</p>
+                <h4 className="text-xl sm:text-2xl font-black font-fredoka text-slate-800 mt-2 truncate">
+                  {profile?.full_name}
+                </h4>
+                <div className="w-16 h-0.5 bg-slate-800 mx-auto my-3" />
+                <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto font-medium">
+                  Telah berhasil menyelesaikan seluruh tantangan akademik dan menamatkan materi pembelajaran pada subjek:
+                </p>
+                <p className="text-sm font-black text-indigo-600 mt-2 font-fredoka">{roadmap.title}</p>
+                <p className="text-[9px] text-slate-400 mt-6 font-mono">ID: {user?.id.slice(0, 8)} // DATE: {new Date().toLocaleDateString()}</p>
+              </div>
+            </div>
+
+            {/* Rewards Card details */}
+            <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl max-w-md mx-auto mb-8 flex justify-around text-center text-xs">
+              <div>
+                <p className="opacity-70">Lencana Dibuka:</p>
+                <p className="font-extrabold text-pink-500 mt-1">Roadmap Master</p>
+              </div>
+              <div className="border-x border-slate-800 px-6">
+                <p className="opacity-70">Bonus XP:</p>
+                <p className="font-extrabold text-indigo-400 mt-1">+200 XP</p>
+              </div>
+              <div>
+                <p className="opacity-70">Status:</p>
+                <p className="font-extrabold text-emerald-400 mt-1">Lulus</p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                if (isKidMode) playSynthSound('click');
+                setShowCompletionCelebration(false);
+                router.push('/dashboard');
+              }}
+              className={`px-8 py-3.5 text-center font-black text-base cursor-pointer touch-target ${
+                isKidMode 
+                  ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
+                  : 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm transition-all border border-emerald-500/20 shadow-lg'
+              }`}
+            >
+              Kembali ke Dashboard
+            </button>
           </div>
         </div>
       )}

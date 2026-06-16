@@ -20,6 +20,7 @@ export interface QuizQuestion {
   options: string[];
   correctAnswerIndex: number;
   explanation: string;
+  hint: string;
 }
 
 export interface StudyMaterial {
@@ -162,7 +163,8 @@ Anda HARUS mengembalikan data dalam format JSON murni dengan skema berikut:
       "question": "Pertanyaan kuis pertama?",
       "options": ["Teks Opsi Pertama", "Teks Opsi Kedua", "Teks Opsi Ketiga", "Teks Opsi Keempat"],
       "correctAnswerIndex": 0,
-      "explanation": "Penjelasan singkat mengapa opsi tersebut benar."
+      "explanation": "Penjelasan singkat mengapa opsi tersebut benar.",
+      "hint": "Petunjuk singkat berupa satu kalimat untuk membantu memandu cara berpikir siswa (jangan berikan jawabannya)."
     }
   ]
 }
