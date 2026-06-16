@@ -5,6 +5,7 @@ import React, { useEffect, useState, createContext, useContext } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { RefreshCw } from 'lucide-react';
+import AchievementToast from './AchievementToast';
 
 interface UserContextType {
   user: any;
@@ -185,6 +186,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
   return (
     <UserContext.Provider value={{ user, profile, xpStats, coins, stars, refreshUserData, loading }}>
       {children}
+      <AchievementToast isKidMode={profile?.role === 'SD'} />
     </UserContext.Provider>
   );
 }

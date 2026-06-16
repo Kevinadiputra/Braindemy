@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import ProtectedRoute, { useAuth } from '@/components/ProtectedRoute';
 import Header from '@/components/Header';
 import { Mail, Shield, Trophy, Flame, Award, ArrowLeft, AlertTriangle, Trash2, X, RefreshCw, User } from 'lucide-react';
+import BadgeIcon from '@/components/BadgeIcon';
+import { achievementTemplates } from '@/lib/achievements';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { playSynthSound } from '@/components/SoundHelper';
@@ -67,6 +69,28 @@ function ProfileContent() {
     }
   };
 
+  const equippedBadge = profile?.current_roadmap?.equipped_badge;
+  const equippedTitle = profile?.current_roadmap?.equipped_title;
+  const equippedFrame = profile?.current_roadmap?.equipped_frame;
+
+  const getFrameStyle = (frameName?: string) => {
+    if (!frameName) return 'border-slate-800';
+    switch (frameName) {
+      case 'Bronze Border':
+        return 'border-amber-700/80 shadow-[0_0_8px_rgba(180,83,9,0.3)]';
+      case 'Sapphire Shield':
+        return 'border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)] ring-2 ring-cyan-500/20';
+      case 'Amethyst Glow':
+        return 'border-violet-500 shadow-[0_0_20px_rgba(139,92,246,0.5)] ring-2 ring-violet-500/30 animate-pulse';
+      case 'Golden Aura':
+        return 'border-amber-500 shadow-[0_0_25px_rgba(245,158,11,0.6)] ring-4 ring-amber-500/20';
+      case 'Crimson Nova':
+        return 'border-rose-500 shadow-[0_0_35px_rgba(244,63,94,0.8)] ring-4 ring-rose-500/40 animate-pulse';
+      default:
+        return 'border-slate-800';
+    }
+  };
+
   return (
     <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
       <Header isKidMode={isKidMode} />
@@ -95,24 +119,55 @@ function ProfileContent() {
             : 'glass-panel border border-slate-800'
         }`}>
           <div className="flex flex-col sm:flex-row items-center gap-6 border-b pb-6 border-slate-800/10 mb-6">
-            {profile?.avatar_url ? (
-              <img 
-                src={profile.avatar_url} 
-                alt="Foto Profil" 
-                className="w-20 h-20 rounded-full border-4 border-slate-800 object-cover shadow-md"
-              />
-            ) : (
-              <div className={`w-20 h-20 rounded-full border-4 border-slate-800 flex items-center justify-center text-4xl shadow-md ${
-                isKidMode ? 'bg-pink-100' : 'bg-slate-900'
-              }`}>
-                {profile?.role === 'SD' ? '🐱' : '🦉'}
-              </div>
-            )}
+            <div className="relative">
+              {profile?.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt="Foto Profil" 
+                  className={`w-20 h-20 rounded-full border-4 object-cover shadow-md transition-all ${getFrameStyle(equippedFrame)}`}
+                />
+              ) : (
+                <div className={`w-20 h-20 rounded-full border-4 flex items-center justify-center text-4xl shadow-md transition-all ${
+                  isKidMode ? 'bg-pink-100' : 'bg-slate-900'
+                } ${getFrameStyle(equippedFrame)}`}>
+                  {profile?.role === 'SD' ? '🐱' : '🦉'}
+                </div>
+              )}
+              
+              {/* Equipped Favorite Badge bubble */}
+              {equippedBadge && (
+                <div className="absolute -bottom-1 -right-1 z-10 w-7 h-7 rounded-full border-2 border-slate-800 bg-slate-900 flex items-center justify-center shadow-md animate-scale-up">
+                  {(() => {
+                    const badge = achievementTemplates.find(b => b.id === equippedBadge);
+                    return badge ? (
+                      <BadgeIcon name={badge.iconName} className="w-3.5 h-3.5 text-white" />
+                    ) : (
+                      <Award className="w-3.5 h-3.5 text-white" />
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
             
             <div className="text-center sm:text-left flex-1 min-w-0">
               <h2 className={`text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'}`}>
                 {profile?.full_name || 'User'}
               </h2>
+              
+              {/* Equipped Title Display */}
+              {equippedTitle && (
+                <div className="mt-1">
+                  <span className={`px-2.5 py-0.5 rounded-full border-2 text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1 ${
+                    isKidMode 
+                      ? 'bg-amber-100 border-slate-800 text-slate-800 shadow-[1px_1px_0_#1E293B]' 
+                      : 'bg-violet-950/30 border-violet-500/20 text-violet-400 font-mono'
+                  }`}>
+                    <Award className="w-3 h-3 text-indigo-400" />
+                    {equippedTitle}
+                  </span>
+                </div>
+              )}
+
               <p className={`text-sm mt-1.5 ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
                 Belajar sebagai <span className="font-bold">{profile?.role === 'SD' ? 'Anak Sekolah Dasar (SD) 🪐' : 'Mahasiswa 🎓'}</span>
               </p>
