@@ -38,6 +38,15 @@ export function getApiKey(): string {
   return process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 }
 
+// Helper to get Groq API Key
+export function getGroqApiKey(): string {
+  if (typeof window !== 'undefined') {
+    const localKey = localStorage.getItem('braindemy_groq_api_key');
+    if (localKey) return localKey;
+  }
+  return process.env.NEXT_PUBLIC_GROQ_API_KEY || '';
+}
+
 // Helper to make fetch calls to Gemini
 async function callGemini(systemPrompt: string, userPrompt: string): Promise<string> {
   const apiKey = getApiKey();
@@ -84,6 +93,68 @@ async function callGemini(systemPrompt: string, userPrompt: string): Promise<str
   return text;
 }
 
+// Helper to make fetch calls to Groq
+async function callGroq(systemPrompt: string, userPrompt: string): Promise<string> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) {
+    throw new Error('API Key Groq tidak ditemukan.');
+  }
+
+  const url = 'https://api.groq.com/openai/v1/chat/completions';
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt
+        },
+        {
+          role: 'user',
+          content: userPrompt
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7
+    })
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    const message = errData?.error?.message || `HTTP error! status: ${response.status}`;
+    throw new Error(`Groq API Error: ${message}`);
+  }
+
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) {
+    throw new Error('Format respon Groq kosong.');
+  }
+
+  return text;
+}
+
+// Unified call AI router
+async function callAI(systemPrompt: string, userPrompt: string): Promise<string> {
+  // Selalu prioritaskan Groq jika kunci tersedia
+  if (getGroqApiKey()) {
+    return callGroq(systemPrompt, userPrompt);
+  }
+  
+  // Gunakan Gemini sebagai fallback jika hanya kunci Gemini yang tersedia
+  if (getApiKey()) {
+    return callGemini(systemPrompt, userPrompt);
+  }
+
+  throw new Error('API Key tidak ditemukan. Harap atur API Key Groq atau Gemini di Pengaturan atau Environment Variables.');
+}
+
 // Generate Roadmap
 export async function generateRoadmap(topic: string, isKidMode: boolean): Promise<RoadmapData> {
   const modeText = isKidMode ? 'Anak SD (Sekolah Dasar) yang berumur 7-12 tahun' : 'Mahasiswa (Perguruan Tinggi) yang membutuhkan materi mendalam';
@@ -115,7 +186,7 @@ Ketentuan:
 
   const userPrompt = `Buatlah roadmap belajar untuk topik: "${topic}"`;
   
-  const jsonText = await callGemini(systemPrompt, userPrompt);
+  const jsonText = await callAI(systemPrompt, userPrompt);
   return JSON.parse(jsonText) as RoadmapData;
 }
 
@@ -177,6 +248,6 @@ Ketentuan:
 
   const userPrompt = `Buatkan materi belajar dan 3 latihan soal untuk subtopik: "${nodeTitle}" (Deskripsi: ${nodeDesc}) dari topik utama: "${topic}"`;
   
-  const jsonText = await callGemini(systemPrompt, userPrompt);
+  const jsonText = await callAI(systemPrompt, userPrompt);
   return JSON.parse(jsonText) as StudyMaterial;
 }
