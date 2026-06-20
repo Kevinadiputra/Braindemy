@@ -92,7 +92,7 @@ function ProfileContent() {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'}`}>
       <Header isKidMode={isKidMode} />
 
       <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8 relative z-10">
@@ -265,7 +265,7 @@ function ProfileContent() {
                   setDeleteConfirmText('');
                   setDeleteError('');
                 }}
-                className="touch-target px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-black transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-md"
+                className="touch-target px-6 h-12 max-sm:h-14 bg-red-600 hover:bg-red-500 text-white rounded-2xl font-bold transition-all cursor-pointer inline-flex items-center justify-center gap-2 shadow-md active:scale-95"
               >
                 <Trash2 className="w-4 h-4" />
                 <span>Hapus Akun Saya</span>
@@ -327,7 +327,7 @@ function ProfileContent() {
                       setDeleteStep(2);
                     }}
                     disabled={deleteConfirmText !== profile?.email}
-                    className="touch-target w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-all cursor-pointer"
+                    className="touch-target w-full h-12 max-sm:h-14 rounded-2xl bg-red-650 hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm transition-all cursor-pointer flex items-center justify-center"
                   >
                     Lanjutkan Ke Tahap Akhir
                   </button>
@@ -358,14 +358,14 @@ function ProfileContent() {
                       setIsDeleteModalOpen(false);
                     }}
                     disabled={isDeleting}
-                    className="touch-target flex-1 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer border border-slate-700"
+                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer border border-slate-700 flex items-center justify-center"
                   >
                     Batal
                   </button>
                   <button 
                     onClick={handleDeleteAccount}
                     disabled={isDeleting}
-                    className="touch-target flex-1 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     {isDeleting ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />

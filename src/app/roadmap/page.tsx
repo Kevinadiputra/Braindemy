@@ -226,7 +226,7 @@ function RoadmapContent() {
 
   return (
     <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${
-      isKidMode ? 'bg-[#FFFBEB] text-slate-800' : 'bg-slate-950 text-slate-200'
+      isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'
     }`}>
       {/* Visual background grids */}
       {!isKidMode && <div className="absolute inset-0 scholar-grid pointer-events-none opacity-20" />}
@@ -607,10 +607,10 @@ function RoadmapContent() {
             <div className="space-y-3">
               <button 
                 onClick={() => handleStartLesson(selectedNodeData.node.id)}
-                className={`w-full py-3 text-center font-black text-base cursor-pointer touch-target ${
+                className={`w-full text-center font-black text-base cursor-pointer touch-target flex items-center justify-center ${
                   isKidMode 
                     ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
-                    : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all border border-violet-500/20'
+                    : 'btn-scholar-primary'
                 }`}
               >
                 Mulai Petualangan!
@@ -620,10 +620,10 @@ function RoadmapContent() {
                   if (isKidMode) playSynthSound('click');
                   setSelectedNodeData(null);
                 }}
-                className={`w-full py-2.5 text-center font-black text-sm cursor-pointer touch-target ${
+                className={`w-full text-center font-black text-sm cursor-pointer touch-target flex items-center justify-center ${
                   isKidMode 
                     ? 'btn-toy-secondary shadow-[3px_3px_0_#1E293B]' 
-                    : 'bg-slate-900 hover:bg-slate-800 text-slate-350 rounded-xl transition-all border border-slate-800'
+                    : 'btn-scholar-secondary'
                 }`}
               >
                 Kembali ke Peta
@@ -688,10 +688,10 @@ function RoadmapContent() {
                 setShowCompletionCelebration(false);
                 router.push('/dashboard');
               }}
-              className={`px-8 py-3.5 text-center font-black text-base cursor-pointer touch-target ${
+              className={`px-8 text-center font-black text-base cursor-pointer touch-target flex items-center justify-center mx-auto ${
                 isKidMode 
                   ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
-                  : 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm transition-all border border-emerald-500/20 shadow-lg'
+                  : 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl h-12 max-sm:h-14 font-bold transition-all border border-emerald-500/20 shadow-lg active:scale-95'
               }`}
             >
               Kembali ke Dashboard

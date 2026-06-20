@@ -80,7 +80,7 @@ export default function Header({ isKidMode, onSettingsClick, showSettingsBtn = f
 
   return (
     <>
-      <header className={`relative z-30 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between border-b ${
+      <header className={`relative z-30 px-4 sm:px-6 h-[72px] flex items-center justify-between border-b ${
         isKidMode 
           ? 'border-slate-800 bg-white shadow-[0_4px_0_#1E293B]' 
           : 'border-slate-900 bg-slate-950/80 backdrop-blur-md'

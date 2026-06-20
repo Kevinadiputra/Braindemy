@@ -192,7 +192,7 @@ function AchievementsContent() {
   const equippedFrame = profile?.current_roadmap?.equipped_frame;
 
   return (
-    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-slate-950 text-slate-100'}`}>
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'}`}>
       <Header isKidMode={isKidMode} />
 
       <main className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 py-8 relative z-10">
