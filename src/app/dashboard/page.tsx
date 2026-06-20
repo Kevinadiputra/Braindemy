@@ -41,22 +41,10 @@ function DashboardContent() {
   const [completedLessonsCount, setCompletedLessonsCount] = useState(0);
   const [lessonsOpenedCount, setLessonsOpenedCount] = useState(0);
 
+  // 1. Fetch achievements and subscribe to changes
   useEffect(() => {
     if (!user) return;
 
-    // Fetch progress count
-    const fetchProgressData = async () => {
-      const { data: progData } = await supabase
-        .from('progress')
-        .select('status')
-        .eq('user_id', user.id);
-      if (progData) {
-        setCompletedLessonsCount(progData.filter((p: any) => p.status === 'completed').length);
-        setLessonsOpenedCount(progData.length);
-      }
-    };
-
-    // Fetch achievements count from Supabase
     const fetchAchievements = async () => {
       const { data, count, error } = await supabase
         .from('achievements')
@@ -69,11 +57,9 @@ function DashboardContent() {
       }
     };
 
-    fetchProgressData();
     fetchAchievements();
-    refreshUserData(); // Fetch latest profile and XP on mount
+    refreshUserData();
 
-    // Realtime subscriptions to auto-refresh when db updates
     const xpChannel = supabase
       .channel('dashboard-xp-changes')
       .on(
@@ -102,6 +88,49 @@ function DashboardContent() {
     };
   }, [user]);
 
+  // 2. Fetch progress data scoped to the active roadmap nodes
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchProgressData = async () => {
+      const { data: progData } = await supabase
+        .from('progress')
+        .select('lesson_id, status')
+        .eq('user_id', user.id);
+      
+      if (progData) {
+        const nodes = profile?.current_roadmap?.nodes || [];
+        if (nodes.length > 0) {
+          const activeNodeIds = new Set(nodes.map((n: any) => n.id));
+          const completed = progData.filter((p: any) => activeNodeIds.has(p.lesson_id) && p.status === 'completed');
+          const opened = progData.filter((p: any) => activeNodeIds.has(p.lesson_id));
+          setCompletedLessonsCount(completed.length);
+          setLessonsOpenedCount(opened.length);
+        } else {
+          setCompletedLessonsCount(0);
+          setLessonsOpenedCount(0);
+        }
+      }
+    };
+
+    fetchProgressData();
+
+    const progressChannel = supabase
+      .channel('dashboard-progress-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'progress', filter: `user_id=eq.${user.id}` },
+        async () => {
+          await fetchProgressData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(progressChannel);
+    };
+  }, [user, profile?.current_roadmap]);
+
   const handleGenerate = async (selectedTopic?: string) => {
     const query = selectedTopic || topicInput;
     if (!query.trim()) return;
@@ -127,9 +156,24 @@ function DashboardContent() {
       // 2. Generate roadmap via Gemini
       const data = await generateRoadmap(query, isKidMode);
       
+      // Generate a unique roadmap ID and assign it to nodes
+      const roadmapId = `map-${Date.now()}`;
+      const nodesWithUniqueIds = data.nodes.map((node: any, idx: number) => ({
+        ...node,
+        id: `${roadmapId}-node-${idx + 1}`
+      }));
+      
+      const newRoadmap = {
+        ...data,
+        id: roadmapId,
+        nodes: nodesWithUniqueIds,
+        status: "active", // Explicitly active
+        created_at: new Date().toISOString()
+      };
+
       // 3. Attach history to the new roadmap data
       const updatedRoadmapData = {
-        ...data,
+        ...newRoadmap,
         history: history
       };
       
