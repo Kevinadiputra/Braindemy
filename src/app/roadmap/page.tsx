@@ -152,9 +152,9 @@ function RoadmapContent() {
 
   if (!roadmap || loadingProgress) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-200">
-        <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-        <p className="text-sm font-mono mt-4 animate-pulse">Loading adventure roadmap...</p>
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-[#0F172A]">
+        <RefreshCw className="w-8 h-8 animate-spin text-[#7C3AED]" />
+        <p className="text-sm font-mono mt-4 animate-pulse font-medium text-[#475569]">Loading adventure roadmap...</p>
       </div>
     );
   }
@@ -226,12 +226,12 @@ function RoadmapContent() {
 
   return (
     <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${
-      isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'
+      isKidMode ? 'kid-grid text-[#0F172A]' : 'scholar-grid bg-[#F8FAFC] text-[#0F172A]'
     }`}>
       {/* Visual background grids */}
       {!isKidMode && <div className="absolute inset-0 scholar-grid pointer-events-none opacity-20" />}
-      {!isKidMode && <div className="absolute top-20 left-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />}
-      {!isKidMode && <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />}
+      {!isKidMode && <div className="absolute top-20 left-10 w-96 h-96 bg-violet-600/5 rounded-full blur-3xl pointer-events-none" />}
+      {!isKidMode && <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#7C3AED]/5 rounded-full blur-3xl pointer-events-none" />}
 
       <Header isKidMode={isKidMode} />
       <ConfettiCanvas active={showCompletionCelebration} />
@@ -239,7 +239,7 @@ function RoadmapContent() {
       <main className="flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-4 py-6 sm:py-8 relative z-10">
         
         {/* Top Header Dashboard / Navigation HUD */}
-        <div className="w-full flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 border-b pb-6 border-slate-800/10 dark:border-slate-800/40 text-left">
+        <div className="w-full flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6 mb-8 border-b pb-6 border-[#E2E8F0] text-left">
           <div>
             <button 
               onClick={() => {
@@ -248,20 +248,20 @@ function RoadmapContent() {
               }}
               className={`touch-target inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs mb-3 border-4 transition-all cursor-pointer font-black ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none' 
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B] text-[#0F172A] active:translate-y-0.5 active:shadow-none' 
+                  : 'bg-white border-[#E2E8F0] border text-[#475569] hover:text-[#0F172A] hover:bg-slate-50'
               }`}
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-[#7C3AED]" />
               <span>Dashboard</span>
             </button>
             
             <h1 className={`text-2xl sm:text-3xl font-black flex items-center gap-2 ${
-              isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'
+              isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk tracking-wide'
             }`}>
               {roadmap.title}
             </h1>
-            <p className={`text-sm mt-1 max-w-xl ${isKidMode ? 'text-slate-650' : 'text-slate-400'}`}>
+            <p className="text-sm mt-1 max-w-xl text-[#475569]">
               {roadmap.description}
             </p>
           </div>
@@ -270,28 +270,26 @@ function RoadmapContent() {
           <div className={`p-4 rounded-3xl border-4 text-left min-w-[280px] lg:max-w-xs flex-1 ${
             isKidMode 
               ? 'bg-white border-slate-800 shadow-[4px_4px_0_#1E293B]' 
-              : 'bg-slate-900/50 border-slate-800 backdrop-blur-sm'
+              : 'bg-white border-[#E2E8F0] border shadow-sm'
           }`}>
             <div className="flex justify-between items-center mb-2.5">
-              <span className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
+              <span className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-[#7C3AED] font-fredoka' : 'text-[#7C3AED] font-mono'}`}>
                 {isKidMode ? `Lvl ${xpStats?.current_level || 1} Penjelajah` : `LEVEL 0${xpStats?.current_level || 1} EXPLO`}
               </span>
-              <span className={`text-xs font-black flex items-center gap-1 ${isKidMode ? 'text-amber-500' : 'text-amber-400'}`}>
-                <Star className="w-4 h-4 fill-current" />
+              <span className="text-xs font-black flex items-center gap-1 text-[#7C3AED]">
+                <Star className="w-4 h-4 fill-current text-[#7C3AED]" />
                 <span>{xpStats?.total_xp || 0} XP</span>
               </span>
             </div>
             
-            <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
+            <div className="w-full bg-[#E5E7EB] rounded-full h-3 overflow-hidden p-0.5 border border-[#E2E8F0]">
               <div 
-                className={`h-full rounded-full transition-all duration-700 ${
-                  isKidMode ? 'bg-gradient-to-r from-pink-400 to-indigo-500' : 'bg-gradient-to-r from-violet-600 to-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]'
-                }`}
+                className="h-full rounded-full bg-[#7C3AED] transition-all duration-700"
                 style={{ width: `${completedPercent}%` }}
               />
             </div>
             
-            <div className="flex justify-between items-center mt-2.5 text-[10px] font-bold opacity-80">
+            <div className="flex justify-between items-center mt-2.5 text-[10px] font-bold text-[#475569]">
               <span>{completedNodes.length} / {roadmap.nodes.length} Modul Selesai</span>
               <span>{completedPercent}%</span>
             </div>
@@ -301,12 +299,12 @@ function RoadmapContent() {
         {/* Zoom & Pan HUD Overlay Controls */}
         <div className="flex flex-wrap items-center gap-3 mb-6 relative z-20">
           <div className={`p-1.5 rounded-2xl flex items-center gap-1.5 border ${
-            isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/80 border-slate-800'
+            isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-white border-[#E2E8F0]'
           }`}>
             <button 
               onClick={zoomIn} 
               className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
-                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-[#0F172A]'
               }`}
               title="Zoom In"
             >
@@ -315,7 +313,7 @@ function RoadmapContent() {
             <button 
               onClick={zoomOut} 
               className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
-                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-[#0F172A]'
               }`}
               title="Zoom Out"
             >
@@ -324,14 +322,14 @@ function RoadmapContent() {
             <button 
               onClick={resetZoomPan} 
               className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
-                isKidMode ? 'bg-pink-50 border-2 border-slate-800 text-slate-800 hover:bg-pink-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+                isKidMode ? 'bg-pink-50 border-2 border-slate-800 text-slate-800 hover:bg-pink-100' : 'bg-slate-50 border border-[#E2E8F0] hover:bg-slate-100 text-[#0F172A]'
               }`}
               title="Reset View"
             >
               Reset 🔄
             </button>
           </div>
-          <span className={`text-[10px] font-bold ${isKidMode ? 'text-indigo-600' : 'text-slate-400 font-mono'}`}>
+          <span className={`text-[10px] font-bold ${isKidMode ? 'text-[#7C3AED]' : 'text-[#475569] font-mono'}`}>
             💡 {isKidMode ? 'Geser layar untuk menjelajah!' : 'Drag to pan / Scroll wheel to zoom'}
           </span>
         </div>
@@ -339,7 +337,7 @@ function RoadmapContent() {
         {/* Pan and Zoom Canvas frame */}
         <div 
           className={`w-full overflow-hidden rounded-3xl border-4 select-none relative cursor-grab active:cursor-grabbing ${
-            isKidMode ? 'bg-[#FFFDF9] border-slate-800 shadow-[6px_6px_0_#1E293B]' : 'bg-slate-955 border-slate-800'
+            isKidMode ? 'bg-[#FFFDF9] border-slate-800 shadow-[6px_6px_0_#1E293B]' : 'bg-white border-[#E2E8F0] border shadow-inner'
           }`}
           style={{ height: '540px' }}
           onWheel={handleWheel}
@@ -372,14 +370,14 @@ function RoadmapContent() {
               >
                 <defs>
                   <linearGradient id="roadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#8B5CF6" />
-                    <stop offset="50%" stopColor="#EC4899" />
-                    <stop offset="100%" stopColor="#06B6D4" />
+                    <stop offset="0%" stopColor="#7C3AED" />
+                    <stop offset="50%" stopColor="#6D28D9" />
+                    <stop offset="100%" stopColor="#7C3AED" />
                   </linearGradient>
                   <linearGradient id="roadGradientKid" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#F59E0B" />
-                    <stop offset="50%" stopColor="#EC4899" />
-                    <stop offset="100%" stopColor="#3B82F6" />
+                    <stop offset="0%" stopColor="#7C3AED" />
+                    <stop offset="50%" stopColor="#6D28D9" />
+                    <stop offset="100%" stopColor="#7C3AED" />
                   </linearGradient>
                 </defs>
 
@@ -387,7 +385,7 @@ function RoadmapContent() {
                 <path 
                   d={getSvgPathD()} 
                   fill="none" 
-                  stroke={isKidMode ? '#E2E8F0' : '#1E293B'} 
+                  stroke="#E2E8F0" 
                   strokeWidth="10" 
                   strokeLinecap="round"
                   opacity={0.3}
@@ -413,15 +411,13 @@ function RoadmapContent() {
                   top: `${activeAvatarY}px`
                 }}
               >
-                <div className={`w-full h-full rounded-full border-4 border-slate-900 flex items-center justify-center shadow-lg relative ${
-                  isKidMode ? 'bg-pink-500' : 'bg-violet-600 border-violet-400'
-                }`}>
+                <div className="w-full h-full rounded-full border-4 border-slate-900 flex items-center justify-center shadow-lg relative bg-[#F5F3FF]">
                   {isKidMode ? (
                     <span className="text-3xl select-none">🐱</span>
                   ) : (
-                    <User className="w-7 h-7 text-white select-none" />
+                    <User className="w-7 h-7 text-[#7C3AED] select-none" />
                   )}
-                  <div className="absolute -inset-2.5 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none animate-ping" />
+                  <div className="absolute -inset-2.5 rounded-full border-4 border-[#7C3AED] active-pulse-ring pointer-events-none animate-ping" />
                 </div>
               </div>
 
@@ -444,23 +440,23 @@ function RoadmapContent() {
                     : 'bg-emerald-600 border-emerald-400 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] ring-4 ring-emerald-500/20';
                   innerContent = <CheckCircle className="w-8 h-8 flex-shrink-0" />;
                 } else if (isActive) {
-                  // CURRENT: Pink/Violet with active pulse rings
+                  // CURRENT: Violet with active pulse rings
                   nodeStyles = isKidMode
                     ? 'bg-pink-500 border-slate-900 text-white shadow-[0_6px_0_#1E293B] ring-4 ring-pink-350'
-                    : 'bg-violet-600 border-violet-400 text-white shadow-[0_0_25px_rgba(124,58,237,0.7)] ring-4 ring-violet-500/30';
+                    : 'bg-[#7C3AED] border-[#C4B5FD] text-white shadow-[0_0_25px_rgba(124,58,237,0.3)] ring-4 ring-[#7C3AED]/20';
                   innerContent = <NodeIcon type={node.iconType} className="w-8 h-8 animate-pulse" />;
                 } else if (isUnlocked) {
                   // UNLOCKED: Standard state
                   nodeStyles = isKidMode
                     ? 'bg-white border-slate-900 text-slate-800 shadow-[0_4px_0_#1E293B]'
-                    : 'bg-slate-900 border-slate-800 text-slate-300';
-                  innerContent = <NodeIcon type={node.iconType} className="w-7 h-7" />;
+                    : 'bg-white border-[#E2E8F0] text-[#7C3AED] shadow-sm';
+                  innerContent = <NodeIcon type={node.iconType} className="w-7 h-7 text-[#7C3AED]" />;
                 } else {
                   // LOCKED: Grayed out and blur
                   nodeStyles = isKidMode
                     ? 'bg-slate-200 border-slate-400 text-slate-400 opacity-60 shadow-[0_2px_0_#94A3B8] blur-[0.5px]'
-                    : 'bg-slate-955 border-slate-900 text-slate-600 opacity-40 blur-[1px]';
-                  innerContent = <Lock className="w-5 h-5" />;
+                    : 'bg-slate-100 border-[#E2E8F0] text-slate-400 opacity-45 blur-[0.5px]';
+                  innerContent = <Lock className="w-5 h-5 text-slate-450" />;
                 }
 
                 return (
@@ -483,7 +479,7 @@ function RoadmapContent() {
                       >
                         {/* Step index badge indicator */}
                         <div className={`absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full border-2 border-slate-900 text-slate-900 flex items-center justify-center font-black text-[9px] ${
-                          isCompleted ? 'bg-emerald-300' : isLocked ? 'bg-slate-400' : 'bg-amber-400'
+                          isCompleted ? 'bg-emerald-300' : isLocked ? 'bg-slate-350 text-slate-700' : 'bg-[#7C3AED] text-white'
                         }`}>
                           {index + 1}
                         </div>
@@ -492,14 +488,14 @@ function RoadmapContent() {
                       </div>
 
                       {/* Tooltip Popup on Hover */}
-                      <div className="absolute bottom-[105%] left-1/2 -translate-x-1/2 mb-3 w-40 p-2.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl opacity-0 scale-90 group-hover/node:opacity-100 group-hover/node:scale-100 transition-all duration-200 pointer-events-none z-50 text-left">
-                        <p className="text-[9px] font-bold text-violet-400 uppercase tracking-widest font-mono">Tahap {index + 1}</p>
-                        <p className="text-[11px] font-black text-white truncate mt-0.5">{node.title}</p>
-                        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800/60 text-[9px] font-bold">
-                          <span className={isCompleted ? 'text-emerald-400' : isActive ? 'text-pink-400' : 'text-slate-500'}>
+                      <div className="absolute bottom-[105%] left-1/2 -translate-x-1/2 mb-3 w-40 p-2.5 rounded-2xl bg-white border border-[#E2E8F0] shadow-xl opacity-0 scale-90 group-hover/node:opacity-100 group-hover/node:scale-100 transition-all duration-200 pointer-events-none z-50 text-left">
+                        <p className="text-[9px] font-bold text-[#7C3AED] uppercase tracking-widest font-mono">Tahap {index + 1}</p>
+                        <p className="text-[11px] font-black text-[#0F172A] truncate mt-0.5">{node.title}</p>
+                        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-[#E2E8F0] text-[9px] font-bold">
+                          <span className={isCompleted ? 'text-emerald-500' : isActive ? 'text-[#7C3AED]' : 'text-[#475569]'}>
                             {isCompleted ? '✔ Selesai' : isActive ? '⚡ Sedang Jalan' : '🔒 Terkunci'}
                           </span>
-                          <span className="text-amber-400 font-mono">+100 XP</span>
+                          <span className="text-[#7C3AED] font-mono">+100 XP</span>
                         </div>
                       </div>
                     </div>
@@ -508,12 +504,12 @@ function RoadmapContent() {
                     <div 
                       className={`absolute top-[92px] w-28 text-center px-2 py-1.5 rounded-xl border-2 transition-all ${
                         isCompleted
-                          ? isKidMode ? 'bg-emerald-50 border-emerald-400' : 'bg-emerald-950/20 border-emerald-500/20 text-slate-300'
+                          ? isKidMode ? 'bg-emerald-50 border-emerald-400 text-emerald-800' : 'bg-emerald-50 border-emerald-250 text-emerald-800'
                           : isActive
-                            ? isKidMode ? 'bg-pink-50 border-pink-500 shadow-[2px_2px_0_#1E293B]' : 'bg-violet-950/30 border-violet-500/40 text-white'
+                            ? isKidMode ? 'bg-pink-50 border-pink-500 shadow-[2px_2px_0_#1E293B]' : 'bg-[#F5F3FF] border-[#C4B5FD] text-[#7C3AED] shadow-sm'
                             : isLocked
-                              ? 'opacity-40 border-transparent text-slate-500'
-                              : isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+                              ? 'opacity-40 border-transparent text-[#475569]'
+                              : isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-white border-[#E2E8F0] text-[#0F172A] shadow-sm'
                       }`}
                     >
                       <p className="font-black text-[10px] truncate leading-tight">{node.title}</p>
@@ -529,24 +525,24 @@ function RoadmapContent() {
 
       {/* ADVENTURE LESSON PRE-START MODAL (with Reward previews and unlocks) */}
       {selectedNodeData && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-55 flex items-center justify-center p-4">
           <div className={`w-full max-w-sm p-6 relative overflow-hidden modal-responsive transition-all duration-300 ${
             isKidMode 
-              ? 'card-toy bg-gradient-to-b from-white to-pink-50 border-4 border-slate-800 shadow-[8px_8px_0_#1E293B]' 
-              : 'glass-panel border border-slate-800/80 rounded-3xl text-left bg-slate-900/60 shadow-2xl'
+              ? 'card-toy bg-white border-4 border-slate-800 shadow-[8px_8px_0_#1E293B]' 
+              : 'glass-panel border border-[#E2E8F0] rounded-3xl text-left bg-white shadow-xl text-[#0F172A]'
           }`}>
             {isKidMode && <div className="absolute top-0 right-0 w-24 h-24 bg-pink-200 rounded-full blur-2xl opacity-50" />}
             <div className="text-center mb-5">
               <div className="flex justify-center mb-3">
-                <div className={`p-4 rounded-full ${isKidMode ? 'bg-pink-100 text-pink-500 border-2 border-slate-800 animate-bounce' : 'bg-slate-800/80 text-violet-400 border border-slate-700 hover:shadow-[0_0_15px_rgba(139,92,246,0.25)]'} transition-all`}>
+                <div className={`p-4 rounded-full ${isKidMode ? 'bg-[#F5F3FF] text-[#7C3AED] border-2 border-slate-800 animate-bounce' : 'bg-[#F5F3FF] text-[#7C3AED] border border-[#C4B5FD]'} transition-all`}>
                   <NodeIcon type={selectedNodeData.node.iconType} className="w-10 h-10" />
                 </div>
               </div>
               
-              <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk'}`}>
+              <h3 className={`text-xl sm:text-2xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                 {selectedNodeData.node.title}
               </h3>
-              <p className={`text-xs mt-1 uppercase font-bold tracking-wider ${isKidMode ? 'text-indigo-600' : 'text-violet-400'}`}>
+              <p className="text-xs mt-1 uppercase font-bold tracking-wider text-[#7C3AED]">
                 {isKidMode 
                   ? `Petualangan Tahap ${selectedNodeData.index + 1}`
                   : `Curriculum Module step ${selectedNodeData.index + 1} of ${roadmap.nodes.length}`
@@ -557,8 +553,8 @@ function RoadmapContent() {
             {/* Description / Speech Bubble */}
             <div className={`p-4 rounded-2xl mb-5 relative border-2 ${
               isKidMode 
-                ? 'bg-white border-slate-800 text-slate-700 font-bold text-xs' 
-                : 'bg-slate-950 border-slate-900 text-slate-400 text-xs leading-relaxed'
+                ? 'bg-white border-slate-800 text-[#0F172A] font-bold text-xs' 
+                : 'bg-slate-50 border-[#E2E8F0] text-[#475569] text-xs leading-relaxed'
             }`}>
               {isKidMode ? (
                 <>
@@ -576,24 +572,22 @@ function RoadmapContent() {
             </div>
 
             {/* Motivational Rewards Preview Widget */}
-            <div className={`p-4 rounded-2xl mb-6 border-2 text-left ${
-              isKidMode ? 'bg-white border-slate-800' : 'bg-slate-950 border-slate-900'
-            }`}>
-              <h4 className={`text-xs font-black uppercase tracking-wider mb-2.5 ${isKidMode ? 'text-slate-800' : 'text-violet-400'}`}>
+            <div className="p-4 rounded-2xl mb-6 border-2 text-left bg-white border-[#E2E8F0]">
+              <h4 className={`text-xs font-black uppercase tracking-wider mb-2.5 ${isKidMode ? 'text-[#0F172A]' : 'text-[#7C3AED]'}`}>
                 Target Rewards & Unlocks:
               </h4>
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100 dark:border-slate-900">
+              <div className="space-y-2 text-xs text-[#475569]">
+                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100">
                   <span className="opacity-75">Bonus Kelulusan:</span>
-                  <span className="font-extrabold text-indigo-500">+50 XP</span>
+                  <span className="font-extrabold text-[#7C3AED]">+50 XP</span>
                 </div>
-                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100 dark:border-slate-900">
+                <div className="flex items-center justify-between border-b pb-1.5 border-slate-100">
                   <span className="opacity-75">Bonus Koin:</span>
-                  <span className="font-extrabold text-amber-500">+25 Koin</span>
+                  <span className="font-extrabold text-[#7C3AED]">+25 Koin</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="opacity-75">Lencana Target:</span>
-                  <span className="font-extrabold text-pink-500">
+                  <span className="font-extrabold text-[#7C3AED]">
                     {selectedNodeData.index === 0 ? 'First Lesson' :
                      selectedNodeData.index === 2 ? 'Math Explorer' :
                      selectedNodeData.index === 4 ? 'Problem Solver' :
@@ -607,7 +601,7 @@ function RoadmapContent() {
             <div className="space-y-3">
               <button 
                 onClick={() => handleStartLesson(selectedNodeData.node.id)}
-                className={`w-full text-center font-black text-base cursor-pointer touch-target flex items-center justify-center ${
+                className={`w-full text-center font-black text-base text-white cursor-pointer touch-target flex items-center justify-center ${
                   isKidMode 
                     ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
                     : 'btn-scholar-primary'
@@ -635,7 +629,7 @@ function RoadmapContent() {
 
       {/* FULL-SCREEN GRADUATION CELEBRATION MODAL */}
       {showCompletionCelebration && (
-        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/95 z-55 flex items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-xl text-center py-8 px-4 sm:px-8 relative my-auto">
             
             <Trophy className="w-16 h-16 mx-auto text-amber-500 animate-bounce mb-6" />
@@ -652,7 +646,7 @@ function RoadmapContent() {
               <div className="absolute top-0 right-0 w-24 h-24 bg-amber-100 rounded-full blur-2xl opacity-50" />
               
               <div className="border-2 border-slate-800/20 p-4 sm:p-6 rounded-2xl relative">
-                <Award className="w-12 h-12 mx-auto text-indigo-500 mb-3" />
+                <Award className="w-12 h-12 mx-auto text-[#7C3AED] mb-3" />
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Sertifikat Kelulusan</p>
                 <h4 className="text-xl sm:text-2xl font-black font-fredoka text-slate-800 mt-2 truncate">
                   {profile?.full_name}
@@ -667,18 +661,18 @@ function RoadmapContent() {
             </div>
 
             {/* Rewards Card details */}
-            <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl max-w-md mx-auto mb-8 flex justify-around text-center text-xs">
+            <div className="bg-white border border-[#E2E8F0] p-4 rounded-2xl max-w-md mx-auto mb-8 flex justify-around text-center text-xs text-[#475569]">
               <div>
                 <p className="opacity-70">Lencana Dibuka:</p>
-                <p className="font-extrabold text-pink-500 mt-1">Roadmap Master</p>
+                <p className="font-extrabold text-[#7C3AED] mt-1">Roadmap Master</p>
               </div>
-              <div className="border-x border-slate-800 px-6">
+              <div className="border-x border-[#E2E8F0] px-6">
                 <p className="opacity-70">Bonus XP:</p>
-                <p className="font-extrabold text-indigo-400 mt-1">+200 XP</p>
+                <p className="font-extrabold text-[#7C3AED] mt-1">+200 XP</p>
               </div>
               <div>
                 <p className="opacity-70">Status:</p>
-                <p className="font-extrabold text-emerald-400 mt-1">Lulus</p>
+                <p className="font-extrabold text-emerald-600 mt-1">Lulus</p>
               </div>
             </div>
 

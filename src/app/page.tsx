@@ -36,9 +36,9 @@ export default function RootPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-200">
-      <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-      <p className="text-sm font-mono mt-4 animate-pulse">Memuat sesi belajar...</p>
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-[#0F172A]">
+      <RefreshCw className="w-8 h-8 animate-spin text-[#7C3AED]" />
+      <p className="text-sm font-mono mt-4 animate-pulse text-[#475569]">Memuat sesi belajar...</p>
     </div>
   );
 }

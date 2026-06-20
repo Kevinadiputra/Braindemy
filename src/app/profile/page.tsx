@@ -74,7 +74,7 @@ function ProfileContent() {
   const equippedFrame = profile?.current_roadmap?.equipped_frame;
 
   const getFrameStyle = (frameName?: string) => {
-    if (!frameName) return 'border-slate-800';
+    if (!frameName) return isKidMode ? 'border-slate-800' : 'border-[#E2E8F0]';
     switch (frameName) {
       case 'Bronze Border':
         return 'border-amber-700/80 shadow-[0_0_8px_rgba(180,83,9,0.3)]';
@@ -87,12 +87,12 @@ function ProfileContent() {
       case 'Crimson Nova':
         return 'border-rose-500 shadow-[0_0_35px_rgba(244,63,94,0.8)] ring-4 ring-rose-500/40 animate-pulse';
       default:
-        return 'border-slate-800';
+        return isKidMode ? 'border-slate-800' : 'border-[#E2E8F0]';
     }
   };
 
   return (
-    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'}`}>
+    <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#F8FAFC] text-[#0F172A]'}`}>
       <Header isKidMode={isKidMode} />
 
       <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-3 sm:px-4 py-8 relative z-10">
@@ -101,10 +101,10 @@ function ProfileContent() {
         <div className="w-full text-left mb-6">
           <button 
             onClick={handleBack}
-            className={`touch-target inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
+            className={`touch-target inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
               isKidMode 
-                ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
-                : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                ? 'bg-white border-4 border-slate-800 shadow-[2px_2px_0_#1E293B] text-slate-800 active:translate-y-0.5 active:shadow-none font-bold' 
+                : 'bg-white border border-[#E2E8F0] text-[#475569] hover:text-[#0F172A] hover:border-[#C4B5FD] hover:bg-[#F5F3FF] shadow-sm font-semibold'
             }`}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -116,7 +116,7 @@ function ProfileContent() {
         <div className={`w-full max-w-2xl p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-[32px] text-left ${
           isKidMode 
             ? 'bg-white border-4 border-slate-800 shadow-[6px_6px_0px_#1E293B]' 
-            : 'glass-panel border border-slate-800'
+            : 'bg-white border border-[#E2E8F0] shadow-sm'
         }`}>
           <div className="flex flex-col sm:flex-row items-center gap-6 border-b pb-6 border-slate-800/10 mb-6">
             <div className="relative">
@@ -128,7 +128,7 @@ function ProfileContent() {
                 />
               ) : (
                 <div className={`w-20 h-20 rounded-full border-4 flex items-center justify-center text-4xl shadow-md transition-all ${
-                  isKidMode ? 'bg-pink-100' : 'bg-slate-900'
+                  isKidMode ? 'bg-pink-100' : 'bg-[#F5F3FF] text-[#7C3AED] border-[#C4B5FD]'
                 } ${getFrameStyle(equippedFrame)}`}>
                   {profile?.role === 'SD' ? '🐱' : '🦉'}
                 </div>
@@ -136,13 +136,13 @@ function ProfileContent() {
               
               {/* Equipped Favorite Badge bubble */}
               {equippedBadge && (
-                <div className="absolute -bottom-1 -right-1 z-10 w-7 h-7 rounded-full border-2 border-slate-800 bg-slate-900 flex items-center justify-center shadow-md animate-scale-up">
+                <div className="absolute -bottom-1 -right-1 z-10 w-7 h-7 rounded-full border border-[#C4B5FD] bg-[#F5F3FF] flex items-center justify-center shadow-md animate-scale-up">
                   {(() => {
                     const badge = achievementTemplates.find(b => b.id === equippedBadge);
                     return badge ? (
-                      <BadgeIcon name={badge.iconName} className="w-3.5 h-3.5 text-white" />
+                      <BadgeIcon name={badge.iconName} className="w-3.5 h-3.5 text-[#7C3AED]" />
                     ) : (
-                      <Award className="w-3.5 h-3.5 text-white" />
+                      <Award className="w-3.5 h-3.5 text-[#7C3AED]" />
                     );
                   })()}
                 </div>
@@ -150,7 +150,7 @@ function ProfileContent() {
             </div>
             
             <div className="text-center sm:text-left flex-1 min-w-0">
-              <h2 className={`text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'}`}>
+              <h2 className={`text-2xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk tracking-wide'}`}>
                 {profile?.full_name || 'User'}
               </h2>
               
@@ -160,15 +160,15 @@ function ProfileContent() {
                   <span className={`px-2.5 py-0.5 rounded-full border-2 text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1 ${
                     isKidMode 
                       ? 'bg-amber-100 border-slate-800 text-slate-800 shadow-[1px_1px_0_#1E293B]' 
-                      : 'bg-violet-950/30 border-violet-500/20 text-violet-400 font-mono'
+                      : 'bg-[#F5F3FF] border-[#C4B5FD] text-[#7C3AED]'
                   }`}>
-                    <Award className="w-3 h-3 text-indigo-400" />
+                    <Award className="w-3 h-3 text-[#7C3AED]" />
                     {equippedTitle}
                   </span>
                 </div>
               )}
 
-              <p className={`text-sm mt-1.5 ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
+              <p className={`text-sm mt-1.5 ${isKidMode ? 'text-slate-500' : 'text-[#475569]'}`}>
                 Belajar sebagai <span className="font-bold">{profile?.role === 'SD' ? 'Anak Sekolah Dasar (SD) 🪐' : 'Mahasiswa 🎓'}</span>
               </p>
             </div>
@@ -178,31 +178,31 @@ function ProfileContent() {
             {/* Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
-                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
+                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-white border-[#E2E8F0] text-[#0F172A]'
               }`}>
-                <Mail className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <Mail className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-[#7C3AED]'}`} />
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase font-bold text-slate-500">Email</p>
+                  <p className="text-[10px] uppercase font-bold text-[#475569]">Email</p>
                   <p className="text-sm font-semibold truncate">{profile?.email}</p>
                 </div>
               </div>
 
               <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
-                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
+                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-white border-[#E2E8F0] text-[#0F172A]'
               }`}>
-                <Shield className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <Shield className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-[#7C3AED]'}`} />
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase font-bold text-slate-500">User ID</p>
+                  <p className="text-[10px] uppercase font-bold text-[#475569]">User ID</p>
                   <p className="text-xs font-mono truncate">{profile?.id}</p>
                 </div>
               </div>
 
               <div className={`p-4.5 rounded-2xl border-2 flex items-center gap-4 min-w-0 overflow-hidden ${
-                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-slate-950 border-slate-900 text-slate-200'
+                isKidMode ? 'bg-slate-50 border-slate-800/10 text-slate-800' : 'bg-white border-[#E2E8F0] text-[#0F172A]'
               }`}>
-                <User className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                <User className={`w-5 h-5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-[#7C3AED]'}`} />
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase font-bold text-slate-500">Provider</p>
+                  <p className="text-[10px] uppercase font-bold text-[#475569]">Provider</p>
                   <p className="text-sm font-semibold truncate">
                     {user?.app_metadata?.provider === 'google' ? 'Google 🌐' : 'Email & Password ✉️'}
                   </p>
@@ -212,10 +212,10 @@ function ProfileContent() {
 
             {/* Statistics */}
             <div className={`p-6 rounded-2xl border-2 ${
-              isKidMode ? 'bg-indigo-50/50 border-slate-800/10' : 'bg-slate-950 border-slate-900'
+              isKidMode ? 'bg-indigo-50/50 border-slate-800/10' : 'bg-[#F5F3FF] border-[#7C3AED]/20'
             }`}>
               <h3 className={`text-base font-black mb-4 flex items-center gap-2 ${
-                isKidMode ? 'text-slate-800' : 'text-violet-400 font-space-grotesk'
+                isKidMode ? 'text-slate-800' : 'text-[#7C3AED] font-space-grotesk'
               }`}>
                 <Trophy className="w-5 h-5 text-amber-500 animate-bounce" />
                 <span>Statistik Belajar</span>
@@ -223,38 +223,38 @@ function ProfileContent() {
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div className={`p-3 rounded-xl border shadow-sm flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-900 border-slate-800 text-slate-200'
+                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-white border-[#7C3AED]/20 text-[#0F172A]'
                 }`}>
-                  <Flame className="w-6 h-6 text-orange-500 fill-orange-500/10 mb-1" />
-                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-white'}`}>{xpStats?.streak || 1}</span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Streak Hari</span>
+                  <Flame className="w-6 h-6 text-[#7C3AED] fill-[#7C3AED]/10 mb-1" />
+                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-[#7C3AED]'}`}>{xpStats?.streak || 1}</span>
+                  <span className="text-[9px] font-bold text-[#475569] uppercase font-mono">Streak Hari</span>
                 </div>
                 <div className={`p-3 rounded-xl border shadow-sm flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-900 border-slate-800 text-slate-200'
+                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-white border-[#7C3AED]/20 text-[#0F172A]'
                 }`}>
-                  <Trophy className="w-6 h-6 text-indigo-500 mb-1" />
-                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-white'}`}>{xpStats?.total_xp || 0}</span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Total XP</span>
+                  <Trophy className="w-6 h-6 text-[#7C3AED] fill-[#7C3AED]/10 mb-1" />
+                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-[#7C3AED]'}`}>{xpStats?.total_xp || 0}</span>
+                  <span className="text-[9px] font-bold text-[#475569] uppercase font-mono">Total XP</span>
                 </div>
                 <div className={`p-3 rounded-xl border shadow-sm flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-slate-900 border-slate-800 text-slate-200'
+                  isKidMode ? 'bg-white border-slate-800/10' : 'bg-white border-[#7C3AED]/20 text-[#0F172A]'
                 }`}>
-                  <Award className="w-6 h-6 text-amber-500 mb-1" />
-                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-white'}`}>{xpStats?.current_level || 1}</span>
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Level</span>
+                  <Award className="w-6 h-6 text-[#7C3AED] fill-[#7C3AED]/10 mb-1" />
+                  <span className={`text-lg font-black ${isKidMode ? 'text-slate-800' : 'text-[#7C3AED]'}`}>{xpStats?.current_level || 1}</span>
+                  <span className="text-[9px] font-bold text-[#475569] uppercase font-mono">Level</span>
                 </div>
               </div>
             </div>
 
             {/* Danger Zone */}
             <div className={`p-6 rounded-2xl border-2 mt-6 ${
-              isKidMode ? 'bg-red-50 border-red-200' : 'bg-red-950/10 border-red-900/40 text-red-200'
+              isKidMode ? 'bg-red-50 border-red-200' : 'bg-red-50 border-red-200 text-red-700'
             }`}>
-              <h3 className="text-base font-black mb-2 flex items-center gap-2 text-red-500 font-space-grotesk">
-                <AlertTriangle className="w-5 h-5 animate-pulse" />
+              <h3 className="text-base font-black mb-2 flex items-center gap-2 text-red-650 font-space-grotesk">
+                <AlertTriangle className="w-5 h-5 animate-pulse text-red-500" />
                 <span>⚠️ Danger Zone</span>
               </h3>
-              <p className={`text-xs mb-4 ${isKidMode ? 'text-slate-650' : 'text-slate-400'}`}>
+              <p className={`text-xs mb-4 ${isKidMode ? 'text-slate-655' : 'text-[#475569]'}`}>
                 Menghapus akun Anda bersifat permanen dan seluruh kemajuan belajar, XP, serta lencana Anda akan dihapus selamanya. Tindakan ini tidak dapat dibatalkan.
               </p>
               <button
@@ -279,24 +279,24 @@ function ProfileContent() {
 
       {/* DELETE ACCOUNT CONFIRMATION MODALS (Step 1, 2, 3) */}
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
           <div className={`modal-responsive w-full max-w-md p-6 relative overflow-hidden ${
             isKidMode 
               ? 'card-toy bg-gradient-to-b from-white to-red-50 text-slate-800' 
-              : 'glass-panel border border-red-950 rounded-3xl text-left text-slate-200'
+              : 'bg-white border border-[#E2E8F0] rounded-3xl text-left text-[#0F172A] shadow-xl'
           }`}>
             <button 
               onClick={() => {
                 if (isKidMode) playSynthSound('click');
                 setIsDeleteModalOpen(false);
               }}
-              className="touch-target absolute top-4 right-4 text-slate-400 hover:text-slate-200"
+              className="touch-target absolute top-4 right-4 text-slate-400 hover:text-slate-600"
             >
               <X className="w-5 h-5" />
             </button>
 
             {deleteError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-950/20 border border-red-500/30 text-red-300 text-xs font-bold leading-normal">
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-650 text-xs font-bold leading-normal">
                 {deleteError}
               </div>
             )}
@@ -304,12 +304,12 @@ function ProfileContent() {
             {deleteStep === 1 ? (
               /* Step 1 & 2: User confirmation via email check */
               <div>
-                <h3 className="text-xl font-black mb-2 flex items-center gap-2 text-red-500">
+                <h3 className="text-xl font-black mb-2 flex items-center gap-2 text-red-600">
                   <AlertTriangle className="w-5 h-5" />
                   <span>Konfirmasi Penghapusan Akun</span>
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  Untuk melanjutkan, silakan masukkan alamat email akun Anda (<span className="font-bold text-slate-200">{profile?.email}</span>) di bawah ini sebagai konfirmasi.
+                <p className="text-xs text-[#475569] leading-relaxed mb-4">
+                  Untuk melanjutkan, silakan masukkan alamat email akun Anda (<span className="font-bold text-[#0F172A]">{profile?.email}</span>) di bawah ini as konfirmasi.
                 </p>
 
                 <div className="space-y-4">
@@ -318,7 +318,7 @@ function ProfileContent() {
                     value={deleteConfirmText}
                     onChange={(e) => setDeleteConfirmText(e.target.value)}
                     placeholder="Masukkan alamat email Anda"
-                    className="touch-target w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-950"
+                    className="touch-target w-full px-4 py-3 bg-white border border-[#E2E8F0] rounded-xl text-sm text-[#0F172A] focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-200"
                   />
 
                   <button 
@@ -336,14 +336,14 @@ function ProfileContent() {
             ) : (
               /* Step 3: Final warning checklist */
               <div>
-                <h3 className="text-xl font-black mb-2 text-red-500">
+                <h3 className="text-xl font-black mb-2 text-red-600">
                   ⚠️ Peringatan Terakhir!
                 </h3>
-                <p className="text-xs text-slate-450 leading-relaxed mb-4">
+                <p className="text-xs text-[#475569] leading-relaxed mb-4">
                   Akun Anda akan dihapus secara permanen dan tidak dapat dipulihkan kembali. Anda akan kehilangan:
                 </p>
 
-                <ul className="space-y-2 text-xs text-slate-300 mb-6 bg-slate-950/40 p-4 rounded-xl border border-red-950/20">
+                <ul className="space-y-2 text-xs text-[#475569] mb-6 bg-slate-50 p-4 rounded-xl border border-[#E2E8F0]">
                   <li>• Akun & Autentikasi Supabase</li>
                   <li>• Progress belajar & Status Peta Roadmap</li>
                   <li>• Seluruh Bintang XP & level belajar</li>
@@ -358,14 +358,14 @@ function ProfileContent() {
                       setIsDeleteModalOpen(false);
                     }}
                     disabled={isDeleting}
-                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all cursor-pointer border border-slate-700 flex items-center justify-center"
+                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-white hover:bg-slate-50 text-[#475569] font-bold text-sm transition-all cursor-pointer border border-[#E2E8F0] flex items-center justify-center shadow-sm"
                   >
                     Batal
                   </button>
                   <button 
                     onClick={handleDeleteAccount}
                     disabled={isDeleting}
-                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="touch-target flex-1 h-12 max-sm:h-14 rounded-2xl bg-red-650 hover:bg-red-600 text-white font-bold text-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     {isDeleting ? (
                       <RefreshCw className="w-4 h-4 animate-spin" />

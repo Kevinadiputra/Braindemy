@@ -35,7 +35,7 @@ export default function RootLayout({
       lang="en"
       className={`${fredoka.variable} ${outfit.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100">
+      <body className="min-h-full flex flex-col bg-[#F8FAFC] text-[#0F172A]">
         {children}
       </body>
     </html>

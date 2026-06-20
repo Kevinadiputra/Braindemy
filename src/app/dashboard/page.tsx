@@ -241,7 +241,7 @@ function DashboardContent() {
 
   return (
     <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${
-      isKidMode ? 'kid-grid text-slate-800' : 'scholar-grid bg-[#020617] text-[#F8FAFC]'
+      isKidMode ? 'kid-grid text-[#0F172A]' : 'scholar-grid bg-[#F8FAFC] text-[#0F172A]'
     }`}>
       <Header isKidMode={isKidMode} />
 
@@ -249,11 +249,9 @@ function DashboardContent() {
         
         {/* Error notification */}
         {errorMessage && (
-          <div className={`mb-6 p-4 rounded-2xl border-4 flex items-center justify-between w-full ${
-            isKidMode ? 'bg-red-50 border-slate-800 text-red-800' : 'bg-rose-950/20 border-[#334155] text-rose-300'
-          }`}>
+          <div className="mb-6 p-4 rounded-2xl border-4 flex items-center justify-between w-full bg-red-50 border-red-200 text-red-850">
             <div className="flex items-center gap-3">
-              <X className="w-5 h-5 flex-shrink-0" />
+              <X className="w-5 h-5 flex-shrink-0 text-red-650" />
               <p className="text-sm font-bold">{errorMessage}</p>
             </div>
             <button onClick={() => setErrorMessage('')} className="p-1 hover:opacity-80 touch-target">
@@ -268,14 +266,10 @@ function DashboardContent() {
           <div className="order-1 lg:col-span-2 w-full">
             {isKidMode ? (
               /* KIDS MODE HERO BILLBOARD */
-              <div className="card-toy p-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white border-4 border-slate-900 shadow-[8px_8px_0_#1E293B] relative overflow-hidden group">
-                {/* Glow layer */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-110 transition-all duration-500" />
-                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-300/20 rounded-full blur-xl pointer-events-none" />
-                
+              <div className="card-toy p-6 bg-[#FFFFFF] border-4 border-slate-900 shadow-[8px_8px_0_#1E293B] relative overflow-hidden group">
                 <div className="flex flex-col gap-6 relative z-10">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border-4 border-slate-900 bg-pink-100 flex items-center justify-center text-4xl relative flex-shrink-0 shadow-md">
+                    <div className="w-16 h-16 rounded-full border-4 border-slate-900 bg-[#F5F3FF] flex items-center justify-center text-4xl relative flex-shrink-0 shadow-md">
                       {profile?.avatar_url ? (
                         <img 
                           src={profile.avatar_url} 
@@ -287,38 +281,38 @@ function DashboardContent() {
                       )}
                     </div>
                     <div>
-                      <h2 className="text-2xl sm:text-3xl font-black font-fredoka drop-shadow-[0_2px_0_rgba(30,41,59,0.4)]">
+                      <h2 className="text-2xl sm:text-3xl font-black font-fredoka text-[#0F172A]">
                         👋 Halo {profile?.full_name?.split(' ')[0] || 'Penjelajah'}
                       </h2>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap gap-3 items-center text-left">
-                    <div className="bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
-                      <Flame className="w-4 h-4 text-orange-400 fill-current" />
+                    <div className="bg-[#F5F3FF] border-2 border-[#C4B5FD] px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-[#7C3AED]">
+                      <Flame className="w-4 h-4 text-[#7C3AED] fill-current" />
                       <span className="text-xs font-black font-fredoka">{currentStreak} Hari Streak</span>
                     </div>
-                    <div className="bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
-                      <Trophy className="w-4 h-4 text-yellow-300 fill-current" />
+                    <div className="bg-[#F5F3FF] border-2 border-[#C4B5FD] px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-[#7C3AED]">
+                      <Trophy className="w-4 h-4 text-[#7C3AED] fill-current" />
                       <span className="text-xs font-black font-fredoka">{currentXp} XP</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-white/10 pt-4 flex flex-col gap-1.5 text-left">
-                    <span className="text-[10px] font-black uppercase text-pink-200 tracking-wider">📚 Petualangan Aktif</span>
-                    <h3 className="text-lg sm:text-xl font-black font-fredoka text-yellow-300 drop-shadow-[0_1.5px_0_rgba(30,41,59,0.4)]">
+                  <div className="border-t border-[#E2E8F0] pt-4 flex flex-col gap-1.5 text-left">
+                    <span className="text-[10px] font-black uppercase text-[#475569] tracking-wider">📚 Petualangan Aktif</span>
+                    <h3 className="text-lg sm:text-xl font-bold font-fredoka text-[#7C3AED]">
                       {profile?.current_roadmap?.title || 'Belum ada petualangan aktif'}
                     </h3>
 
                     {profile?.current_roadmap && (
                       <div className="w-full mt-2">
-                        <div className="flex items-center justify-between text-[10px] font-black text-slate-100 mb-1">
+                        <div className="flex items-center justify-between text-[10px] font-black text-[#475569] mb-1">
                           <span>Kemajuan Belajar</span>
                           <span>{Math.min(completedPercent, 100)}%</span>
                         </div>
-                        <div className="w-full h-3 bg-black/25 rounded-full overflow-hidden border-2 border-slate-900/30">
+                        <div className="w-full h-3 bg-[#E5E7EB] rounded-full overflow-hidden border border-[#E2E8F0]">
                           <div 
-                            className="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                            className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
                             style={{ width: `${Math.min(completedPercent, 100)}%` }}
                           />
                         </div>
@@ -329,7 +323,7 @@ function DashboardContent() {
                   {profile?.current_roadmap ? (
                     <button 
                       onClick={handleContinueRoadmap}
-                      className="btn-toy-accent text-slate-900 border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
+                      className="btn-toy-accent text-white border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
                     >
                       <span>Lanjutkan Belajar</span>
                       <ArrowRight className="w-4 h-4" />
@@ -337,7 +331,7 @@ function DashboardContent() {
                   ) : (
                     <button 
                       onClick={() => document.getElementById('topic-search')?.focus()}
-                      className="btn-toy-accent text-slate-900 border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
+                      className="btn-toy-accent text-white border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
                     >
                       <span>Mulai Petualangan Baru</span>
                       <ArrowRight className="w-4 h-4" />
@@ -347,14 +341,13 @@ function DashboardContent() {
               </div>
             ) : (
               /* SCHOLAR MODE CYBERNETIC GLASS HERO */
-              <div className="glass-panel p-6 sm:p-8 rounded-[32px] border border-[#334155] bg-gradient-to-br from-[#0F172A] via-[#1E1B4B] to-[#0F172A] shadow-[0_0_30px_rgba(236,72,153,0.12)] text-left relative overflow-hidden group hover:border-[#EC4899]/30 transition-all duration-300">
+              <div className="glass-panel p-6 sm:p-8 rounded-[32px] border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm text-left relative overflow-hidden group hover:border-[#7C3AED]/30 transition-all duration-300">
                 {/* Glow layer */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/20 transition-all duration-500" />
-                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-pink-600/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/10 transition-all duration-500" />
 
                 <div className="flex flex-col gap-6 relative z-10">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border-2 border-[#334155] bg-slate-950 flex items-center justify-center text-4xl relative flex-shrink-0 shadow-md">
+                    <div className="w-16 h-16 rounded-full border border-[#E2E8F0] bg-[#F5F3FF] flex items-center justify-center text-4xl relative flex-shrink-0 shadow-sm">
                       {profile?.avatar_url ? (
                         <img 
                           src={profile.avatar_url} 
@@ -366,11 +359,11 @@ function DashboardContent() {
                       )}
                     </div>
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-bold font-space-grotesk tracking-wide text-[#F8FAFC]">
+                      <h1 className="text-2xl sm:text-3xl font-extrabold font-space-grotesk tracking-wide text-[#0F172A]">
                         👋 Halo, {profile?.full_name?.split(' ')[0] || 'Academic'}
                       </h1>
                       {equippedTitle && (
-                        <p className="text-[10px] text-[#EC4899] font-mono font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
+                        <p className="text-[10px] text-[#7C3AED] font-mono font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
                           <Award className="w-3.5 h-3.5" />
                           <span>{equippedTitle}</span>
                         </p>
@@ -379,31 +372,31 @@ function DashboardContent() {
                   </div>
 
                   <div className="flex flex-wrap gap-3 items-center text-left font-mono">
-                    <div className="bg-[#020617]/60 border border-[#334155] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
-                      <Flame className="w-4 h-4 text-orange-500 fill-current animate-pulse" />
-                      <span className="text-xs font-bold text-[#CBD5E1]">{currentStreak} Day Streak</span>
+                    <div className="bg-[#F5F3FF] border border-[#C4B5FD] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[#7C3AED]">
+                      <Flame className="w-4 h-4 text-[#7C3AED] fill-current animate-pulse" />
+                      <span className="text-xs font-bold">{currentStreak} Day Streak</span>
                     </div>
-                    <div className="bg-[#020617]/60 border border-[#334155] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
-                      <Trophy className="w-4 h-4 text-amber-500" />
-                      <span className="text-xs font-bold text-[#CBD5E1]">{currentXp} XP</span>
+                    <div className="bg-[#F5F3FF] border border-[#C4B5FD] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[#7C3AED]">
+                      <Trophy className="w-4 h-4 text-[#7C3AED]" />
+                      <span className="text-xs font-bold">{currentXp} XP</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-[#334155] pt-4 flex flex-col gap-1.5 text-left">
-                    <span className="text-[10px] font-mono font-bold text-violet-400 uppercase tracking-wider">📚 Active Curriculum</span>
-                    <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-[#F8FAFC]">
+                  <div className="border-t border-[#E2E8F0] pt-4 flex flex-col gap-1.5 text-left">
+                    <span className="text-[10px] font-mono font-bold text-[#475569] uppercase tracking-wider">📚 Active Curriculum</span>
+                    <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-[#7C3AED]">
                       {profile?.current_roadmap?.title || 'No active curriculum'}
                     </h3>
 
                     {profile?.current_roadmap && (
                       <div className="w-full mt-2">
-                        <div className="flex items-center justify-between text-[10px] font-bold text-[#CBD5E1] mb-1 font-mono">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-[#475569] mb-1 font-mono">
                           <span>Curriculum Progress</span>
                           <span>{Math.min(completedPercent, 100)}%</span>
                         </div>
-                        <div className="w-full h-3 bg-[#020617] rounded-full overflow-hidden border border-[#334155]">
+                        <div className="w-full h-3 bg-[#E5E7EB] rounded-full overflow-hidden border border-[#E2E8F0]">
                           <div 
-                            className="h-full bg-gradient-to-r from-violet-500 to-[#EC4899] rounded-full transition-all duration-500"
+                            className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
                             style={{ width: `${Math.min(completedPercent, 100)}%` }}
                           />
                         </div>
@@ -414,7 +407,7 @@ function DashboardContent() {
                   {profile?.current_roadmap ? (
                     <button 
                       onClick={handleContinueRoadmap}
-                      className="btn-scholar-primary w-full sm:w-fit px-8 mt-1 cursor-pointer"
+                      className="btn-scholar-primary text-white w-full sm:w-fit px-8 mt-1 cursor-pointer"
                     >
                       <span className="flex items-center gap-2">
                         Lanjutkan Belajar
@@ -442,9 +435,9 @@ function DashboardContent() {
             <div className={`p-6 rounded-[32px] text-center border-4 relative w-full ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#334155] bg-[#0F172A] shadow-xl'
+                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
             }`}>
-              <div className="flex flex-col items-center gap-4 pb-4 border-b border-slate-800/10 dark:border-slate-850/30">
+              <div className="flex flex-col items-center gap-4 pb-4 border-b border-slate-800/10">
                 <div className="relative flex-shrink-0">
                   {profile?.avatar_url ? (
                     <img 
@@ -453,22 +446,20 @@ function DashboardContent() {
                       className={`w-24 h-24 rounded-full border-4 object-cover ${getFrameStyle(equippedFrame)}`}
                     />
                   ) : (
-                    <div className={`w-24 h-24 rounded-full border-4 flex items-center justify-center text-4xl ${
-                      isKidMode ? 'bg-pink-100' : 'bg-slate-950'
-                    } ${getFrameStyle(equippedFrame)}`}>
+                    <div className={`w-24 h-24 rounded-full border-4 flex items-center justify-center text-4xl bg-[#F5F3FF] ${getFrameStyle(equippedFrame)}`}>
                       {profile?.role === 'SD' ? '🐱' : '🦉'}
                     </div>
                   )}
 
                   {/* Equipped Favorite Badge bubble */}
                   {equippedBadge && (
-                    <div className="absolute -bottom-1 -right-1 z-10 w-8 h-8 rounded-full border-2 border-slate-800 bg-slate-900 flex items-center justify-center shadow-md">
+                    <div className="absolute -bottom-1 -right-1 z-10 w-8 h-8 rounded-full border-2 border-[#C4B5FD] bg-[#F5F3FF] flex items-center justify-center shadow-md">
                       {(() => {
                         const badge = achievementTemplates.find(b => b.id === equippedBadge);
                         return badge ? (
-                          <BadgeIcon name={badge.iconName} className="w-4 h-4 text-white" />
+                          <BadgeIcon name={badge.iconName} className="w-4 h-4 text-[#7C3AED]" />
                         ) : (
-                          <Award className="w-4 h-4 text-white" />
+                          <Award className="w-4 h-4 text-[#7C3AED]" />
                         );
                       })()}
                     </div>
@@ -476,21 +467,17 @@ function DashboardContent() {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className={`font-black text-lg leading-tight ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#F8FAFC] font-space-grotesk'}`}>
+                  <h3 className={`font-black text-lg leading-tight ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                     {profile?.full_name || 'Penjelajah'}
                   </h3>
                   {equippedTitle && (
                     <div className="mt-1">
-                      <span className={`px-2.5 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1 ${
-                        isKidMode 
-                          ? 'bg-amber-100 border-slate-800 text-slate-800 shadow-[1px_1px_0_#1E293B]' 
-                          : 'bg-violet-950/20 border-violet-500/20 text-violet-400 font-mono'
-                      }`}>
+                      <span className="px-2.5 py-0.5 rounded-full border border-[#C4B5FD] bg-[#F5F3FF] text-[#7C3AED] text-[9px] font-black uppercase tracking-wider inline-flex items-center gap-1 font-mono">
                         {equippedTitle}
                       </span>
                     </div>
                   )}
-                  <p className={`text-xs font-bold ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-[#CBD5E1] font-mono'}`}>
+                  <p className={`text-xs font-bold ${isKidMode ? 'text-[#7C3AED] font-fredoka' : 'text-[#475569] font-mono'}`}>
                     {isKidMode ? 'Sekolah Dasar (SD) 🪐' : 'Akademisi Mahasiswa 🎓'}
                   </p>
                 </div>
@@ -498,26 +485,20 @@ function DashboardContent() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-3 gap-3 mt-5">
-                <div className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all hover:scale-105 duration-200 ${
-                  isKidMode ? 'bg-orange-50 border-orange-250 text-orange-700' : 'bg-[#020617] border-[#334155] text-orange-400 shadow-inner'
-                }`}>
-                  <Flame className="w-5 h-5 fill-current mb-1" />
-                  <span className="text-base font-black font-mono">{currentStreak}</span>
-                  <span className={`text-[8px] uppercase font-extrabold tracking-wider mt-1 ${isKidMode ? 'text-orange-800' : 'text-slate-400'}`}>Streak</span>
+                <div className="p-3 rounded-2xl border border-[#7C3AED]/20 bg-[#F5F3FF] flex flex-col items-center justify-center transition-all hover:scale-105 duration-200">
+                  <Flame className="w-5 h-5 text-[#7C3AED] fill-current mb-1" />
+                  <span className="text-base font-black font-mono text-[#7C3AED]">{currentStreak}</span>
+                  <span className="text-[8px] uppercase font-extrabold tracking-wider mt-1 text-[#475569]">Streak</span>
                 </div>
-                <div className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all hover:scale-105 duration-200 ${
-                  isKidMode ? 'bg-indigo-50 border-indigo-250 text-indigo-700' : 'bg-[#020617] border-[#334155] text-amber-400 shadow-inner'
-                }`}>
-                  <Trophy className="w-5 h-5 mb-1" />
-                  <span className="text-base font-black font-mono">{currentXp}</span>
-                  <span className={`text-[8px] uppercase font-extrabold tracking-wider mt-1 ${isKidMode ? 'text-indigo-800' : 'text-slate-400'}`}>XP</span>
+                <div className="p-3 rounded-2xl border border-[#7C3AED]/20 bg-[#F5F3FF] flex flex-col items-center justify-center transition-all hover:scale-105 duration-200">
+                  <Trophy className="w-5 h-5 text-[#7C3AED] mb-1" />
+                  <span className="text-base font-black font-mono text-[#7C3AED]">{currentXp}</span>
+                  <span className="text-[8px] uppercase font-extrabold tracking-wider mt-1 text-[#475569]">XP</span>
                 </div>
-                <div className={`p-3 rounded-2xl border flex flex-col items-center justify-center transition-all hover:scale-105 duration-200 ${
-                  isKidMode ? 'bg-amber-50 border-amber-250 text-amber-700' : 'bg-[#020617] border-[#334155] text-violet-400 shadow-inner'
-                }`}>
-                  <Star className="w-5 h-5 mb-1 fill-current" />
-                  <span className="text-base font-black font-mono">{currentLevel}</span>
-                  <span className={`text-[8px] uppercase font-extrabold tracking-wider mt-1 ${isKidMode ? 'text-amber-800' : 'text-slate-400'}`}>Level</span>
+                <div className="p-3 rounded-2xl border border-[#7C3AED]/20 bg-[#F5F3FF] flex flex-col items-center justify-center transition-all hover:scale-105 duration-200">
+                  <Star className="w-5 h-5 text-[#7C3AED] fill-current mb-1" />
+                  <span className="text-base font-black font-mono text-[#7C3AED]">{currentLevel}</span>
+                  <span className="text-[8px] uppercase font-extrabold tracking-wider mt-1 text-[#475569]">Level</span>
                 </div>
               </div>
             </div>
@@ -528,7 +509,7 @@ function DashboardContent() {
             <div className={`p-6 sm:p-8 rounded-[32px] border-4 relative text-center flex flex-col items-center gap-6 ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#334155] bg-[#0F172A] shadow-xl'
+                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
             }`}>
               {/* Mascot wrapper with float, glow, pulse */}
               <div className="relative group flex flex-col items-center">
@@ -548,16 +529,16 @@ function DashboardContent() {
                 /* STATE 1: ACTIVE ROADMAP */
                 <div className="space-y-4 w-full flex flex-col items-center">
                   <div className="space-y-1">
-                    <h3 className={`text-xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#F8FAFC] font-space-grotesk'}`}>
+                    <h3 className={`text-xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                       🤖 Lanjutkan petualanganmu!
                     </h3>
-                    <p className={`text-sm ${isKidMode ? 'text-slate-700' : 'text-[#CBD5E1]'}`}>
-                      Kamu sedang berada di tengah petualangan <span className="font-bold underline decoration-pink-500 decoration-2">{profile.current_roadmap.title}</span>.
+                    <p className="text-sm text-[#475569]">
+                      Kamu sedang berada di tengah petualangan <span className="font-bold underline decoration-[#7C3AED] decoration-2">{profile.current_roadmap.title}</span>.
                     </p>
                   </div>
                   <button 
                     onClick={handleContinueRoadmap}
-                    className={`w-full sm:w-auto px-10 cursor-pointer ${
+                    className={`w-full sm:w-auto px-10 text-white cursor-pointer ${
                       isKidMode ? 'btn-toy-primary' : 'btn-scholar-primary'
                     }`}
                   >
@@ -568,10 +549,10 @@ function DashboardContent() {
                 /* STATE 2: NO ACTIVE ROADMAP */
                 <div className="space-y-6 w-full text-left">
                   <div className="text-center space-y-1">
-                    <h3 className={`text-xl font-black ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#F8FAFC] font-space-grotesk'}`}>
+                    <h3 className={`text-xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                       🤖 Apa yang ingin kamu pelajari hari ini?
                     </h3>
-                    <p className={`text-sm ${isKidMode ? 'text-slate-650' : 'text-[#CBD5E1]'}`}>
+                    <p className="text-sm text-[#475569]">
                       Ketik topik apa saja dan AI kami akan langsung membuat peta belajar khusus untukmu!
                     </p>
                   </div>
@@ -592,15 +573,15 @@ function DashboardContent() {
                       }}
                       className={`w-full px-5 sm:pl-12 sm:pr-40 py-4 sm:py-5 rounded-2xl outline-none text-base transition-all border-4 ${
                         isKidMode 
-                          ? 'border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-200 focus:border-pink-500 shadow-[4px_4px_0px_#1E293B] font-fredoka' 
-                          : 'border-[#334155] bg-[#020617] text-[#F8FAFC] placeholder-slate-600 focus:border-[#EC4899] focus:ring-4 focus:ring-pink-950/20 font-outfit shadow-inner'
+                          ? 'border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] shadow-[4px_4px_0px_#1E293B] font-fredoka' 
+                          : 'border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] placeholder-slate-400 focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/20 font-outfit shadow-sm'
                       }`}
                     />
                     
                     <button 
                       onClick={() => handleGenerate()}
                       disabled={isGenerating || !topicInput.trim()}
-                      className={`w-full sm:w-auto sm:absolute sm:right-3 sm:top-3 px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                      className={`w-full sm:w-auto sm:absolute sm:right-3 sm:top-3 px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-white transition-all cursor-pointer ${
                         isKidMode
                           ? 'btn-toy-primary text-sm disabled:opacity-50 h-10'
                           : 'btn-scholar-primary text-sm disabled:opacity-50 h-10 shadow-lg'
@@ -619,9 +600,7 @@ function DashboardContent() {
 
                   {/* Suggestions inside State 2 */}
                   <div className="w-full">
-                    <p className={`text-xs font-black uppercase tracking-wider mb-3 ${
-                      isKidMode ? 'text-slate-500' : 'text-slate-400'
-                    }`}>
+                    <p className="text-xs font-black uppercase tracking-wider mb-3 text-[#475569]">
                       {isKidMode ? '💡 Rekomendasi Peta Terpopuler:' : '💡 Recommended Academic Curriculums:'}
                     </p>
                     
@@ -636,7 +615,7 @@ function DashboardContent() {
                           className={`p-3.5 rounded-xl cursor-pointer transition-all duration-300 text-left flex items-center justify-between ${
                             isKidMode 
                               ? 'bg-white border-2 border-slate-800 text-slate-800 font-black text-sm shadow-[3px_3px_0_#1E293B] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_#1E293B]' 
-                              : 'bg-[#020617] border border-[#334155] text-[#CBD5E1] text-xs hover:border-[#EC4899] hover:-translate-y-0.5 hover:bg-slate-900 hover:text-white font-mono shadow-sm hover:shadow-md'
+                              : 'bg-[#FFFFFF] border border-[#E2E8F0] text-[#0F172A] text-xs hover:border-[#7C3AED] hover:-translate-y-0.5 hover:bg-[#F5F3FF] hover:text-[#7C3AED] font-mono shadow-sm hover:shadow-md'
                           }`}
                         >
                           <span>{item.title}</span>
@@ -656,24 +635,24 @@ function DashboardContent() {
               <div className={`p-6 rounded-[32px] text-left border-4 transition-all duration-300 group hover:-translate-y-1.5 ${
                 isKidMode 
                   ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B] hover:shadow-[8px_8px_0_#1E293B]' 
-                  : 'glass-panel border-[#334155] bg-[#0F172A] shadow-xl hover:border-[#EC4899]/30 hover:shadow-[0_12px_24px_rgba(236,72,153,0.15)]'
+                  : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm hover:border-[#7C3AED]/30 hover:shadow-[0_12px_24px_rgba(124,58,237,0.08)]'
               }`}>
                 <div className="flex items-center gap-2 mb-4">
-                  <Star className="w-4 h-4 text-[#EC4899] animate-pulse" />
-                  <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-slate-800' : 'text-[#EC4899] font-mono'}`}>
+                  <Star className="w-4 h-4 text-[#7C3AED] animate-pulse" />
+                  <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-[#0F172A]' : 'text-[#7C3AED] font-mono'}`}>
                     {isKidMode ? 'Hampir Terbuka!' : 'Almost There!'}
                   </h4>
                 </div>
 
                 <div className="flex items-center gap-4 mb-4">
-                  <div className={`w-14 h-14 rounded-2xl border-4 border-slate-800 flex items-center justify-center flex-shrink-0 bg-slate-800 text-white shadow-md transition-transform group-hover:scale-110 duration-300`}>
-                    <BadgeIcon name={nextBadge.iconName} className="w-7 h-7 text-yellow-300 fill-current" />
+                  <div className="w-14 h-14 rounded-2xl border-2 border-[#C4B5FD] flex items-center justify-center flex-shrink-0 bg-[#F5F3FF] text-[#7C3AED] shadow-sm transition-transform group-hover:scale-110 duration-300">
+                    <BadgeIcon name={nextBadge.iconName} className="w-7 h-7 text-[#7C3AED] fill-current" />
                   </div>
                   <div className="min-w-0">
-                    <h5 className={`font-black text-base ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#F8FAFC] font-space-grotesk'}`}>
+                    <h5 className={`font-black text-base ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                       {nextBadge.title}
                     </h5>
-                    <p className={`text-xs mt-0.5 leading-relaxed ${isKidMode ? 'text-slate-600 font-medium' : 'text-[#CBD5E1] font-mono'}`}>
+                    <p className={`text-xs mt-0.5 leading-relaxed ${isKidMode ? 'text-[#475569] font-medium' : 'text-[#475569] font-mono'}`}>
                       {nextBadge.desc}
                     </p>
                   </div>
@@ -681,13 +660,13 @@ function DashboardContent() {
 
                 {/* Progress bar */}
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-extrabold text-slate-500 font-mono uppercase">
+                  <div className="flex items-center justify-between text-[10px] font-extrabold text-[#475569] font-mono uppercase">
                     <span>Progress</span>
-                    <span className={`${isKidMode ? 'text-slate-700' : 'text-[#F8FAFC]'}`}>{Math.min(nextBadgePercent, 100)}%</span>
+                    <span className="text-[#0F172A]">{Math.min(nextBadgePercent, 100)}%</span>
                   </div>
-                  <div className="w-full h-3 rounded-full overflow-hidden bg-slate-100 dark:bg-[#020617] border dark:border-[#334155]">
+                  <div className="w-full h-3 rounded-full overflow-hidden bg-[#E5E7EB] border border-[#E2E8F0]">
                     <div 
-                      className="h-full bg-gradient-to-r from-pink-500 to-[#EC4899] rounded-full transition-all duration-500"
+                      className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(nextBadgePercent, 100)}%` }}
                     />
                   </div>
@@ -701,10 +680,10 @@ function DashboardContent() {
             <div className={`p-6 rounded-[32px] text-left border-4 ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#334155] bg-[#0F172A] shadow-xl'
+                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
             }`}>
-              <div className="flex items-center justify-between mb-5 border-b pb-3 border-slate-800/10 dark:border-slate-850/30">
-                <h4 className={`text-sm font-black uppercase tracking-wider ${isKidMode ? 'text-slate-800' : 'text-[#F8FAFC] font-mono'}`}>
+              <div className="flex items-center justify-between mb-5 border-b pb-3 border-[#E2E8F0]">
+                <h4 className={`text-sm font-black uppercase tracking-wider ${isKidMode ? 'text-[#0F172A]' : 'text-[#0F172A] font-mono'}`}>
                   {isKidMode ? 'Lencana Belajar' : 'Academic Credentials'}
                 </h4>
                 <button 
@@ -713,7 +692,7 @@ function DashboardContent() {
                     router.push('/achievements');
                   }}
                   className={`text-xs font-black uppercase cursor-pointer hover:underline ${
-                    isKidMode ? 'text-indigo-650' : 'text-[#EC4899] font-mono'
+                    isKidMode ? 'text-[#7C3AED]' : 'text-[#7C3AED] font-mono'
                   }`}
                 >
                   {isKidMode ? 'Galeri →' : 'View All →'}
@@ -723,7 +702,7 @@ function DashboardContent() {
               {unlockedBadges.length === 0 ? (
                 <div className="text-center py-8">
                   <Lock className="w-10 h-10 mx-auto opacity-30 text-slate-400 mb-3" />
-                  <p className={`text-xs leading-relaxed ${isKidMode ? 'text-slate-650 font-medium' : 'text-[#CBD5E1] font-mono'}`}>
+                  <p className="text-xs leading-relaxed text-[#475569] font-medium">
                     {isKidMode 
                       ? 'Lencana belum ada. Ayo selesaikan tantangan pertama untuk membukanya!' 
                       : 'No credentials unlocked yet. Complete your first lesson module to start.'
@@ -743,10 +722,8 @@ function DashboardContent() {
                         }}
                         className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 hover:-translate-y-1 ${
                           isUnlocked 
-                            ? isKidMode 
-                              ? 'bg-amber-50 border-slate-800 shadow-[2px_2px_0_#1E293B] hover:shadow-[3px_3px_0_#1E293B] text-slate-800' 
-                              : 'bg-[#020617] border-[#334155] text-yellow-400 shadow-sm hover:border-[#EC4899]'
-                            : 'bg-slate-100/40 border-slate-350 dark:bg-slate-950/10 dark:border-slate-900 opacity-20'
+                            ? 'bg-[#F5F3FF] border-[#C4B5FD] text-[#7C3AED] shadow-sm' 
+                            : 'bg-slate-50 border-[#E2E8F0] opacity-30'
                         }`}
                         title={badge.title}
                       >
@@ -759,7 +736,6 @@ function DashboardContent() {
               )}
             </div>
           </div>
-
         </div>
 
       </main>

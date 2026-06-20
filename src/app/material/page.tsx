@@ -409,12 +409,12 @@ function MaterialContent() {
 
   return (
     <div className={`min-h-screen flex flex-col relative z-10 overflow-hidden ${
-      isKidMode ? 'bg-[#FFFBEB] text-slate-800' : 'bg-slate-950 text-slate-200'
+      isKidMode ? 'bg-[#FFFBEB] text-slate-800' : 'bg-[#F8FAFC] text-[#0F172A]'
     }`}>
       {/* Decorative cosmic grids for Scholar mode */}
-      {!isKidMode && <div className="absolute inset-0 scholar-grid pointer-events-none opacity-20" />}
-      {!isKidMode && <div className="absolute top-20 left-10 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none" />}
-      {!isKidMode && <div className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />}
+      {!isKidMode && <div className="absolute inset-0 scholar-grid pointer-events-none opacity-10" />}
+      {!isKidMode && <div className="absolute top-20 left-10 w-96 h-96 bg-violet-500/5 rounded-full blur-3xl pointer-events-none" />}
+      {!isKidMode && <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />}
 
       {/* Subtle decorative circles for Kids Mode background */}
       {isKidMode && (
@@ -430,17 +430,17 @@ function MaterialContent() {
       <div className="fixed top-0 left-0 right-0 h-1.5 z-50 pointer-events-none">
         <div 
           className={`h-full transition-all duration-150 ${
-            isKidMode ? 'bg-pink-500' : 'bg-cyan-400 shadow-[0_0_10px_#22D3EE]'
+            isKidMode ? 'bg-pink-500' : 'bg-[#7C3AED] shadow-[0_0_10px_rgba(124,58,237,0.3)]'
           }`}
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       {/* Sticky floating reading indicator badge */}
-      <div className={`fixed bottom-4 left-4 z-40 px-3.5 py-2 rounded-full border-2 text-[10px] font-black shadow-lg pointer-events-none transition-all duration-350 ${
+      <div className={`fixed bottom-4 left-4 z-40 px-3.5 py-2 rounded-full border text-[10px] font-bold shadow-md pointer-events-none transition-all duration-350 ${
         isKidMode 
           ? 'bg-white border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B]' 
-          : 'bg-slate-900/90 border-slate-800 text-slate-400 font-mono backdrop-blur-sm'
+          : 'bg-white border-[#E2E8F0] text-[#475569] font-mono'
       }`}>
         {isKidMode ? `Dibaca ${scrollProgress}%` : `READOUT: ${scrollProgress}%`}
       </div>
@@ -459,38 +459,38 @@ function MaterialContent() {
                 if (isKidMode) playSynthSound('click');
                 router.push('/roadmap');
               }}
-              className={`touch-target inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs border-4 transition-all cursor-pointer ${
+              className={`touch-target inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs transition-all cursor-pointer ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 text-slate-800 shadow-[3px_3px_0_#1E293B] hover:translate-y-[-1px] hover:shadow-[4px_4px_0_#1E293B] active:translate-y-0.5 active:shadow-none font-black' 
-                  : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                  ? 'bg-white border-4 border-slate-800 text-slate-800 shadow-[3px_3px_0_#1E293B] hover:translate-y-[-1px] hover:shadow-[4px_4px_0_#1E293B] active:translate-y-0.5 active:shadow-none font-black' 
+                  : 'bg-white border border-[#E2E8F0] text-[#475569] hover:text-[#0F172A] hover:border-[#C4B5FD] hover:bg-[#F5F3FF]'
               }`}
             >
               <ArrowLeft className="w-4 h-4" />
               <span>{isKidMode ? 'Kembali ke Peta' : 'Back to Roadmap'}</span>
             </button>
           </div>
-
+ 
           {/* Progress HUD */}
           {roadmap && (
-            <div className={`flex-1 sm:max-w-md p-3 rounded-2xl border-4 flex items-center gap-4 ${
+            <div className={`flex-1 sm:max-w-md p-3 rounded-2xl flex items-center gap-4 ${
               isKidMode 
-                ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B]' 
-                : 'bg-slate-900/40 border-slate-800 backdrop-blur-sm'
+                ? 'bg-white border-4 border-slate-800 shadow-[3px_3px_0_#1E293B]' 
+                : 'bg-white border border-[#E2E8F0] shadow-sm'
             }`}>
               <div className="flex-1 min-w-0 text-left">
-                <p className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
-                  {isKidMode ? `Langkah ${nodeIndex + 1} dari ${roadmap.nodes.length}` : `NODE INDEX: 0${nodeIndex + 1} // TOTAL: 0${roadmap.nodes.length}`}
+                <p className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-[#7C3AED] font-semibold'}`}>
+                  {isKidMode ? `Langkah ${nodeIndex + 1} dari ${roadmap.nodes.length}` : `LANGKAH: ${nodeIndex + 1} // TOTAL: ${roadmap.nodes.length}`}
                 </p>
-                <div className="w-full bg-slate-200 dark:bg-slate-950 rounded-full h-2.5 mt-1 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
+                <div className="w-full bg-[#E5E7EB] rounded-full h-2.5 mt-1 overflow-hidden p-0.5 border border-[#E2E8F0]">
                   <div 
                     className={`h-full rounded-full transition-all duration-700 ${
-                      isKidMode ? 'bg-gradient-to-r from-pink-400 to-indigo-500' : 'bg-gradient-to-r from-violet-600 to-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]'
+                      isKidMode ? 'bg-gradient-to-r from-pink-400 to-indigo-500' : 'bg-gradient-to-r from-[#7C3AED] to-[#6D28D9]'
                     }`}
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
               </div>
-              <span className={`text-xs font-black ${isKidMode ? 'text-slate-800' : 'text-slate-300 font-mono'}`}>
+              <span className={`text-xs font-black ${isKidMode ? 'text-slate-800' : 'text-[#0F172A] font-semibold'}`}>
                 {progressPercent}%
               </span>
             </div>
@@ -509,7 +509,7 @@ function MaterialContent() {
             ) : (
               <>
                 <ScholarCore state="thinking" />
-                <p className="text-base font-mono text-cyan-400 mt-6 animate-pulse">
+                <p className="text-base font-mono text-[#7C3AED] mt-6 animate-pulse font-medium">
                   Downloading course documentation and compiling evaluation questions...
                 </p>
               </>
@@ -523,11 +523,11 @@ function MaterialContent() {
             <div id="textbook-section" className={`lg:col-span-2 p-5 sm:p-6 md:p-8 rounded-3xl text-left transition-all ${
               isKidMode 
                 ? 'bg-white border-4 border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'border border-slate-800/80 bg-slate-900/30 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)]'
+                : 'bg-white border border-[#E2E8F0] shadow-sm'
             }`}>
-              <div className="flex items-center gap-2.5 mb-6 border-b pb-4 border-slate-800/10 dark:border-slate-800/50">
-                <BookOpenCheck className={`w-5 h-5 ${isKidMode ? 'text-pink-500 animate-bounce' : 'text-violet-400'}`} />
-                <span className={`text-xs font-black uppercase tracking-widest ${isKidMode ? 'text-pink-500 font-fredoka' : 'text-violet-400 font-mono'}`}>
+              <div className="flex items-center gap-2.5 mb-6 border-b pb-4 border-slate-800/10 dark:border-slate-800/10">
+                <BookOpenCheck className={`w-5 h-5 ${isKidMode ? 'text-pink-500 animate-bounce' : 'text-[#7C3AED]'}`} />
+                <span className={`text-xs font-black uppercase tracking-widest ${isKidMode ? 'text-pink-500 font-fredoka' : 'text-[#7C3AED] font-bold'}`}>
                   {isKidMode ? 'Buku Panduan Belajar' : 'Section Textbook Documentation'}
                 </span>
               </div>
@@ -541,29 +541,29 @@ function MaterialContent() {
             <div className="space-y-6">
 
               {/* 1. Completion & Stats Widget (Completion status, rewards, and live session stats) */}
-              <div className={`p-5 rounded-3xl border-4 text-left transition-all ${
+              <div className={`p-5 rounded-3xl border text-left transition-all ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 shadow-[4px_4px_0_#1E293B]' 
-                  : 'bg-slate-950/80 border-slate-900 text-slate-350 shadow-inner'
+                  ? 'bg-white border-4 border-slate-800 shadow-[4px_4px_0_#1E293B]' 
+                  : 'bg-[#F5F3FF] border-[#C4B5FD] text-[#0F172A]'
               }`}>
                 <h3 className={`text-xs font-black mb-4 flex items-center gap-2 ${
-                  isKidMode ? 'text-slate-800 font-fredoka' : 'text-violet-400 font-space-grotesk'
+                  isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#7C3AED] font-semibold'
                 }`}>
-                  <Trophy className="w-4 h-4 text-amber-500" />
+                  <Trophy className="w-4 h-4 text-[#7C3AED]" />
                   <span>{isKidMode ? 'Status Belajar' : 'Module Progression'}</span>
                 </h3>
                 
                 <div className="space-y-3 text-xs">
                   {/* XP Earned */}
-                  <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800/50">
+                  <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800/10">
                     <span className="opacity-70">{isKidMode ? 'XP Terkumpul:' : 'Session XP Earned:'}</span>
-                    <span className="font-extrabold text-indigo-500">+{correctQuizAnswers * 10} XP</span>
+                    <span className="font-extrabold text-[#7C3AED]">+{correctQuizAnswers * 10} XP</span>
                   </div>
 
                   {/* Rewards Card */}
-                  <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800/50">
-                    <span className="opacity-70">{isKidMode ? 'Hadiah Kelulusan:' : 'Completion Rewards:'}</span>
-                    <span className="font-extrabold text-amber-500">+50 XP / +25 Koin</span>
+                  <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800/10">
+                    <span className="opacity-70">{isKidMode ? 'Hadiah Kelulusan:' : 'Hadiah Kelulusan:'}</span>
+                    <span className="font-extrabold text-[#7C3AED]">+50 XP / +25 Koin</span>
                   </div>
 
                   {/* Completion Status */}
@@ -576,9 +576,9 @@ function MaterialContent() {
                       });
                       const isEligible = correctCount >= 2;
                       if (isEligible) {
-                        return <span className="font-extrabold text-emerald-500 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-0.5 rounded border border-emerald-500/20">{isKidMode ? 'Layak Lulus' : '✓ Eligible'}</span>;
+                        return <span className="font-extrabold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-500/20">{isKidMode ? 'Layak Lulus' : '✓ Layak Lulus'}</span>;
                       } else {
-                        return <span className="font-extrabold text-rose-500 bg-rose-50 dark:bg-rose-950/20 px-2.5 py-0.5 rounded border border-rose-500/20">{isKidMode ? 'Belum Lulus (min. 2)' : '✗ Ineligible (min. 2)'}</span>;
+                        return <span className="font-extrabold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded border border-rose-500/20">{isKidMode ? 'Belum Lulus (min. 2)' : '✗ Belum Lulus (min. 2)'}</span>;
                       }
                     })()}
                   </div>
@@ -586,21 +586,21 @@ function MaterialContent() {
               </div>
               
               {/* 2. Target Key Points */}
-              <div className={`p-5 sm:p-6 rounded-3xl border-4 text-left transition-all ${
+              <div className={`p-5 sm:p-6 rounded-3xl border text-left transition-all ${
                 isKidMode 
-                  ? 'bg-amber-50 border-slate-800 shadow-[4px_4px_0_#1E293B]' 
-                  : 'bg-slate-950/80 border-slate-900 text-slate-350 shadow-inner'
+                  ? 'bg-amber-50 border-4 border-slate-800 shadow-[4px_4px_0_#1E293B]' 
+                  : 'bg-white border border-[#E2E8F0] text-[#0F172A] shadow-sm'
               }`}>
                 <h3 className={`text-base font-black mb-4 flex items-center gap-2 ${
-                  isKidMode ? 'text-slate-800 font-fredoka' : 'text-violet-400 font-space-grotesk'
+                  isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#7C3AED] font-semibold'
                 }`}>
-                  <Target className="w-5 h-5 text-pink-500" />
+                  <Target className="w-5 h-5 text-[#7C3AED]" />
                   <span>{isKidMode ? 'Bintang Kunci' : 'Key Concepts'}</span>
                 </h3>
                 <ul className="space-y-3 text-sm">
                   {material.keyPoints.map((point: string, idx: number) => (
                     <li key={idx} className="flex items-start gap-2.5">
-                      <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-cyan-400'}`} />
+                      <Check className={`w-4 h-4 mt-0.5 flex-shrink-0 ${isKidMode ? 'text-pink-500' : 'text-[#7C3AED]'}`} />
                       <span className={isKidMode ? 'font-black text-slate-700' : 'text-slate-300 font-medium'}>{point}</span>
                     </li>
                   ))}
@@ -608,16 +608,16 @@ function MaterialContent() {
               </div>
 
               {/* 3. Interactive Evaluation Quiz */}
-              <div className={`p-5 sm:p-6 rounded-3xl border-4 text-left transition-all ${
+              <div className={`p-5 sm:p-6 rounded-3xl border text-left transition-all ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                  : 'bg-slate-950/60 border-slate-800'
+                  ? 'bg-white border-4 border-slate-800 shadow-[6px_6px_0_#1E293B]' 
+                  : 'bg-white border border-[#E2E8F0] shadow-sm'
               }`}>
-                <div className="flex items-center justify-between border-b pb-4 mb-6 border-slate-800/10 dark:border-slate-800/40">
+                <div className="flex items-center justify-between border-b pb-4 mb-6 border-slate-800/10">
                   <h3 className={`text-lg font-black flex items-center gap-2 ${
-                    isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk tracking-wide'
+                    isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk tracking-wide'
                   }`}>
-                    <HelpCircle className={`w-5 h-5 ${isKidMode ? 'text-pink-500' : 'text-violet-400'}`} />
+                    <HelpCircle className={`w-5 h-5 ${isKidMode ? 'text-pink-500' : 'text-[#7C3AED]'}`} />
                     <span>{isKidMode ? 'Kuis Penjelajah!' : 'Evaluation Quiz'}</span>
                   </h3>
                 </div>
@@ -634,28 +634,27 @@ function MaterialContent() {
                       <p className={`text-sm mb-6 ${isKidMode ? 'text-slate-600 font-medium' : 'text-slate-450 font-mono text-[11px]'}`}>
                         {isKidMode ? 'Kamu berhasil menyelesaikan tantangan ini!' : 'Score threshold met. Minimum criteria fulfilled.'}
                       </p>
-                      
-                      {/* Rewards Grid */}
-                      <div className={`grid grid-cols-2 gap-4 border-4 p-4 rounded-2xl mb-8 max-w-[285px] mx-auto ${
-                        isKidMode ? 'bg-white border-slate-800' : 'bg-slate-950 border-slate-900'
+                                         {/* Rewards Grid */}
+                      <div className={`grid grid-cols-2 gap-4 p-4 rounded-2xl mb-8 max-w-[285px] mx-auto border ${
+                        isKidMode ? 'bg-white border-slate-800 border-4' : 'bg-[#F5F3FF] border-[#C4B5FD]'
                       }`}>
                         <div className="flex flex-col items-center">
-                          <Trophy className="w-6 h-6 text-indigo-500 mb-1" />
-                          <span className="text-xs font-black text-indigo-600 mt-1">+50 XP</span>
+                          <Trophy className="w-6 h-6 text-[#7C3AED] mb-1" />
+                          <span className="text-xs font-black text-[#7C3AED] mt-1">+50 XP</span>
                         </div>
                         <div className="flex flex-col items-center">
                           <Star className="w-6 h-6 text-amber-500 fill-current mb-1" />
                           <span className="text-xs font-black text-amber-500 mt-1">+1 Bintang</span>
                         </div>
                       </div>
-
+ 
                       <button
                         onClick={handleFinishModule}
                         disabled={isFinishing}
-                        className={`touch-target w-full py-4 rounded-2xl border-4 text-sm font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        className={`touch-target w-full py-4 rounded-2xl text-sm font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
                           isKidMode
-                            ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]'
-                            : 'bg-emerald-600 border-emerald-500 hover:bg-emerald-500 text-white font-mono shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                            ? 'btn-toy-primary border-4 shadow-[4px_4px_0_#1E293B]'
+                            : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold shadow-sm'
                         }`}
                       >
                         {isFinishing ? (
@@ -671,28 +670,28 @@ function MaterialContent() {
                     /* Quiz Failure Screen */
                     <div className="text-center py-6 animate-scale-up">
                       <ShieldAlert className="w-16 h-16 mx-auto text-rose-500 animate-pulse mb-4" />
-                      <h3 className={`text-2xl font-black mb-2 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white'}`}>
+                      <h3 className={`text-2xl font-black mb-2 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A]'}`}>
                         {isKidMode ? 'Ayo Coba Lagi!' : 'EVALUATION FAILED'}
                       </h3>
-                      <p className={`text-sm mb-4 ${isKidMode ? 'text-slate-600 font-medium' : 'text-slate-400 font-mono text-[11px]'}`}>
+                      <p className={`text-sm mb-4 ${isKidMode ? 'text-slate-600 font-medium' : 'text-[#475569] text-[11px]'}`}>
                         {isKidMode 
                           ? 'Belum berhasil kali ini. Tapi jangan menyerah, kamu pasti bisa!' 
                           : 'Score threshold not met. Please review documentation and retry.'}
                       </p>
-
+ 
                       <div className={`p-3 rounded-xl mb-6 text-sm font-black inline-block ${
-                        isKidMode ? 'bg-red-50 text-red-750 border border-red-200 shadow-[2px_2px_0_#F87171]' : 'bg-rose-950/20 text-rose-400 border border-rose-900/50'
+                        isKidMode ? 'bg-red-50 text-red-750 border border-red-200 shadow-[2px_2px_0_#F87171]' : 'bg-red-50 text-red-700 border border-red-200'
                       }`}>
                         {isKidMode ? `Skor Kamu: ${correctQuizAnswers} / 3 Benar` : `SCORE: ${correctQuizAnswers} / 3 (MIN. 2 REQUIRED)`}
                       </div>
-
+ 
                       <div className="space-y-3">
                         <button
                           onClick={handleResetQuiz}
-                          className={`touch-target w-full py-3.5 rounded-2xl border-4 text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                          className={`touch-target w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
                             isKidMode
-                              ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]'
-                              : 'bg-violet-600 border-violet-500 hover:bg-violet-500 text-white font-mono'
+                              ? 'btn-toy-primary border-4 shadow-[4px_4px_0_#1E293B]'
+                              : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold transition-all shadow-sm'
                           }`}
                         >
                           <span>{isKidMode ? 'Coba Lagi Kuis' : 'RETRY QUIZ'}</span>
@@ -700,10 +699,10 @@ function MaterialContent() {
                         
                         <button
                           onClick={handleScrollToMaterial}
-                          className={`touch-target w-full py-3.5 rounded-2xl border-4 text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                          className={`touch-target w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
                             isKidMode
-                              ? 'bg-white border-slate-800 text-slate-800 shadow-[3px_3px_0_#1E293B] hover:translate-y-[-1px]'
-                              : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 font-mono'
+                              ? 'bg-white border-4 border-slate-800 text-slate-800 shadow-[3px_3px_0_#1E293B] hover:translate-y-[-1px]'
+                              : 'bg-white border border-[#E2E8F0] text-[#475569] hover:text-[#0F172A] hover:bg-[#F5F3FF] font-semibold shadow-sm'
                           }`}
                         >
                           <span>{isKidMode ? 'Pelajari Lagi Materi' : 'REVIEW DOCUMENTATION'}</span>
@@ -722,12 +721,12 @@ function MaterialContent() {
 
                       return (
                         <div key={qIdx} className={`p-4 rounded-2xl border-2 relative transition-all duration-350 ${
-                          isKidMode ? 'border-slate-800/10 bg-slate-50/50' : 'border-slate-900 bg-slate-950/45'
+                          isKidMode ? 'border-slate-800/10 bg-slate-50/50' : 'border-[#E2E8F0] bg-white text-[#0F172A]'
                         }`}>
                           
                           <div className="flex items-start justify-between gap-3 mb-4">
                             <p className={`text-sm font-black ${
-                              isKidMode ? 'text-slate-800 font-fredoka' : 'text-slate-200 font-semibold'
+                              isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-semibold'
                             }`}>
                               {qIdx + 1}. {q.question}
                             </p>
@@ -747,8 +746,8 @@ function MaterialContent() {
                                     ))}
                                   </span>
                                 ) : (
-                                  <span className="font-mono text-slate-500">
-                                    [TRY: {attempts[qIdx] || 0}/3]
+                                  <span className="font-mono text-[#475569]">
+                                    [PERCOBAAN: {attempts[qIdx] || 0}/3]
                                   </span>
                                 )}
                               </div>
@@ -777,15 +776,15 @@ function MaterialContent() {
                                 }
                               } else {
                                 if (isWrongSelection) {
-                                  optClass = 'bg-rose-950/10 border-rose-950/30 text-rose-500 opacity-40 cursor-not-allowed';
+                                  optClass = 'bg-red-50 border-red-200 text-red-550 opacity-50 line-through cursor-not-allowed';
                                 } else if (isAnswered) {
-                                  if (isThisCorrect) optClass = 'bg-emerald-950/20 border-emerald-500 text-emerald-400 font-bold border-2';
-                                  else if (isThisSelected) optClass = 'bg-rose-950/20 border-rose-500 text-rose-400 border-2';
-                                  else optClass = 'bg-slate-950/20 border-slate-950 text-slate-600 opacity-30';
+                                  if (isThisCorrect) optClass = 'bg-emerald-50 border-emerald-400 text-emerald-700 font-bold border-2 shadow-sm';
+                                  else if (isThisSelected) optClass = 'bg-red-50 border-red-400 text-red-700 border-2 line-through';
+                                  else optClass = 'bg-slate-50 border-slate-100 text-slate-400 opacity-40';
                                 } else {
                                   optClass = isThisSelected
-                                    ? 'bg-violet-950/40 border-violet-500 text-white font-semibold shadow-[0_0_15px_rgba(124,58,237,0.15)] border-2'
-                                    : 'bg-slate-950/60 border-slate-900 hover:bg-slate-900/30 text-slate-400 hover:text-slate-350 border-2';
+                                    ? 'bg-[#F5F3FF] border-[#7C3AED] text-[#7C3AED] font-semibold border-2 shadow-sm'
+                                    : 'bg-white border-[#E2E8F0] hover:bg-slate-50 text-[#475569] hover:text-[#0F172A] border-2 shadow-sm';
                                 }
                               }
 
@@ -815,41 +814,41 @@ function MaterialContent() {
                               <button
                                 disabled={selectedOpt === undefined}
                                 onClick={() => handleSubmitAnswer(qIdx)}
-                                className={`touch-target w-full text-center mt-4 py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
+                                className={`touch-target w-full text-center mt-4 py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer border ${
                                   selectedOpt === undefined 
-                                    ? 'opacity-40 cursor-not-allowed bg-slate-100 border-slate-800/10 text-slate-400'
+                                    ? 'opacity-40 cursor-not-allowed bg-slate-100 border-[#E2E8F0] text-slate-400'
                                     : isKidMode
-                                      ? 'btn-toy-primary shadow-[2px_2px_0_#1E293B]'
-                                      : 'bg-violet-600 border-violet-500 hover:bg-violet-500 text-white hover:shadow-[0_0_15px_rgba(124,58,237,0.3)] font-mono'
+                                      ? 'btn-toy-primary border-4 shadow-[2px_2px_0_#1E293B]'
+                                      : 'bg-[#7C3AED] border-[#7C3AED] hover:bg-[#6D28D9] text-white hover:shadow-sm'
                                 }`}
                               >
-                                {isKidMode ? 'Kirim Jawaban Pilihanmu!' : 'Verify Answer'}
+                                {isKidMode ? 'Kirim Jawaban Pilihanmu!' : 'Verifikasi Jawaban'}
                               </button>
                             ) : (
                               <div className="mt-4 space-y-4">
                                 {/* Friendly Feedback Block */}
-                                <div className={`p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 ${
+                                <div className={`p-4 rounded-2xl border text-xs leading-relaxed transition-all duration-300 ${
                                   isKidMode 
-                                    ? 'bg-pink-50 border-pink-300 text-pink-905 shadow-[3px_3px_0_#F43F5E]' 
-                                    : 'bg-rose-950/20 border-rose-500/30 text-rose-350 border shadow-[0_0_15px_rgba(244,63,94,0.15)]'
+                                    ? 'bg-pink-50 border-pink-300 text-pink-900 border-2 shadow-[3px_3px_0_#F43F5E]' 
+                                    : 'bg-red-50 border-red-200 text-red-700'
                                 }`}>
                                   <p className="font-black mb-1 flex items-center gap-1.5">
-                                    <ShieldAlert className="w-4 h-4 text-rose-500 flex-shrink-0" />
-                                    <span>{isKidMode ? 'Belum Tepat' : 'Incorrect Attempt'}</span>
+                                    <ShieldAlert className="w-4 h-4 text-red-500 flex-shrink-0" />
+                                    <span>{isKidMode ? 'Belum Tepat' : 'Jawaban Salah'}</span>
                                   </p>
                                   <p className="opacity-95 leading-normal">{feedbackMessage[qIdx]}</p>
                                 </div>
-
+ 
                                 {/* Hint block */}
                                 {showHint[qIdx] && (
-                                  <div className={`p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 ${
+                                  <div className={`p-4 rounded-2xl border text-xs leading-relaxed transition-all duration-300 ${
                                     isKidMode 
-                                      ? 'bg-amber-50 border-amber-300 text-amber-955 shadow-[3px_3px_0_#D97706]' 
-                                      : 'bg-cyan-950/20 border-cyan-500/30 text-cyan-300 border shadow-[0_0_15px_rgba(6,182,212,0.15)] font-mono'
+                                      ? 'bg-amber-50 border-amber-300 text-amber-900 border-2 shadow-[3px_3px_0_#D97706]' 
+                                      : 'bg-amber-50 border-amber-200 text-amber-800'
                                   }`}>
                                     <p className="font-black mb-1.5 flex items-center gap-1.5">
                                       <Target className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                                      <span>{isKidMode ? 'Petunjuk Pintar' : 'HINT / GUIDANCE'}</span>
+                                      <span>{isKidMode ? 'Petunjuk Pintar' : 'PETUNJUK'}</span>
                                     </p>
                                     <p className="opacity-95 leading-normal">{q.hint}</p>
                                   </div>
@@ -859,20 +858,20 @@ function MaterialContent() {
                                 <div className="grid grid-cols-2 gap-3">
                                   <button
                                     onClick={() => handleRetryQuestion(qIdx)}
-                                    className={`touch-target py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
+                                    className={`touch-target py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
                                       isKidMode
-                                        ? 'btn-toy-primary shadow-[2px_2px_0_#1E293B]'
-                                        : 'bg-violet-600 border-violet-500 hover:bg-violet-500 text-white font-mono'
+                                        ? 'btn-toy-primary border-4 shadow-[2px_2px_0_#1E293B]'
+                                        : 'bg-[#7C3AED] hover:bg-[#6D28D9] border border-[#7C3AED] text-white'
                                     }`}
                                   >
                                     <span>Coba Lagi</span>
                                   </button>
                                   <button
                                     onClick={handleScrollToMaterial}
-                                    className={`touch-target py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
+                                    className={`touch-target py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer ${
                                       isKidMode
-                                        ? 'bg-white border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B] hover:translate-y-[-1px]'
-                                        : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 font-mono'
+                                        ? 'bg-white border-4 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B] hover:translate-y-[-1px]'
+                                        : 'bg-white border border-[#E2E8F0] text-[#475569] hover:bg-slate-50 hover:text-[#0F172A]'
                                     }`}
                                   >
                                     <span>Pelajari Lagi</span>
@@ -884,47 +883,45 @@ function MaterialContent() {
                             // If finalized (Correct, or failed 3 times)
                             quizCorrect[qIdx] ? (
                               /* Answered Correctly */
-                              <div className={`mt-4 p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 ${
-                                isKidMode 
-                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-955 shadow-[3px_3px_0_#065F46] animate-wobble' 
-                                  : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-400 border shadow-[0_0_15px_rgba(16,185,129,0.15)] animate-pulse'
+                              <div className={`mt-4 p-4 rounded-2xl text-xs leading-relaxed transition-all duration-300 border ${
+                                isKidMode ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'border-[#E2E8F0] bg-white text-[#0F172A]'
                               }`}>
                                 <p className="font-black mb-1 flex items-center gap-1.5">
                                   <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                                  <span>{isKidMode ? 'Kerja Bagus! Hebat!' : 'Correct!'}</span>
+                                  <span>{isKidMode ? 'Kerja Bagus! Hebat!' : 'Benar!'}</span>
                                 </p>
                                 <p className="opacity-90 leading-normal">{q.explanation}</p>
                               </div>
                             ) : (
                               /* Finalized Incorrectly (Failed 3 attempts) */
                               <div className="mt-4 space-y-4">
-                                <div className={`p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 bg-red-50 border-red-300 text-red-955 dark:bg-rose-950/20 dark:border-rose-500/30 dark:text-rose-350`}>
+                                <div className={`p-4 rounded-2xl text-xs leading-relaxed transition-all duration-300 border bg-red-50 border-red-200 text-red-800`}>
                                   <p className="font-black mb-1 flex items-center gap-1.5">
                                     <ShieldAlert className="w-4 h-4 text-red-650 flex-shrink-0" />
-                                    <span>{isKidMode ? 'Kesempatan Habis' : 'Attempts Exhausted'}</span>
+                                    <span>{isKidMode ? 'Kesempatan Habis' : 'Kesempatan Habis'}</span>
                                   </p>
                                   <p className="opacity-90 leading-normal">{feedbackMessage[qIdx]}</p>
                                 </div>
-
+ 
                                 {/* Quick Review Card / Ringkasan Konsep */}
-                                <div className={`p-4 rounded-2xl border-2 text-xs leading-relaxed transition-all duration-300 ${
+                                <div className={`p-4 rounded-2xl text-xs leading-relaxed transition-all duration-300 border ${
                                   isKidMode 
-                                    ? 'bg-indigo-50 border-indigo-300 text-indigo-955 shadow-[3px_3px_0_#4F46E5]' 
-                                    : 'bg-violet-950/20 border-violet-500/30 text-violet-350 border shadow-[0_0_15px_rgba(139,92,246,0.15)]'
+                                    ? 'bg-indigo-50 border-indigo-300 text-indigo-900 border-2 shadow-[3px_3px_0_#4F46E5]' 
+                                    : 'bg-[#F5F3FF] border-[#C4B5FD] text-[#0F172A]'
                                 }`}>
                                   <p className="font-black mb-1.5 flex items-center gap-1.5">
-                                    <BookOpen className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-                                    <span>{isKidMode ? 'Ringkasan Konsep' : 'Quick Review Card'}</span>
+                                    <BookOpen className="w-4 h-4 text-[#7C3AED] flex-shrink-0" />
+                                    <span>{isKidMode ? 'Ringkasan Konsep' : 'Ringkasan Konsep'}</span>
                                   </p>
                                   <p className="opacity-90 leading-normal">{q.explanation}</p>
                                 </div>
-
+ 
                                 <button
                                   onClick={handleScrollToMaterial}
-                                  className={`touch-target w-full py-2.5 rounded-2xl border-4 text-xs font-black transition-all cursor-pointer ${
+                                  className={`touch-target w-full py-2.5 rounded-2xl text-xs font-black transition-all cursor-pointer border ${
                                     isKidMode
-                                      ? 'bg-white border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B] hover:translate-y-[-1px]'
-                                      : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700 font-mono'
+                                      ? 'bg-white border-4 border-slate-800 text-slate-800 shadow-[2px_2px_0_#1E293B] hover:translate-y-[-1px]'
+                                      : 'bg-white border border-[#E2E8F0] text-[#475569] hover:bg-slate-50 hover:text-[#0F172A]'
                                   }`}
                                 >
                                   <span>Pelajari Lagi Materi</span>
@@ -940,28 +937,28 @@ function MaterialContent() {
                 )}
 
                 {/* Bottom section spacing / action bar */}
-                <div className="mt-8 border-t border-slate-800/10 dark:border-slate-800/40 pt-6">
+                <div className="mt-8 border-t border-[#E2E8F0] pt-6">
                   {allQuestionsFinalized && !showOutcomeScreen ? (
                     <button
                       onClick={() => {
                         if (isKidMode) playSynthSound('success');
                         setShowOutcomeScreen(true);
                       }}
-                      className={`touch-target w-full py-4 rounded-2xl border-4 text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer ${
+                      className={`touch-target w-full py-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 transition-all cursor-pointer border ${
                         isKidMode
-                          ? 'btn-toy-accent shadow-[4px_4px_0_#1E293B]'
-                          : 'bg-cyan-600 border-cyan-500 hover:bg-cyan-500 text-white hover:shadow-[0_0_15px_rgba(34,211,238,0.3)] font-mono'
+                          ? 'btn-toy-accent border-4 shadow-[4px_4px_0_#1E293B]'
+                          : 'bg-[#7C3AED] hover:bg-[#6D28D9] border border-[#7C3AED] text-white'
                       }`}
                     >
-                      <span>{isKidMode ? 'Selesaikan Kuis & Lihat Hasil' : 'SUBMIT QUIZ & EVALUATE'}</span>
+                      <span>{isKidMode ? 'Selesaikan Kuis & Lihat Hasil' : 'Kirim Kuis & Lihat Hasil'}</span>
                     </button>
                   ) : !showOutcomeScreen ? (
                     <button
                       disabled={true}
-                      className="touch-target w-full py-4 rounded-2xl border-4 text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 opacity-40 cursor-not-allowed bg-slate-100 border-slate-800/10 text-slate-400"
+                      className="touch-target w-full py-4 rounded-2xl text-xs sm:text-sm font-black flex items-center justify-center gap-2.5 opacity-40 cursor-not-allowed bg-slate-150 border border-slate-200 text-slate-400"
                     >
                       <Award className="w-5 h-5" />
-                      <span>{isKidMode ? 'Jawab Semua Soal Terlebih Dahulu' : 'COMPLETE ALL QUESTIONS FIRST'}</span>
+                      <span>{isKidMode ? 'Jawab Semua Soal Terlebih Dahulu' : 'Jawab Semua Soal Terlebih Dahulu'}</span>
                     </button>
                   ) : null}
                 </div>
@@ -970,83 +967,82 @@ function MaterialContent() {
             </div>
           </div>
         ) : null}
-
       </main>
 
       {/* REWARD COMPLETE POPUP MODAL (Kids and Scholar UI) */}
       {showCompletionPopup && completionPopupData && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/65 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className={`modal-responsive w-full max-w-sm text-center relative overflow-hidden transition-all duration-300 ${
             isKidMode 
               ? 'card-toy p-6 bg-gradient-to-b from-yellow-50 to-pink-50 border-4 border-slate-800 shadow-[8px_8px_0_#1E293B]' 
-              : 'glass-panel p-6 border border-slate-800/80 rounded-3xl bg-slate-900/60 shadow-[0_20px_50px_rgba(0,0,0,0.5)]'
+              : 'bg-white p-6 border border-[#E2E8F0] rounded-3xl shadow-xl text-[#0F172A]'
           }`}>
             {isKidMode && <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200 rounded-full blur-2xl opacity-40 animate-pulse" />}
             
             <div className="mb-4">
               {completionPopupData.isLastNode ? (
-                <Award className="w-16 h-16 mx-auto text-pink-500 animate-bounce" />
+                <Award className="w-16 h-16 mx-auto text-[#7C3AED] animate-bounce" />
               ) : (
-                <Trophy className="w-16 h-16 mx-auto text-amber-500 animate-bounce" />
+                <Trophy className="w-16 h-16 mx-auto text-[#7C3AED] animate-bounce" />
               )}
             </div>
             
-            <h3 className={`text-2xl sm:text-3xl font-black mb-1.5 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-white font-space-grotesk'}`}>
+            <h3 className={`text-2xl sm:text-3xl font-black mb-1.5 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
               {completionPopupData.title}
             </h3>
-            <p className={`text-xs font-black uppercase tracking-widest ${isKidMode ? 'text-slate-500' : 'text-slate-400'}`}>
+            <p className={`text-xs font-black uppercase tracking-widest ${isKidMode ? 'text-slate-500' : 'text-[#475569]'}`}>
               {completionPopupData.isLastNode ? 'Petualangan Selesai!' : 'Modul Selesai Dengan Sukses!'}
             </p>
-
+ 
             {/* Rewards grid */}
-            <div className={`my-6 grid grid-cols-3 gap-3 border-4 p-4 rounded-2xl ${
-              isKidMode ? 'bg-white border-slate-800' : 'bg-slate-950 border-slate-900'
+            <div className={`my-6 grid grid-cols-3 gap-3 border p-4 rounded-2xl ${
+              isKidMode ? 'bg-white border-slate-800 border-4' : 'bg-slate-50 border-[#E2E8F0]'
             }`}>
               <div className="flex flex-col items-center">
-                <Trophy className="w-6 h-6 text-indigo-500 mb-1" />
-                <span className="text-xs font-black text-indigo-600 mt-1">+{completionPopupData.xp} XP</span>
+                <Trophy className="w-6 h-6 text-[#7C3AED] mb-1" />
+                <span className="text-xs font-black text-[#7C3AED] mt-1">+{completionPopupData.xp} XP</span>
               </div>
-              <div className={`flex flex-col items-center ${isKidMode ? 'border-x-2 border-slate-800/10' : 'border-x border-slate-900'}`}>
+              <div className={`flex flex-col items-center ${isKidMode ? 'border-x-2 border-slate-800/10' : 'border-x border-[#E2E8F0]'}`}>
                 <Flame className="w-6 h-6 text-amber-500 mb-1" />
                 <span className="text-xs font-black text-amber-500 mt-1">+{completionPopupData.coins} Koin</span>
               </div>
               <div className="flex flex-col items-center">
-                <Star className="w-6 h-6 text-emerald-500 fill-current mb-1" />
-                <span className="text-xs font-black text-emerald-500 mt-1">+{completionPopupData.stars} Star</span>
+                <Star className="w-6 h-6 text-[#7C3AED] fill-[#7C3AED]/20 mb-1" />
+                <span className="text-xs font-black text-[#7C3AED] mt-1">+{completionPopupData.stars} Star</span>
               </div>
             </div>
-
+ 
             {/* Mascot description advice */}
             <div className={`p-3.5 rounded-2xl mb-6 text-xs font-black leading-normal ${
-              isKidMode ? 'bg-white border-2 border-slate-800 text-slate-700' : 'bg-slate-950/80 text-slate-400'
+              isKidMode ? 'bg-white border-2 border-slate-800 text-slate-700' : 'bg-slate-50 border border-[#E2E8F0] text-[#475569]'
             }`}>
               {isKidMode 
                 ? completionPopupData.isLastNode 
                   ? '"HEBAT SEKALI! Kamu sudah menamatkan seluruh petualangan ini! Aku sangat bangga padamu. Ayo jelajahi peta baru!"'
                   : '"Luar biasa! Kamu semakin pintar. Aku bangga dengan prestasimu. Ayo lanjut petualangan berikutnya!"'
                 : completionPopupData.isLastNode
-                  ? 'All nodes compiled and fully authorized. Roadmap completion certificate index issued to profile.'
-                  : 'Evaluation accepted. Credit index and credentials index updated.'
+                  ? 'Selamat! Seluruh materi modul ini telah selesai dipelajari dan diverifikasi dengan sukses.'
+                  : 'Hebat! Anda telah berhasil menyelesaikan evaluasi modul ini.'
               }
             </div>
-
+ 
             {/* Badge unlock details */}
             {completionPopupData.badge && (
-              <div className="mb-6 p-3 bg-pink-100 border-2 border-pink-400 rounded-2xl flex items-center gap-3 text-left animate-pulse">
-                <Award className="w-8 h-8 text-pink-500 flex-shrink-0" />
+              <div className="mb-6 p-3 bg-[#F5F3FF] border border-[#C4B5FD] rounded-2xl flex items-center gap-3 text-left animate-pulse">
+                <Award className="w-8 h-8 text-[#7C3AED] flex-shrink-0" />
                 <div>
-                  <p className="text-xs font-black text-pink-700">Lencana Baru Dibuka!</p>
-                  <p className="text-[10px] font-bold text-pink-600">{completionPopupData.badge}</p>
+                  <p className="text-xs font-black text-[#7C3AED]">Lencana Baru Dibuka!</p>
+                  <p className="text-[10px] font-bold text-[#7C3AED]">{completionPopupData.badge}</p>
                 </div>
               </div>
             )}
-
+ 
             <button 
               onClick={handleDismissCompletionPopup}
               className={`touch-target w-full py-3.5 text-center font-black text-base cursor-pointer ${
                 isKidMode 
                   ? 'btn-toy-primary shadow-[4px_4px_0_#1E293B]' 
-                  : 'bg-violet-600 hover:bg-violet-500 text-white rounded-xl text-sm transition-all border border-violet-500/20 shadow-lg'
+                  : 'bg-[#7C3AED] hover:bg-[#6D28D9] text-white rounded-xl text-sm transition-all border border-[#7C3AED] shadow-sm font-semibold'
               }`}
             >
               Klaim & Lanjutkan!
@@ -1054,18 +1050,18 @@ function MaterialContent() {
           </div>
         </div>
       )}
-
+ 
     </div>
   );
 }
-
+ 
 export default function MaterialPage() {
   return (
     <ProtectedRoute>
       <Suspense fallback={
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-200">
-          <RefreshCw className="w-8 h-8 animate-spin text-indigo-400" />
-          <p className="text-sm font-mono mt-4 animate-pulse font-medium">Resolving URL parameters...</p>
+        <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center text-[#0F172A]">
+          <RefreshCw className="w-8 h-8 animate-spin text-[#7C3AED]" />
+          <p className="text-sm font-mono mt-4 animate-pulse font-medium text-[#475569]">Resolving URL parameters...</p>
         </div>
       }>
         <MaterialContent />

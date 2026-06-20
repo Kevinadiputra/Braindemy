@@ -90,13 +90,13 @@ export default function Header({ isKidMode, onSettingsClick, showSettingsBtn = f
           className="flex items-center gap-2 sm:gap-3 cursor-pointer flex-shrink-0" 
           onClick={() => navigateTo('/dashboard')}
         >
-          <div className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border-3 sm:border-4 ${
-            isKidMode ? 'bg-pink-400 border-slate-800 text-white' : 'bg-violet-950 border-violet-500/40 text-violet-400'
+          <div className={`p-1.5 sm:p-2 rounded-xl sm:rounded-2xl border-2 ${
+            isKidMode ? 'bg-pink-400 border-slate-800 text-white border-4' : 'bg-[#F5F3FF] border-[#C4B5FD] text-[#7C3AED]'
           }`}>
             <Brain className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
           </div>
           <span className={`text-lg sm:text-2xl font-black tracking-tight ${
-            isKidMode ? 'text-slate-800 font-fredoka' : 'text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 font-space-grotesk'
+            isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk'
           }`}>
             braindemy
           </span>
