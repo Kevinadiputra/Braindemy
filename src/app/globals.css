@@ -349,3 +349,13 @@ img, video, svg {
   animation: shake 0.4s ease-in-out;
 }
 
+/* Animated Dash Path for Roadmap Progress Line */
+@keyframes road-dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+.animated-road-path {
+  animation: road-dash 6s linear infinite;
+}
+

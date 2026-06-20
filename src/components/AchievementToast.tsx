@@ -94,7 +94,7 @@ export default function AchievementToast({ isKidMode = false }: { isKidMode?: bo
 
       <div className={`w-full max-w-sm p-6 relative overflow-hidden rounded-[32px] text-center border-4 ${
         isKidMode 
-          ? 'bg-gradient-to-b from-white to-pink-50 border-slate-800 shadow-[8px_8px_0_#1E293B] text-slate-850' 
+          ? 'bg-gradient-to-b from-white to-pink-50 border-slate-800 shadow-[8px_8px_0_#1E293B] text-slate-800' 
           : `${rarityClass} ${glowClass}`
       } transition-all duration-500 scale-100 transform`}>
         

@@ -26,6 +26,70 @@ function RoadmapContent() {
   const [avatarIndex, setAvatarIndex] = useState(0);
   const [showCompletionCelebration, setShowCompletionCelebration] = useState(false);
 
+  // Zoom and Pan Canvas States
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [panStart, setPanStart] = useState({ x: 0, y: 0 });
+  const [hasMoved, setHasMoved] = useState(false);
+
+  // Panning and Zooming controls
+  const zoomIn = () => setZoom(z => Math.min(z + 0.15, 2.5));
+  const zoomOut = () => setZoom(z => Math.max(z - 0.15, 0.5));
+  const resetZoomPan = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button !== 0) return; // Left click only
+    setIsPanning(true);
+    setHasMoved(false);
+    setPanStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isPanning) return;
+    const dx = e.clientX - panStart.x;
+    const dy = e.clientY - panStart.y;
+    if (Math.abs(dx - pan.x) > 4 || Math.abs(dy - pan.y) > 4) {
+      setHasMoved(true);
+    }
+    setPan({ x: dx, y: dy });
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsPanning(true);
+      setHasMoved(false);
+      setPanStart({ 
+        x: e.touches[0].clientX - pan.x, 
+        y: e.touches[0].clientY - pan.y 
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isPanning) return;
+    const dx = e.touches[0].clientX - panStart.x;
+    const dy = e.touches[0].clientY - panStart.y;
+    if (Math.abs(dx - pan.x) > 4 || Math.abs(dy - pan.y) > 4) {
+      setHasMoved(true);
+    }
+    setPan({ x: dx, y: dy });
+  };
+
+  const handleTouchEnd = () => {
+    setIsPanning(false);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    // Scroll wheel zoom inside map viewport
+    const newZoom = Math.min(Math.max(zoom - e.deltaY * 0.0015, 0.5), 2.5);
+    setZoom(newZoom);
+  };
+
   // Sync completion progress
   useEffect(() => {
     if (!roadmap) {
@@ -96,6 +160,9 @@ function RoadmapContent() {
   }
 
   const handleNodeClick = (node: any, index: number) => {
+    // If user panned/dragged the map, do not trigger the node click
+    if (hasMoved) return;
+
     // Linear progression lock check
     if (index > 0) {
       const prevNodeId = roadmap.nodes[index - 1].id;
@@ -203,7 +270,7 @@ function RoadmapContent() {
           <div className={`p-4 rounded-3xl border-4 text-left min-w-[280px] lg:max-w-xs flex-1 ${
             isKidMode 
               ? 'bg-white border-slate-800 shadow-[4px_4px_0_#1E293B]' 
-              : 'bg-slate-900/50 border-slate-850 backdrop-blur-sm'
+              : 'bg-slate-900/50 border-slate-800 backdrop-blur-sm'
           }`}>
             <div className="flex justify-between items-center mb-2.5">
               <span className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
@@ -215,7 +282,7 @@ function RoadmapContent() {
               </span>
             </div>
             
-            <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-350 dark:border-slate-850">
+            <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-full h-3 overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
               <div 
                 className={`h-full rounded-full transition-all duration-700 ${
                   isKidMode ? 'bg-gradient-to-r from-pink-400 to-indigo-500' : 'bg-gradient-to-r from-violet-600 to-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]'
@@ -231,127 +298,231 @@ function RoadmapContent() {
           </div>
         </div>
 
-        {/* Winding Zig-Zag Roadmap Path container */}
-        <div 
-          className="relative w-full max-w-[400px] mx-auto z-10 my-4"
-          style={{ height: `${mapHeight}px` }}
-        >
-          {/* Background curved path line */}
-          <svg 
-            viewBox={`0 0 400 ${mapHeight}`} 
-            className="absolute inset-0 w-full h-full pointer-events-none z-0"
-            preserveAspectRatio="none"
-          >
-            <path 
-              d={getSvgPathD()} 
-              fill="none" 
-              stroke={isKidMode ? '#1E293B' : '#6366F1'} 
-              strokeWidth={isKidMode ? '7' : '4'} 
-              strokeLinecap="round"
-              strokeDasharray={isKidMode ? 'none' : '10 8'}
-              className={isKidMode ? 'adventure-path-svg' : 'shadow-lg shadow-indigo-500/20'}
-              opacity={isKidMode ? 1 : 0.45}
-            />
-          </svg>
+        {/* Zoom & Pan HUD Overlay Controls */}
+        <div className="flex flex-wrap items-center gap-3 mb-6 relative z-20">
+          <div className={`p-1.5 rounded-2xl flex items-center gap-1.5 border ${
+            isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/80 border-slate-800'
+          }`}>
+            <button 
+              onClick={zoomIn} 
+              className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
+                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+              }`}
+              title="Zoom In"
+            >
+              Zoom In ➕
+            </button>
+            <button 
+              onClick={zoomOut} 
+              className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
+                isKidMode ? 'bg-indigo-50 border-2 border-slate-800 text-slate-800 hover:bg-indigo-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+              }`}
+              title="Zoom Out"
+            >
+              Zoom Out ➖
+            </button>
+            <button 
+              onClick={resetZoomPan} 
+              className={`px-3 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all active:scale-90 ${
+                isKidMode ? 'bg-pink-50 border-2 border-slate-800 text-slate-800 hover:bg-pink-100' : 'bg-slate-950 hover:bg-slate-800 text-white'
+              }`}
+              title="Reset View"
+            >
+              Reset 🔄
+            </button>
+          </div>
+          <span className={`text-[10px] font-bold ${isKidMode ? 'text-indigo-600' : 'text-slate-400 font-mono'}`}>
+            💡 {isKidMode ? 'Geser layar untuk menjelajah!' : 'Drag to pan / Scroll wheel to zoom'}
+          </span>
+        </div>
 
-          {/* Bobbing Character Avatar */}
+        {/* Pan and Zoom Canvas frame */}
+        <div 
+          className={`w-full overflow-hidden rounded-3xl border-4 select-none relative cursor-grab active:cursor-grabbing ${
+            isKidMode ? 'bg-[#FFFDF9] border-slate-800 shadow-[6px_6px_0_#1E293B]' : 'bg-slate-955 border-slate-800'
+          }`}
+          style={{ height: '540px' }}
+          onWheel={handleWheel}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {/* Draggable Inner Canvas container */}
           <div 
-            className="absolute w-16 h-16 z-30 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
+            className="w-full h-full origin-center select-none"
             style={{ 
-              left: `${getCoordinates(avatarIndex).x / 4}%`, 
-              top: `${activeAvatarY}px`
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transition: isPanning ? 'none' : 'transform 0.1s ease-out'
             }}
           >
-            <div className={`w-full h-full rounded-full border-4 border-slate-800 flex items-center justify-center shadow-lg relative ${
-              isKidMode ? 'bg-pink-500' : 'bg-violet-600 border-violet-400'
-            }`}>
-              {isKidMode ? (
-                <span className="text-3xl">🐱</span>
-              ) : (
-                <User className="w-7 h-7 text-white" />
-              )}
-              <div className="absolute -inset-2.5 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none" />
-            </div>
-          </div>
+            {/* Winding Zig-Zag Roadmap Path container */}
+            <div 
+              className="relative w-full max-w-[400px] mx-auto z-10 py-16"
+              style={{ height: `${mapHeight + 100}px` }}
+            >
+              {/* Curved path lines with custom gradients */}
+              <svg 
+                viewBox={`0 0 400 ${mapHeight}`} 
+                className="absolute inset-0 w-full h-full pointer-events-none z-0"
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  <linearGradient id="roadGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="50%" stopColor="#EC4899" />
+                    <stop offset="100%" stopColor="#06B6D4" />
+                  </linearGradient>
+                  <linearGradient id="roadGradientKid" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#F59E0B" />
+                    <stop offset="50%" stopColor="#EC4899" />
+                    <stop offset="100%" stopColor="#3B82F6" />
+                  </linearGradient>
+                </defs>
 
-          {/* Node check-points */}
-          {roadmap.nodes.map((node: any, index: number) => {
-            const isCompleted = completedNodes.includes(node.id);
-            const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
-            const isActive = isUnlocked && !isCompleted;
-            const isLocked = !isUnlocked;
-            const coords = getCoordinates(index);
-            const nodeY = index * rowHeight + paddingY;
+                {/* Base Underlay Track */}
+                <path 
+                  d={getSvgPathD()} 
+                  fill="none" 
+                  stroke={isKidMode ? '#E2E8F0' : '#1E293B'} 
+                  strokeWidth="10" 
+                  strokeLinecap="round"
+                  opacity={0.3}
+                />
 
-            let nodeStyles = "";
-            let innerContent = null;
+                {/* Progress Glowing Overlay Track */}
+                <path 
+                  d={getSvgPathD()} 
+                  fill="none" 
+                  stroke={isKidMode ? 'url(#roadGradientKid)' : 'url(#roadGradient)'} 
+                  strokeWidth="8" 
+                  strokeLinecap="round"
+                  strokeDasharray="15 10"
+                  className="animated-road-path"
+                />
+              </svg>
 
-            if (isCompleted) {
-              // COMPLETED: Bright color, checkmark icon, glow effect
-              nodeStyles = isKidMode
-                ? 'bg-emerald-400 border-slate-800 text-slate-800 shadow-[0_4px_0_#1E293B] hover:shadow-[0_6px_0_#1E293B] hover:translate-y-[-2px] ring-4 ring-emerald-300/50'
-                : 'bg-emerald-600 border-emerald-400 text-white hover:bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-[1.04]';
-              innerContent = <CheckCircle className="w-8 h-8 flex-shrink-0" />;
-            } else if (isActive) {
-              // CURRENT: Pulsing, bobbing, glowing, larger size
-              nodeStyles = isKidMode
-                ? 'bg-pink-500 border-slate-800 text-white shadow-[0_6px_0_#1E293B] hover:shadow-[0_8px_0_#1E293B] hover:translate-y-[-2px] ring-4 ring-pink-300 animate-[pulse_2s_infinite] scale-[1.12]'
-                : 'bg-violet-600 border-violet-400 text-white hover:bg-violet-500 shadow-[0_0_25px_rgba(124,58,237,0.5)] hover:scale-[1.14] scale-[1.12]';
-              innerContent = <NodeIcon type={node.iconType} className="w-8 h-8 animate-bounce" />;
-            } else if (isUnlocked) {
-              // UPCOMING: Visible but muted/simple
-              nodeStyles = isKidMode
-                ? 'bg-white border-slate-800 text-slate-800 shadow-[0_4px_0_#1E293B] hover:shadow-[0_6px_0_#1E293B] hover:translate-y-[-2px]'
-                : 'bg-slate-900 border-slate-800 text-slate-350 hover:bg-slate-800/80';
-              innerContent = <NodeIcon type={node.iconType} className="w-7 h-7" />;
-            } else {
-              // LOCKED: Grayed out, lock icon
-              nodeStyles = isKidMode
-                ? 'bg-slate-200 border-slate-400 text-slate-400 shadow-[0_2px_0_#94A3B8] cursor-not-allowed opacity-70'
-                : 'bg-slate-950 border-slate-900 text-slate-600 cursor-not-allowed opacity-40';
-              innerContent = <Lock className="w-5 h-5" />;
-            }
-
-            return (
+              {/* Bobbing Character Avatar */}
               <div 
-                key={node.id}
-                className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                className="absolute w-16 h-16 z-30 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000 ease-in-out avatar-bobbing"
                 style={{ 
-                  left: `${coords.x / 4}%`, 
-                  top: `${nodeY}px` 
+                  left: `${getCoordinates(avatarIndex).x / 4}%`, 
+                  top: `${activeAvatarY}px`
                 }}
               >
-                <button
-                  onClick={() => handleNodeClick(node, index)}
-                  className={`w-16 h-16 sm:w-18 sm:h-18 rounded-full border-4 flex items-center justify-center transition-all duration-350 relative touch-target select-none ${nodeStyles}`}
-                >
-                  {/* Step index circle number */}
-                  <div className={`absolute -top-2 -right-2 w-6 h-6 rounded-full border-2 border-slate-800 text-slate-800 flex items-center justify-center font-black text-[9px] ${
-                    isCompleted ? 'bg-emerald-300' : isLocked ? 'bg-slate-400' : 'bg-amber-400'
-                  }`}>
-                    {index + 1}
-                  </div>
-                  
-                  {innerContent}
-                </button>
-
-                {/* Subtopic description label card */}
-                <div 
-                  className={`absolute top-[80px] w-28 text-center px-2 py-1.5 rounded-xl border-2 transition-all ${
-                    isCompleted
-                      ? isKidMode ? 'bg-emerald-50 border-emerald-400' : 'bg-emerald-950/20 border-emerald-500/20 text-slate-300'
-                      : isActive
-                        ? isKidMode ? 'bg-pink-50 border-pink-500 shadow-[2px_2px_0_#1E293B]' : 'bg-violet-950/30 border-violet-500/40 text-white'
-                        : isLocked
-                          ? 'opacity-40 border-transparent text-slate-500'
-                          : isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/60 border-slate-800/80 text-slate-350'
-                  }`}
-                >
-                  <p className="font-black text-[10px] truncate leading-tight">{node.title}</p>
+                <div className={`w-full h-full rounded-full border-4 border-slate-900 flex items-center justify-center shadow-lg relative ${
+                  isKidMode ? 'bg-pink-500' : 'bg-violet-600 border-violet-400'
+                }`}>
+                  {isKidMode ? (
+                    <span className="text-3xl select-none">🐱</span>
+                  ) : (
+                    <User className="w-7 h-7 text-white select-none" />
+                  )}
+                  <div className="absolute -inset-2.5 rounded-full border-4 border-pink-400 active-pulse-ring pointer-events-none animate-ping" />
                 </div>
               </div>
-            );
-          })}
+
+              {/* Node check-points */}
+              {roadmap.nodes.map((node: any, index: number) => {
+                const isCompleted = completedNodes.includes(node.id);
+                const isUnlocked = index === 0 || completedNodes.includes(roadmap.nodes[index - 1].id);
+                const isActive = isUnlocked && !isCompleted;
+                const isLocked = !isUnlocked;
+                const coords = getCoordinates(index);
+                const nodeY = index * rowHeight + paddingY;
+
+                let nodeStyles = "";
+                let innerContent = null;
+
+                if (isCompleted) {
+                  // COMPLETED: Green/Emerald with glowing ring
+                  nodeStyles = isKidMode
+                    ? 'bg-emerald-400 border-slate-900 text-slate-800 shadow-[0_4px_0_#1E293B] ring-4 ring-emerald-300/50'
+                    : 'bg-emerald-600 border-emerald-400 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)] ring-4 ring-emerald-500/20';
+                  innerContent = <CheckCircle className="w-8 h-8 flex-shrink-0" />;
+                } else if (isActive) {
+                  // CURRENT: Pink/Violet with active pulse rings
+                  nodeStyles = isKidMode
+                    ? 'bg-pink-500 border-slate-900 text-white shadow-[0_6px_0_#1E293B] ring-4 ring-pink-350'
+                    : 'bg-violet-600 border-violet-400 text-white shadow-[0_0_25px_rgba(124,58,237,0.7)] ring-4 ring-violet-500/30';
+                  innerContent = <NodeIcon type={node.iconType} className="w-8 h-8 animate-pulse" />;
+                } else if (isUnlocked) {
+                  // UNLOCKED: Standard state
+                  nodeStyles = isKidMode
+                    ? 'bg-white border-slate-900 text-slate-800 shadow-[0_4px_0_#1E293B]'
+                    : 'bg-slate-900 border-slate-800 text-slate-300';
+                  innerContent = <NodeIcon type={node.iconType} className="w-7 h-7" />;
+                } else {
+                  // LOCKED: Grayed out and blur
+                  nodeStyles = isKidMode
+                    ? 'bg-slate-200 border-slate-400 text-slate-400 opacity-60 shadow-[0_2px_0_#94A3B8] blur-[0.5px]'
+                    : 'bg-slate-955 border-slate-900 text-slate-600 opacity-40 blur-[1px]';
+                  innerContent = <Lock className="w-5 h-5" />;
+                }
+
+                return (
+                  <div 
+                    key={node.id}
+                    className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center group/node"
+                    style={{ 
+                      left: `${coords.x / 4}%`, 
+                      top: `${nodeY}px` 
+                    }}
+                  >
+                    {/* Hitbox area: 120px on desktop (w-28/w-32 is perfect ~112px/128px click target) */}
+                    <div 
+                      className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center cursor-pointer relative"
+                      onClick={() => handleNodeClick(node, index)}
+                    >
+                      {/* Node Circle Visual */}
+                      <div
+                        className={`w-18 h-18 sm:w-20 sm:h-20 rounded-full border-4 flex items-center justify-center transition-all duration-300 relative select-none pointer-events-none ${nodeStyles} group-hover/node:scale-110 group-hover/node:shadow-xl`}
+                      >
+                        {/* Step index badge indicator */}
+                        <div className={`absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full border-2 border-slate-900 text-slate-900 flex items-center justify-center font-black text-[9px] ${
+                          isCompleted ? 'bg-emerald-300' : isLocked ? 'bg-slate-400' : 'bg-amber-400'
+                        }`}>
+                          {index + 1}
+                        </div>
+                        
+                        {innerContent}
+                      </div>
+
+                      {/* Tooltip Popup on Hover */}
+                      <div className="absolute bottom-[105%] left-1/2 -translate-x-1/2 mb-3 w-40 p-2.5 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl opacity-0 scale-90 group-hover/node:opacity-100 group-hover/node:scale-100 transition-all duration-200 pointer-events-none z-50 text-left">
+                        <p className="text-[9px] font-bold text-violet-400 uppercase tracking-widest font-mono">Tahap {index + 1}</p>
+                        <p className="text-[11px] font-black text-white truncate mt-0.5">{node.title}</p>
+                        <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-slate-800/60 text-[9px] font-bold">
+                          <span className={isCompleted ? 'text-emerald-400' : isActive ? 'text-pink-400' : 'text-slate-500'}>
+                            {isCompleted ? '✔ Selesai' : isActive ? '⚡ Sedang Jalan' : '🔒 Terkunci'}
+                          </span>
+                          <span className="text-amber-400 font-mono">+100 XP</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Subtopic description label card */}
+                    <div 
+                      className={`absolute top-[92px] w-28 text-center px-2 py-1.5 rounded-xl border-2 transition-all ${
+                        isCompleted
+                          ? isKidMode ? 'bg-emerald-50 border-emerald-400' : 'bg-emerald-950/20 border-emerald-500/20 text-slate-300'
+                          : isActive
+                            ? isKidMode ? 'bg-pink-50 border-pink-500 shadow-[2px_2px_0_#1E293B]' : 'bg-violet-950/30 border-violet-500/40 text-white'
+                            : isLocked
+                              ? 'opacity-40 border-transparent text-slate-500'
+                              : isKidMode ? 'bg-white border-slate-800 shadow-[2px_2px_0_#1E293B]' : 'bg-slate-900/60 border-slate-800/80 text-slate-300'
+                      }`}
+                    >
+                      <p className="font-black text-[10px] truncate leading-tight">{node.title}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
       </main>

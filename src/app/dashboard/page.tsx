@@ -235,6 +235,9 @@ function DashboardContent() {
   };
 
   const { badge: nextBadge, percent: nextBadgePercent } = getNextAchievement();
+  
+  const totalNodes = profile?.current_roadmap?.nodes?.length || 0;
+  const completedPercent = totalNodes > 0 ? Math.round((completedLessonsCount / totalNodes) * 100) : 0;
 
   return (
     <div className="min-h-screen flex flex-col relative z-10 overflow-hidden">
@@ -262,49 +265,101 @@ function DashboardContent() {
           {/* Main Action Content (Left Column on Desktop) */}
           <div className="lg:col-span-2 space-y-8">
             
-            {/* Dashboard Top Statistics Header */}
+            {/* Dashboard Top Statistics Header / Hero Section */}
             {isKidMode ? (
-              /* KIDS MODE BENTO HEADER */
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                {/* Nickname card */}
-                <div className="col-span-1 sm:col-span-3 card-toy p-4 flex items-center gap-4 bg-gradient-to-br from-amber-50 to-pink-50 text-left">
-                  <div className="w-14 h-14 rounded-full border-4 border-slate-800 bg-pink-100 flex items-center justify-center text-3xl relative flex-shrink-0">
-                    {profile?.avatar_url ? (
-                      <img 
-                        src={profile.avatar_url} 
-                        alt="Avatar" 
-                        className={`w-full h-full rounded-full object-cover border-2 ${getFrameStyle(equippedFrame)}`}
-                      />
-                    ) : (
-                      <span className="text-3xl">{mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}</span>
-                    )}
+              /* KIDS MODE HERO BILLBOARD */
+              <div className="card-toy p-6 bg-gradient-to-br from-amber-300 via-pink-400 to-indigo-500 text-white border-4 border-slate-900 shadow-[8px_8px_0_#1E293B] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_#1E293B] transition-all duration-300 text-left relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-110 transition-all duration-500" />
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-pink-300/20 rounded-full blur-xl pointer-events-none" />
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border-4 border-slate-900 bg-pink-100 flex items-center justify-center text-4xl relative flex-shrink-0 shadow-md">
+                      {profile?.avatar_url ? (
+                        <img 
+                          src={profile.avatar_url} 
+                          alt="Avatar" 
+                          className={`w-full h-full rounded-full object-cover border-2 ${getFrameStyle(equippedFrame)}`}
+                        />
+                      ) : (
+                        <span className="text-3xl">{mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}</span>
+                      )}
+                    </div>
+                    <div>
+                      <h2 className="text-2xl sm:text-3xl font-black font-fredoka drop-shadow-[0_2px_0_rgba(30,41,59,0.4)]">
+                        Halo {profile?.full_name || 'Penjelajah'}! 👋
+                      </h2>
+                      {profile?.current_roadmap ? (
+                        <p className="text-xs font-bold text-slate-100 mt-1 flex items-center gap-1.5 drop-shadow-[0_1px_0_rgba(30,41,59,0.3)]">
+                          🎯 Petualanganmu: <span className="underline decoration-yellow-300 decoration-2">{profile.current_roadmap.title}</span>
+                        </p>
+                      ) : (
+                        <p className="text-xs font-bold text-slate-100 mt-1 drop-shadow-[0_1px_0_rgba(30,41,59,0.3)]">
+                          🚀 Siap memulai petualangan belajarmu hari ini?
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-lg text-slate-800 truncate">Halo {profile?.full_name}!</p>
-                    {equippedTitle && (
-                      <div className="mt-0.5">
-                        <span className="px-2 py-0.5 rounded-full border border-slate-800 bg-amber-100 text-[8px] font-black uppercase tracking-wider inline-flex items-center gap-1">
-                          {equippedTitle}
-                        </span>
+
+                  <div className="flex flex-wrap gap-2 items-center">
+                    <div className="bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+                      <Flame className="w-4 h-4 text-orange-400 fill-current" />
+                      <span className="text-xs font-black font-fredoka">{currentStreak} Hari Streak</span>
+                    </div>
+                    <div className="bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+                      <Trophy className="w-4 h-4 text-yellow-300 fill-current" />
+                      <span className="text-xs font-black font-fredoka">{currentXp} XP</span>
+                    </div>
+                    {profile?.current_roadmap && (
+                      <div className="bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl flex items-center gap-1.5">
+                        <span className="text-xs font-black font-fredoka">Progress: {completedPercent}%</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
             ) : (
-              /* SCHOLAR MODE HEADER */
-              <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-slate-800 pb-6">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold font-space-grotesk tracking-wide text-white flex items-center gap-2">
-                    <span>Halo, {profile?.full_name}</span>
-                  </h1>
-                  {equippedTitle && (
-                    <p className="text-xs text-violet-400 font-mono font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
-                      <Award className="w-3.5 h-3.5" />
-                      <span>{equippedTitle}</span>
-                    </p>
-                  )}
-                  <p className="text-xs text-slate-400 mt-1.5 font-medium">Selamat datang kembali di Pusat Komando Akademik Anda.</p>
+              /* SCHOLAR MODE CYBERNETIC GLASS HERO */
+              <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 bg-slate-900/40 shadow-2xl text-left relative overflow-hidden group hover:border-violet-500/30 transition-all duration-300">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/10 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/15 transition-all duration-500" />
+                
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-bold font-space-grotesk tracking-wide text-white">
+                      Halo, {profile?.full_name || 'Academic'} 👋
+                    </h1>
+                    {profile?.current_roadmap ? (
+                      <p className="text-sm text-slate-400 mt-1.5">
+                        Current Adventure: <span className="text-violet-400 font-semibold">{profile.current_roadmap.title}</span>
+                      </p>
+                    ) : (
+                      <p className="text-sm text-slate-400 mt-1.5">
+                        No active curriculum. Compile an AI study roadmap below to start.
+                      </p>
+                    )}
+                    {equippedTitle && (
+                      <p className="text-xs text-violet-400 font-mono font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5" />
+                        <span>{equippedTitle}</span>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2.5 items-center">
+                    <div className="bg-slate-950/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                      <Flame className="w-3.5 h-3.5 text-orange-500 fill-current animate-pulse" />
+                      <span className="text-xs font-mono font-bold text-slate-300">{currentStreak} day streak</span>
+                    </div>
+                    <div className="bg-slate-950/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                      <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                      <span className="text-xs font-mono font-bold text-slate-300">{currentXp} XP</span>
+                    </div>
+                    {profile?.current_roadmap && (
+                      <div className="bg-slate-950/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                        <span className="text-xs font-mono font-bold text-slate-300">Progress: {completedPercent}%</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -338,11 +393,11 @@ function DashboardContent() {
                 <div className={`w-full p-6 text-left transition-all duration-300 ${
                   isKidMode 
                     ? isCompleted
-                      ? 'card-toy bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-400 shadow-[6px_6px_0_#065F46]'
-                      : 'card-toy bg-gradient-to-r from-pink-50 to-indigo-50 shadow-[4px_4px_0_#1E293B]' 
+                      ? 'card-toy bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-400 shadow-[6px_6px_0_#065F46] hover:scale-[1.02] hover:shadow-[8px_8px_0_#065F46]'
+                      : 'card-toy bg-gradient-to-r from-pink-50 to-indigo-50 shadow-[4px_4px_0_#1E293B] hover:scale-[1.02] hover:shadow-[6px_6px_0_#1E293B]' 
                     : isCompleted
-                      ? 'glass-panel p-6 rounded-2xl border border-emerald-500/30 bg-emerald-950/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'
-                      : 'glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'
+                      ? 'glass-panel p-6 rounded-3xl border border-emerald-500/30 bg-emerald-950/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:scale-[1.02] hover:border-emerald-500/50 hover:shadow-[0_8px_30px_rgba(16,185,129,0.1)]'
+                      : 'glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:scale-[1.02] hover:border-violet-500/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]'
                 }`}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -364,8 +419,8 @@ function DashboardContent() {
                     </div>
                     <p className={`text-sm mt-1.5 ${
                       isKidMode 
-                        ? isCompleted ? 'text-emerald-800 font-semibold' : 'text-slate-655' 
-                        : isCompleted ? 'text-slate-350' : 'text-slate-400 font-mono text-xs'
+                        ? isCompleted ? 'text-emerald-800 font-semibold' : 'text-slate-600' 
+                        : isCompleted ? 'text-slate-300' : 'text-slate-400 font-mono text-xs'
                     }`}>
                       {isCompleted 
                         ? isKidMode 
@@ -377,14 +432,14 @@ function DashboardContent() {
                   </div>
                   <button 
                     onClick={handleContinueRoadmap}
-                    className={`px-6 py-3 font-bold text-center cursor-pointer flex items-center justify-center gap-2 min-h-[44px] whitespace-nowrap self-start sm:self-auto ${
+                    className={`px-6 py-3.5 font-bold text-center cursor-pointer flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[44px] whitespace-nowrap self-stretch sm:self-auto transition-all ${
                       isKidMode 
                         ? isCompleted
-                          ? 'btn-toy-accent mt-4 w-full sm:w-auto shadow-[4px_4px_0_#065F46]'
+                          ? 'btn-toy-accent mt-4 w-full sm:w-auto shadow-[4px_4px_0_#065F46] hover:translate-y-[-2px] active:translate-y-[2px]'
                           : 'btn-toy-primary mt-4 w-full sm:w-auto' 
                         : isCompleted
-                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm transition-all border border-emerald-500/30 font-mono'
-                          : 'bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm transition-all font-mono'
+                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm transition-all border border-emerald-500/30 font-mono active:scale-95 shadow-[0_4px_12px_rgba(16,185,129,0.2)]'
+                          : 'bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm transition-all font-mono active:scale-95 shadow-[0_4px_12px_rgba(99,102,241,0.2)]'
                     }`}
                   >
                     <span>
@@ -401,35 +456,38 @@ function DashboardContent() {
 
             {/* Topic Input Bar */}
             <div className="w-full text-left">
-              <h3 className={`text-lg font-black mb-2.5 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-slate-300 font-space-grotesk'}`}>
+              <h3 className={`text-lg font-black mb-2.5 ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-slate-350 font-space-grotesk'}`}>
                 {profile?.current_roadmap ? 'Atau Buat Petualangan Baru:' : 'Buat Peta Belajarmu:'}
               </h3>
               <div>
                 {/* Mobile: flex-col layout; sm+: relative positioning for absolute button */}
-                <div className="flex flex-col sm:relative gap-3 sm:gap-0">
+                <div className="flex flex-col sm:relative gap-3 sm:gap-0 group">
+                  <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none hidden sm:inline">
+                    ✨
+                  </span>
                   <input 
                     type="text"
                     value={topicInput}
                     onChange={(e) => setTopicInput(e.target.value)}
-                    placeholder={isKidMode ? 'Contoh: Cara kerja gunung berapi, perkalian pecahan...' : 'Contoh: Machine Learning Basics, React Hooks, Aljabar Linear...'}
+                    placeholder={isKidMode ? 'Mau belajar apa hari ini? (Contoh: Cara kerja gunung berapi...)' : 'Mau belajar apa hari ini? (Contoh: Machine Learning Basics...)'}
                     disabled={isGenerating}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') handleGenerate();
                     }}
-                    className={`w-full px-5 sm:px-6 py-4 sm:py-5 rounded-3xl outline-none text-base sm:text-lg transition-all ${
+                    className={`w-full px-5 sm:pl-12 sm:pr-28 py-4 sm:py-5 rounded-3xl outline-none text-base sm:text-lg transition-all border-4 ${
                       isKidMode 
-                        ? 'border-4 border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-200 shadow-[6px_6px_0px_#1E293B] font-fredoka' 
-                        : 'border border-slate-800 bg-slate-950 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-950/20 font-outfit'
+                        ? 'border-slate-800 bg-white text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-200 focus:border-pink-500 shadow-[6px_6px_0px_#1E293B] font-fredoka' 
+                        : 'border-slate-800 bg-slate-955 text-white placeholder-slate-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-950/40 font-outfit'
                     }`}
                   />
                   
                   <button 
                     onClick={() => handleGenerate()}
                     disabled={isGenerating || !topicInput.trim()}
-                    className={`w-full sm:w-auto sm:absolute sm:right-3.5 sm:top-3.5 px-6 py-2.5 rounded-2xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[44px] ${
+                    className={`w-full sm:w-auto sm:absolute sm:right-3 sm:top-3 px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[48px] sm:min-h-[44px] ${
                       isKidMode
                         ? 'btn-toy-primary text-sm disabled:opacity-50'
-                        : 'bg-violet-600 hover:bg-violet-500 text-white text-sm border border-violet-500/30 shadow-lg disabled:opacity-50 font-mono'
+                        : 'bg-violet-600 hover:bg-violet-500 text-white text-sm border border-violet-500/30 shadow-lg disabled:opacity-50 font-mono active:scale-95'
                     }`}
                   >
                     {isGenerating ? (
@@ -448,7 +506,7 @@ function DashboardContent() {
             {/* Popular Topic Suggestions */}
             <div className="w-full text-left mt-4">
               <p className={`text-xs font-black uppercase tracking-wider mb-4 ${
-                isKidMode ? 'text-slate-505' : 'text-slate-400'
+                isKidMode ? 'text-slate-500' : 'text-slate-400'
               }`}>
                 {isKidMode ? '💡 Rekomendasi Peta Terpopuler:' : '💡 Recommended Academic Curriculums:'}
               </p>
@@ -461,13 +519,13 @@ function DashboardContent() {
                       setTopicInput(item.query);
                       handleGenerate(item.query);
                     }}
-                    className={`p-4.5 rounded-2xl cursor-pointer transition-all duration-200 text-left min-h-[44px] ${
+                    className={`p-4 rounded-2xl cursor-pointer transition-all duration-300 text-left min-h-[48px] sm:min-h-[44px] flex items-center ${
                       isKidMode 
-                        ? 'bg-white border-4 border-slate-800 text-slate-800 font-black text-base shadow-[4px_4px_0_#1E293B] hover:-translate-y-1 hover:shadow-[6px_6px_0_#1E293B]' 
-                        : 'bg-slate-950 border border-slate-900 text-slate-300 text-sm hover:border-violet-500/50 hover:bg-slate-900/40 hover:text-white font-mono'
+                        ? 'bg-white border-4 border-slate-800 text-slate-800 font-black text-base shadow-[4px_4px_0_#1E293B] hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[6px_6px_0_#1E293B]' 
+                        : 'bg-slate-950 border border-slate-800 text-slate-300 text-sm hover:border-violet-500 hover:-translate-y-1 hover:bg-slate-900/40 hover:text-white font-mono shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between w-full">
                       <span>{item.title}</span>
                       <ChevronRight className="w-4 h-4 opacity-50" />
                     </div>
@@ -533,7 +591,7 @@ function DashboardContent() {
                       </span>
                     </div>
                   )}
-                  <p className={`text-[10px] mt-1 font-bold ${isKidMode ? 'text-indigo-600' : 'text-slate-450 font-mono'}`}>
+                  <p className={`text-[10px] mt-1 font-bold ${isKidMode ? 'text-indigo-600' : 'text-slate-400 font-mono'}`}>
                     {isKidMode ? 'Sekolah Dasar (SD) 🪐' : 'Akademisi Mahasiswa'}
                   </p>
                 </div>
@@ -542,25 +600,25 @@ function DashboardContent() {
               {/* Stats Grid */}
               <div className="grid grid-cols-3 gap-2 mt-4 text-center">
                 <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-orange-50/55 border-orange-100 text-orange-600' : 'bg-slate-950/45 border-slate-900 text-slate-300'
+                  isKidMode ? 'bg-orange-50/55 border-orange-100 text-orange-600' : 'bg-slate-950/45 border-slate-900 text-slate-350'
                 }`}>
                   <Flame className="w-4 h-4 fill-current mb-0.5" />
                   <span className="text-xs font-black">{currentStreak}</span>
-                  <span className="text-[7px] uppercase font-bold text-slate-450 mt-0.5">Streak</span>
+                  <span className="text-[7px] uppercase font-bold text-slate-500 mt-0.5">Streak</span>
                 </div>
                 <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-indigo-50/55 border-indigo-100 text-indigo-600' : 'bg-slate-950/45 border-slate-900 text-slate-300'
+                  isKidMode ? 'bg-indigo-50/55 border-indigo-100 text-indigo-600' : 'bg-slate-950/45 border-slate-900 text-slate-350'
                 }`}>
                   <Trophy className="w-4 h-4 mb-0.5" />
                   <span className="text-xs font-black">{currentXp}</span>
-                  <span className="text-[7px] uppercase font-bold text-slate-455 mt-0.5">XP</span>
+                  <span className="text-[7px] uppercase font-bold text-slate-500 mt-0.5">XP</span>
                 </div>
                 <div className={`p-2.5 rounded-xl border flex flex-col items-center justify-center ${
-                  isKidMode ? 'bg-amber-50/55 border-amber-100 text-amber-600' : 'bg-slate-950/45 border-slate-900 text-slate-300'
+                  isKidMode ? 'bg-amber-50/55 border-amber-100 text-amber-600' : 'bg-slate-950/45 border-slate-900 text-slate-350'
                 }`}>
                   <Award className="w-4 h-4 mb-0.5" />
                   <span className="text-xs font-black">{currentLevel}</span>
-                  <span className="text-[7px] uppercase font-bold text-slate-455 mt-0.5">Level</span>
+                  <span className="text-[7px] uppercase font-bold text-slate-500 mt-0.5">Level</span>
                 </div>
               </div>
             </div>
@@ -587,7 +645,7 @@ function DashboardContent() {
                     <h5 className={`font-black text-xs sm:text-sm ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-slate-200'}`}>
                       {nextBadge.title}
                     </h5>
-                    <p className={`text-[10px] mt-0.5 leading-relaxed ${isKidMode ? 'text-slate-655 font-medium' : 'text-slate-400 font-mono'}`}>
+                    <p className={`text-[10px] mt-0.5 leading-relaxed ${isKidMode ? 'text-slate-500 font-medium' : 'text-slate-400 font-mono'}`}>
                       {nextBadge.desc}
                     </p>
                   </div>
@@ -595,7 +653,7 @@ function DashboardContent() {
 
                 {/* Progress bar */}
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[9px] font-bold text-slate-455 font-mono uppercase">
+                  <div className="flex items-center justify-between text-[9px] font-bold text-slate-500 font-mono uppercase">
                     <span>Progress</span>
                     <span>{nextBadgePercent}%</span>
                   </div>
@@ -616,7 +674,7 @@ function DashboardContent() {
                 : 'glass-panel border-slate-800 bg-slate-900/60 shadow-xl'
             }`}>
               <div className="flex items-center justify-between mb-4.5 border-b pb-3 border-slate-800/10 dark:border-slate-800/30">
-                <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-slate-850' : 'text-slate-300 font-mono'}`}>
+                <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-slate-800' : 'text-slate-300 font-mono'}`}>
                   {isKidMode ? 'Lencana Belajar' : 'Academic Credentials'}
                 </h4>
                 <button 

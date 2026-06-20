@@ -475,7 +475,7 @@ function MaterialContent() {
             <div className={`flex-1 sm:max-w-md p-3 rounded-2xl border-4 flex items-center gap-4 ${
               isKidMode 
                 ? 'bg-white border-slate-800 shadow-[3px_3px_0_#1E293B]' 
-                : 'bg-slate-900/40 border-slate-850 backdrop-blur-sm'
+                : 'bg-slate-900/40 border-slate-800 backdrop-blur-sm'
             }`}>
               <div className="flex-1 min-w-0 text-left">
                 <p className={`text-[10px] font-black uppercase tracking-wider ${isKidMode ? 'text-indigo-600 font-fredoka' : 'text-cyan-400 font-mono'}`}>
@@ -611,7 +611,7 @@ function MaterialContent() {
               <div className={`p-5 sm:p-6 rounded-3xl border-4 text-left transition-all ${
                 isKidMode 
                   ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                  : 'bg-slate-950/60 border-slate-850'
+                  : 'bg-slate-950/60 border-slate-800'
               }`}>
                 <div className="flex items-center justify-between border-b pb-4 mb-6 border-slate-800/10 dark:border-slate-800/40">
                   <h3 className={`text-lg font-black flex items-center gap-2 ${
@@ -1036,7 +1036,7 @@ function MaterialContent() {
                 <Award className="w-8 h-8 text-pink-500 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-black text-pink-700">Lencana Baru Dibuka!</p>
-                  <p className="text-[10px] font-bold text-pink-655">{completionPopupData.badge}</p>
+                  <p className="text-[10px] font-bold text-pink-600">{completionPopupData.badge}</p>
                 </div>
               </div>
             )}
