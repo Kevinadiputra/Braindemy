@@ -112,21 +112,35 @@ function DashboardContent() {
     if (isKidMode) playSynthSound('click');
     
     try {
-      // Generate roadmap via Gemini
+      // 1. Get current active roadmap
+      const currentRoadmap = profile?.current_roadmap;
+      let history = [];
+      if (currentRoadmap) {
+        const { history: oldHistory, ...roadmapWithoutHistory } = currentRoadmap;
+        history = oldHistory || [];
+        // Add current active roadmap to history if not already there
+        if (roadmapWithoutHistory.title && !history.some((h: any) => h.title === roadmapWithoutHistory.title)) {
+          history.push(roadmapWithoutHistory);
+        }
+      }
+
+      // 2. Generate roadmap via Gemini
       const data = await generateRoadmap(query, isKidMode);
       
-      // Update the user's active roadmap inside Supabase profiles
+      // 3. Attach history to the new roadmap data
+      const updatedRoadmapData = {
+        ...data,
+        history: history
+      };
+      
+      // 4. Update the user's active roadmap inside Supabase profiles
       const { error: updateErr } = await supabase
         .from('profiles')
-        .update({ current_roadmap: data })
+        .update({ current_roadmap: updatedRoadmapData })
         .eq('id', user.id);
 
       if (updateErr) throw updateErr;
 
-      // Reset progress table for new roadmap nodes
-      // (Optionally delete previous progress or keep them; let's keep them and let the client manage it,
-      // but to ensure a clean start, we can clear uncompleted steps or just let the new node IDs resolve).
-      
       // Refresh profile data in auth state
       await refreshUserData();
       
@@ -140,6 +154,48 @@ function DashboardContent() {
       setErrorMessage(err.message || 'Gagal membuat roadmap. Periksa koneksi internet atau API Key Anda.');
       setMascotState('fail');
       if (isKidMode) playSynthSound('fail');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleSwitchRoadmap = async (targetRoadmap: any) => {
+    if (isKidMode) playSynthSound('click');
+    setIsGenerating(true);
+    try {
+      const currentRoadmap = profile?.current_roadmap;
+      let history = [];
+      if (currentRoadmap) {
+        const { history: oldHistory, ...roadmapWithoutHistory } = currentRoadmap;
+        history = oldHistory || [];
+        // Add current active roadmap to history if not there
+        if (roadmapWithoutHistory.title && !history.some((h: any) => h.title === roadmapWithoutHistory.title)) {
+          history.push(roadmapWithoutHistory);
+        }
+      }
+      
+      // Remove target roadmap from history list
+      const newHistory = history.filter((h: any) => h.title !== targetRoadmap.title);
+      
+      // Swap target roadmap with active, and append new history
+      const updatedRoadmapData = {
+        ...targetRoadmap,
+        history: newHistory
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update({ current_roadmap: updatedRoadmapData })
+        .eq('id', user.id);
+        
+      if (error) throw error;
+      
+      await refreshUserData();
+      setMascotState('success');
+      router.push('/roadmap');
+    } catch (err: any) {
+      console.error(err);
+      alert('Gagal berpindah roadmap: ' + (err.message || err));
     } finally {
       setIsGenerating(false);
     }
@@ -340,8 +396,7 @@ function DashboardContent() {
                 </div>
               </div>
             ) : (
-              /* SCHOLAR MODE CYBERNETIC GLASS HERO */
-              <div className="glass-panel p-6 sm:p-8 rounded-[32px] border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm text-left relative overflow-hidden group hover:border-[#7C3AED]/30 transition-all duration-300">
+              <div className="glass-panel p-6 sm:p-8 text-left relative overflow-hidden group hover:border-[#7C3AED]/30 transition-all duration-300">
                 {/* Glow layer */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/10 transition-all duration-500" />
 
@@ -432,10 +487,10 @@ function DashboardContent() {
           
           {/* 2. PROFILE CARD */}
           <div className="order-2 lg:col-span-1 w-full">
-            <div className={`p-6 rounded-[32px] text-center border-4 relative w-full ${
+            <div className={`p-6 relative w-full ${
               isKidMode 
-                ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
+                ? 'card-toy text-center' 
+                : 'glass-panel text-center'
             }`}>
               <div className="flex flex-col items-center gap-4 pb-4 border-b border-slate-800/10">
                 <div className="relative flex-shrink-0">
@@ -506,10 +561,10 @@ function DashboardContent() {
 
           {/* 3. CHATBOT CARD */}
           <div className="order-3 lg:col-span-2 w-full">
-            <div className={`p-6 sm:p-8 rounded-[32px] border-4 relative text-center flex flex-col items-center gap-6 ${
+            <div className={`p-6 sm:p-8 relative flex flex-col items-center gap-6 ${
               isKidMode 
-                ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
+                ? 'card-toy text-center' 
+                : 'glass-panel text-center'
             }`}>
               {/* Mascot wrapper with float, glow, pulse */}
               <div className="relative group flex flex-col items-center">
@@ -525,35 +580,52 @@ function DashboardContent() {
                 </div>
               </div>
 
-              {profile?.current_roadmap ? (
-                /* STATE 1: ACTIVE ROADMAP */
-                <div className="space-y-4 w-full flex flex-col items-center">
-                  <div className="space-y-1">
-                    <h3 className={`text-xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
-                      🤖 Lanjutkan petualanganmu!
-                    </h3>
-                    <p className="text-sm text-[#475569]">
-                      Kamu sedang berada di tengah petualangan <span className="font-bold underline decoration-[#7C3AED] decoration-2">{profile.current_roadmap.title}</span>.
-                    </p>
+              {/* Mascot / Bot Message */}
+              <div className="w-full text-left space-y-6">
+                
+                {profile?.current_roadmap && (
+                  /* active roadmap continuing block */
+                  <div className={`p-5 rounded-2xl border flex flex-col sm:flex-row items-center justify-between gap-4 ${
+                    isKidMode 
+                      ? 'bg-amber-50 border-slate-800 border-4 shadow-[3px_3px_0_#1E293B]' 
+                      : 'bg-white border border-[#E2E8F0] shadow-sm'
+                  }`}>
+                    <div className="space-y-1 text-center sm:text-left min-w-0">
+                      <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#7C3AED] font-mono'}`}>
+                        {isKidMode ? '🚀 Petualangan Aktif!' : '🚀 Active Roadmap'}
+                      </h4>
+                      <p className={`text-base font-extrabold truncate ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
+                        {profile.current_roadmap.title}
+                      </p>
+                      <p className="text-xs text-[#475569] line-clamp-1">
+                        {profile.current_roadmap.description}
+                      </p>
+                    </div>
+                    <button 
+                      onClick={handleContinueRoadmap}
+                      className={`touch-target px-8 py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-white transition-all cursor-pointer whitespace-nowrap flex-shrink-0 ${
+                        isKidMode 
+                          ? 'btn-toy-primary text-xs shadow-[2px_2px_0_#1E293B] border-4' 
+                          : 'btn-scholar-primary text-xs font-semibold shadow-sm h-11'
+                      }`}
+                    >
+                      Lanjutkan Petualangan
+                    </button>
                   </div>
-                  <button 
-                    onClick={handleContinueRoadmap}
-                    className={`w-full sm:w-auto px-10 text-white cursor-pointer ${
-                      isKidMode ? 'btn-toy-primary' : 'btn-scholar-primary'
-                    }`}
-                  >
-                    Lanjutkan
-                  </button>
-                </div>
-              ) : (
-                /* STATE 2: NO ACTIVE ROADMAP */
-                <div className="space-y-6 w-full text-left">
+                )}
+
+                {/* Generate New Roadmap section */}
+                <div className="space-y-4 w-full">
                   <div className="text-center space-y-1">
                     <h3 className={`text-xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
-                      🤖 Apa yang ingin kamu pelajari hari ini?
+                      {profile?.current_roadmap 
+                        ? '➕ Buat Roadmap Baru' 
+                        : '🤖 Apa yang ingin kamu pelajari hari ini?'}
                     </h3>
                     <p className="text-sm text-[#475569]">
-                      Ketik topik apa saja dan AI kami akan langsung membuat peta belajar khusus untukmu!
+                      {profile?.current_roadmap 
+                        ? 'Ingin belajar topik lain? Ketik topik baru di bawah untuk mengganti atau menambah koleksi roadmap-mu!'
+                        : 'Ketik topik apa saja dan AI kami akan langsung membuat peta belajar khusus untukmu!'}
                     </p>
                   </div>
 
@@ -583,7 +655,7 @@ function DashboardContent() {
                       disabled={isGenerating || !topicInput.trim()}
                       className={`w-full sm:w-auto sm:absolute sm:right-3 sm:top-3 px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-1.5 text-white transition-all cursor-pointer ${
                         isKidMode
-                          ? 'btn-toy-primary text-sm disabled:opacity-50 h-10'
+                          ? 'btn-toy-primary text-sm disabled:opacity-50 h-10 shadow-[2px_2px_0_#1E293B] border-4'
                           : 'btn-scholar-primary text-sm disabled:opacity-50 h-10 shadow-lg'
                       }`}
                     >
@@ -591,15 +663,15 @@ function DashboardContent() {
                         <RefreshCw className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          <span>Buat Petualangan</span>
+                          <span>🚀 Buat Petualangan</span>
                           <Sparkles className="w-4 h-4" />
                         </>
                       )}
                     </button>
                   </div>
 
-                  {/* Suggestions inside State 2 */}
-                  <div className="w-full">
+                  {/* Suggestions inside */}
+                  <div className="w-full pt-2">
                     <p className="text-xs font-black uppercase tracking-wider mb-3 text-[#475569]">
                       {isKidMode ? '💡 Rekomendasi Peta Terpopuler:' : '💡 Recommended Academic Curriculums:'}
                     </p>
@@ -624,18 +696,47 @@ function DashboardContent() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Historical roadmaps list */}
+                  {profile?.current_roadmap?.history && profile.current_roadmap.history.length > 0 && (
+                    <div className="w-full pt-6 border-t border-[#E2E8F0] text-left">
+                      <p className="text-xs font-black uppercase tracking-wider mb-3 text-[#475569]">
+                        📚 Riwayat Petualanganmu:
+                      </p>
+                      <div className="space-y-2">
+                        {profile.current_roadmap.history.map((histItem: any, idx: number) => (
+                          <div 
+                            key={idx}
+                            className={`p-3.5 rounded-xl border border-[#E2E8F0] bg-white flex items-center justify-between shadow-sm hover:shadow-md transition-all duration-300`}
+                          >
+                            <div>
+                              <h5 className="font-extrabold text-sm text-[#0F172A]">{histItem.title}</h5>
+                              <p className="text-[10px] text-[#475569]">{histItem.difficulty} • {histItem.duration}</p>
+                            </div>
+                            <button
+                              onClick={() => handleSwitchRoadmap(histItem)}
+                              className="px-3.5 py-1.5 rounded-lg bg-[#F5F3FF] text-[#7C3AED] hover:bg-[#7C3AED] hover:text-white transition-all text-xs font-black"
+                            >
+                              Ganti
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                 </div>
-              )}
+              </div>
             </div>
           </div>
 
           {/* 4. ALMOST THERE CARD */}
           <div className="order-4 lg:col-span-1 w-full">
             {nextBadge && (
-              <div className={`p-6 rounded-[32px] text-left border-4 transition-all duration-300 group hover:-translate-y-1.5 ${
+              <div className={`p-6 transition-all duration-300 group hover:-translate-y-1.5 ${
                 isKidMode 
-                  ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B] hover:shadow-[8px_8px_0_#1E293B]' 
-                  : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm hover:border-[#7C3AED]/30 hover:shadow-[0_12px_24px_rgba(124,58,237,0.08)]'
+                  ? 'card-toy text-left' 
+                  : 'glass-panel text-left hover:border-[#7C3AED]/30'
               }`}>
                 <div className="flex items-center gap-2 mb-4">
                   <Star className="w-4 h-4 text-[#7C3AED] animate-pulse" />
@@ -664,7 +765,7 @@ function DashboardContent() {
                     <span>Progress</span>
                     <span className="text-[#0F172A]">{Math.min(nextBadgePercent, 100)}%</span>
                   </div>
-                  <div className="w-full h-3 rounded-full overflow-hidden bg-[#E5E7EB] border border-[#E2E8F0]">
+                  <div className="w-full h-3 bg-[#E5E7EB] rounded-full overflow-hidden border border-[#E2E8F0]">
                     <div 
                       className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
                       style={{ width: `${Math.min(nextBadgePercent, 100)}%` }}
@@ -677,10 +778,10 @@ function DashboardContent() {
 
           {/* 5. BADGES CARD */}
           <div className="order-5 lg:col-span-1 w-full">
-            <div className={`p-6 rounded-[32px] text-left border-4 ${
+            <div className={`p-6 ${
               isKidMode 
-                ? 'bg-white border-slate-800 shadow-[6px_6px_0_#1E293B]' 
-                : 'glass-panel border-[#E2E8F0] bg-[#FFFFFF] shadow-sm'
+                ? 'card-toy text-left' 
+                : 'glass-panel text-left'
             }`}>
               <div className="flex items-center justify-between mb-5 border-b pb-3 border-[#E2E8F0]">
                 <h4 className={`text-sm font-black uppercase tracking-wider ${isKidMode ? 'text-[#0F172A]' : 'text-[#0F172A] font-mono'}`}>

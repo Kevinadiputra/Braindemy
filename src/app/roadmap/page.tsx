@@ -528,8 +528,8 @@ function RoadmapContent() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-55 flex items-center justify-center p-4">
           <div className={`w-full max-w-sm p-6 relative overflow-hidden modal-responsive transition-all duration-300 ${
             isKidMode 
-              ? 'card-toy bg-white border-4 border-slate-800 shadow-[8px_8px_0_#1E293B]' 
-              : 'glass-panel border border-[#E2E8F0] rounded-3xl text-left bg-white shadow-xl text-[#0F172A]'
+              ? 'card-toy text-center' 
+              : 'glass-panel text-left'
           }`}>
             {isKidMode && <div className="absolute top-0 right-0 w-24 h-24 bg-pink-200 rounded-full blur-2xl opacity-50" />}
             <div className="text-center mb-5">
