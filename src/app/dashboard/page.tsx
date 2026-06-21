@@ -269,6 +269,16 @@ function DashboardContent() {
   const currentXp = xpStats?.total_xp || 0;
   const currentStreak = xpStats?.streak || 1;
 
+  const getDynamicGreeting = () => {
+    if (currentStreak > 3) {
+      return '🔥 Kamu sedang membangun kebiasaan belajar yang hebat!';
+    }
+    const name = profile?.full_name?.split(' ')[0] || (isKidMode ? 'Penjelajah' : 'Academic');
+    return `👋 Halo ${name}! Selamat datang kembali di petualangan belajarmu.`;
+  };
+
+  const roadmapCount = (profile?.current_roadmap?.history?.length || 0) + (profile?.current_roadmap ? 1 : 0);
+
   const equippedBadge = profile?.current_roadmap?.equipped_badge;
   const equippedTitle = profile?.current_roadmap?.equipped_title;
   const equippedFrame = profile?.current_roadmap?.equipped_frame;
@@ -360,174 +370,206 @@ function DashboardContent() {
           </div>
         )}
 
-        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 w-full items-start">
-          
-          {/* 1. HERO CARD */}
-          <div className="order-1 lg:col-span-2 w-full">
-            {isKidMode ? (
-              /* KIDS MODE HERO BILLBOARD */
-              <div className="card-toy p-6 bg-[#FFFFFF] border-4 border-slate-900 shadow-[8px_8px_0_#1E293B] relative overflow-hidden group">
-                <div className="flex flex-col gap-6 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border-4 border-slate-900 bg-[#F5F3FF] flex items-center justify-center text-4xl relative flex-shrink-0 shadow-md">
-                      {profile?.avatar_url ? (
-                        <img 
-                          src={profile.avatar_url} 
-                          alt="Avatar" 
-                          className={`w-full h-full rounded-full object-cover border-2 ${getFrameStyle(equippedFrame)}`}
-                        />
-                      ) : (
-                        <span className="text-3xl">{mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}</span>
-                      )}
-                    </div>
-                    <div>
-                      <h2 className="text-2xl sm:text-3xl font-black font-fredoka text-[#0F172A]">
-                        👋 Halo {profile?.full_name?.split(' ')[0] || 'Penjelajah'}
-                      </h2>
-                    </div>
+        {/* REDESIGNED HERO SECTION (FULL WIDTH) */}
+        <div className="mb-8 w-full">
+          <div className="p-6 sm:p-8 md:p-10 rounded-[32px] border border-[#E2E8F0] shadow-[0_12px_32px_rgba(15,23,42,0.08)] bg-gradient-to-br from-white to-[#F8FAFC] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(15,23,42,0.12)] relative overflow-hidden group">
+            {/* Glow effect */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#7C3AED]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-500" />
+            
+            {profile?.current_roadmap ? (
+              /* ACTIVE ROADMAP STATE */
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                {/* Left Column (Primary Content) */}
+                <div className="lg:col-span-7 flex flex-col gap-5 text-left">
+                  {/* Dynamic Greeting */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">
+                      {currentStreak > 3 ? '🔥' : '👋'}
+                    </span>
+                    <span className={`text-sm sm:text-base font-extrabold tracking-tight ${isKidMode ? 'text-amber-600 font-fredoka' : 'text-[#7C3AED] font-mono'}`}>
+                      {getDynamicGreeting()}
+                    </span>
                   </div>
 
-                  <div className="flex flex-wrap gap-3 items-center text-left">
-                    <div className="bg-[#F5F3FF] border-2 border-[#C4B5FD] px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-[#7C3AED]">
-                      <Flame className="w-4 h-4 text-[#7C3AED] fill-current" />
-                      <span className="text-xs font-black font-fredoka">{currentStreak} Hari Streak</span>
-                    </div>
-                    <div className="bg-[#F5F3FF] border-2 border-[#C4B5FD] px-3 py-1.5 rounded-2xl flex items-center gap-1.5 text-[#7C3AED]">
-                      <Trophy className="w-4 h-4 text-[#7C3AED] fill-current" />
-                      <span className="text-xs font-black font-fredoka">{currentXp} XP</span>
-                    </div>
+                  {/* Active Roadmap Title */}
+                  <div className="space-y-1">
+                    <span className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-slate-500 font-fredoka' : 'text-slate-500 font-mono'}`}>
+                      🚀 Petualangan Aktif
+                    </span>
+                    <h1 className={`text-2xl sm:text-3xl lg:text-[32px] font-black leading-tight tracking-tight text-[#0F172A] ${isKidMode ? 'font-fredoka' : 'font-space-grotesk'}`}>
+                      {profile.current_roadmap.title}
+                    </h1>
                   </div>
 
-                  <div className="border-t border-[#E2E8F0] pt-4 flex flex-col gap-1.5 text-left">
-                    <span className="text-[10px] font-black uppercase text-[#475569] tracking-wider">📚 Petualangan Aktif</span>
-                    <h3 className="text-lg sm:text-xl font-bold font-fredoka text-[#7C3AED]">
-                      {profile?.current_roadmap?.title || 'Belum ada petualangan aktif'}
-                    </h3>
+                  {/* Description */}
+                  <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
+                    {profile.current_roadmap.description}
+                  </p>
 
-                    {profile?.current_roadmap && (
-                      <div className="w-full mt-2">
-                        <div className="flex items-center justify-between text-[10px] font-black text-[#475569] mb-1">
-                          <span>Kemajuan Belajar</span>
-                          <span>{Math.min(completedPercent, 100)}%</span>
-                        </div>
-                        <div className="w-full h-3 bg-[#E5E7EB] rounded-full overflow-hidden border border-[#E2E8F0]">
-                          <div 
-                            className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
-                            style={{ width: `${Math.min(completedPercent, 100)}%` }}
-                          />
-                        </div>
+                  {/* Progress Section */}
+                  <div className="space-y-2 mt-1">
+                    <div className="flex items-center justify-between text-xs font-bold text-[#475569]">
+                      <span className={isKidMode ? 'font-fredoka' : 'font-mono'}>Progress Belajar</span>
+                      <span className={isKidMode ? 'font-fredoka' : 'font-mono'}>{completedLessonsCount} dari {totalNodes} chapter selesai ({Math.min(completedPercent, 100)}%)</span>
+                    </div>
+                    {/* Modern Progress Bar */}
+                    <div className="relative w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-[#E2E8F0]">
+                      <div 
+                        className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] rounded-full transition-all duration-500 ease-out relative"
+                        style={{ width: `${Math.min(completedPercent, 100)}%` }}
+                      >
+                        {/* Glow effect on progress bar */}
+                        <div className="absolute inset-0 bg-white/20 animate-pulse pointer-events-none" />
                       </div>
-                    )}
+                    </div>
                   </div>
 
-                  {profile?.current_roadmap ? (
+                  {/* CTAs */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-3">
                     <button 
                       onClick={handleContinueRoadmap}
-                      className="btn-toy-accent text-white border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
+                      className="px-8 py-4 bg-[#7C3AED] hover:bg-[#6D28D9] active:scale-95 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] cursor-pointer shadow-lg shadow-[#7C3AED]/20 w-full sm:w-auto"
                     >
-                      <span>Lanjutkan Belajar</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>▶ Lanjutkan Belajar</span>
                     </button>
-                  ) : (
                     <button 
-                      onClick={() => document.getElementById('topic-search')?.focus()}
-                      className="btn-toy-accent text-white border-4 border-slate-900 rounded-2xl h-12 max-sm:h-14 font-black flex items-center justify-center gap-2 w-full sm:w-fit px-8 mt-1 transition-all cursor-pointer"
+                      onClick={() => {
+                        const target = document.getElementById('topic-search');
+                        if (target) {
+                          target.focus();
+                          target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="px-6 py-4 bg-white hover:bg-slate-50 border border-[#E2E8F0] active:scale-95 text-[#0F172A] font-bold text-sm rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] cursor-pointer w-full sm:w-auto"
                     >
-                      <span>Mulai Petualangan Baru</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <span>➕ Buat Petualangan Baru</span>
                     </button>
-                  )}
+                  </div>
+                </div>
+
+                {/* Right Column (Statistics) */}
+                <div className="lg:col-span-5 w-full">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Streak Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🔥</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Streak</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentStreak} Hari</span>
+                    </div>
+
+                    {/* XP Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🏆</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">XP</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentXp} XP</span>
+                    </div>
+
+                    {/* Level Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">⭐</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Level</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentLevel}</span>
+                    </div>
+
+                    {/* Roadmap Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🗺️</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Roadmap</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{roadmapCount} Aktif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="glass-panel p-6 sm:p-8 text-left relative overflow-hidden group hover:border-[#7C3AED]/30 transition-all duration-300">
-                {/* Glow layer */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-violet-600/5 rounded-full blur-3xl pointer-events-none group-hover:bg-violet-600/10 transition-all duration-500" />
-
-                <div className="flex flex-col gap-6 relative z-10">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border border-[#E2E8F0] bg-[#F5F3FF] flex items-center justify-center text-4xl relative flex-shrink-0 shadow-sm">
-                      {profile?.avatar_url ? (
-                        <img 
-                          src={profile.avatar_url} 
-                          alt="Avatar" 
-                          className={`w-full h-full rounded-full object-cover border ${getFrameStyle(equippedFrame)}`}
-                        />
-                      ) : (
-                        <span className="text-3xl">{mascotType === 'robot' ? '🤖' : mascotType === 'cat' ? '🐱' : '🦉'}</span>
-                      )}
-                    </div>
-                    <div>
-                      <h1 className="text-2xl sm:text-3xl font-extrabold font-space-grotesk tracking-wide text-[#0F172A]">
-                        👋 Halo, {profile?.full_name?.split(' ')[0] || 'Academic'}
+              /* EMPTY STATE */
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                {/* Left Column: Greeting and Generator */}
+                <div className="lg:col-span-7 flex flex-col gap-4 text-left">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🚀</span>
+                      <h1 className={`text-2xl sm:text-3xl lg:text-[32px] font-black leading-tight tracking-tight text-[#0F172A] ${isKidMode ? 'font-fredoka' : 'font-space-grotesk'}`}>
+                        Mulai Petualangan Belajarmu
                       </h1>
-                      {equippedTitle && (
-                        <p className="text-[10px] text-[#7C3AED] font-mono font-bold mt-1 uppercase tracking-wider flex items-center gap-1">
-                          <Award className="w-3.5 h-3.5" />
-                          <span>{equippedTitle}</span>
-                        </p>
+                    </div>
+                    <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
+                      Ketik topik apa saja yang ingin kamu pelajari, dan Braindemy akan membuat roadmap personal untukmu.
+                    </p>
+                  </div>
+
+                  {/* Inline Search Bar */}
+                  <div className="flex flex-col sm:relative gap-3 sm:gap-0 w-full mt-2">
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none hidden sm:inline">
+                      ✨
+                    </span>
+                    <input 
+                      type="text"
+                      value={topicInput}
+                      onChange={(e) => setTopicInput(e.target.value)}
+                      placeholder="Contoh: Gunung Berapi, Python, Tata Surya, Pecahan"
+                      disabled={isGenerating}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleGenerate();
+                      }}
+                      className={`w-full px-5 sm:pl-12 sm:pr-40 py-4 rounded-2xl outline-none text-base border border-[#E2E8F0] bg-white text-[#0F172A] focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/10 shadow-sm ${
+                        isKidMode ? 'font-fredoka' : 'font-outfit'
+                      }`}
+                    />
+                    
+                    <button 
+                      onClick={() => handleGenerate()}
+                      disabled={isGenerating || !topicInput.trim()}
+                      className="w-full sm:w-auto sm:absolute sm:right-2 sm:top-2 px-6 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.03] disabled:opacity-50 h-11"
+                    >
+                      {isGenerating ? (
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <span>✨ Buat Petualangan</span>
+                        </>
                       )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-3 items-center text-left font-mono">
-                    <div className="bg-[#F5F3FF] border border-[#C4B5FD] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[#7C3AED]">
-                      <Flame className="w-4 h-4 text-[#7C3AED] fill-current animate-pulse" />
-                      <span className="text-xs font-bold">{currentStreak} Day Streak</span>
-                    </div>
-                    <div className="bg-[#F5F3FF] border border-[#C4B5FD] px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[#7C3AED]">
-                      <Trophy className="w-4 h-4 text-[#7C3AED]" />
-                      <span className="text-xs font-bold">{currentXp} XP</span>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-[#E2E8F0] pt-4 flex flex-col gap-1.5 text-left">
-                    <span className="text-[10px] font-mono font-bold text-[#475569] uppercase tracking-wider">📚 Active Curriculum</span>
-                    <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-[#7C3AED]">
-                      {profile?.current_roadmap?.title || 'No active curriculum'}
-                    </h3>
-
-                    {profile?.current_roadmap && (
-                      <div className="w-full mt-2">
-                        <div className="flex items-center justify-between text-[10px] font-bold text-[#475569] mb-1 font-mono">
-                          <span>Curriculum Progress</span>
-                          <span>{Math.min(completedPercent, 100)}%</span>
-                        </div>
-                        <div className="w-full h-3 bg-[#E5E7EB] rounded-full overflow-hidden border border-[#E2E8F0]">
-                          <div 
-                            className="h-full bg-[#7C3AED] rounded-full transition-all duration-500"
-                            style={{ width: `${Math.min(completedPercent, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {profile?.current_roadmap ? (
-                    <button 
-                      onClick={handleContinueRoadmap}
-                      className="btn-scholar-primary text-white w-full sm:w-fit px-8 mt-1 cursor-pointer"
-                    >
-                      <span className="flex items-center gap-2">
-                        Lanjutkan Belajar
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
                     </button>
-                  ) : (
-                    <button 
-                      onClick={() => document.getElementById('topic-search')?.focus()}
-                      className="btn-scholar-secondary w-full sm:w-fit px-8 mt-1 cursor-pointer"
-                    >
-                      <span className="flex items-center gap-2">
-                        Compile New Roadmap
-                        <ArrowRight className="w-4 h-4" />
-                      </span>
-                    </button>
-                  )}
+                  </div>
+                </div>
+
+                {/* Right Column: Statistics */}
+                <div className="lg:col-span-5 w-full">
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Streak Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🔥</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Streak</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentStreak} Hari</span>
+                    </div>
+
+                    {/* XP Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🏆</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">XP</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentXp} XP</span>
+                    </div>
+
+                    {/* Level Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">⭐</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Level</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentLevel}</span>
+                    </div>
+
+                    {/* Roadmap Card */}
+                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+                      <span className="text-2xl">🗺️</span>
+                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Roadmap</span>
+                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{roadmapCount} Aktif</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
           </div>
+        </div>
+
+        <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 w-full items-start">
           
           {/* 2. PROFILE CARD */}
           <div className="order-2 lg:col-span-1 w-full">
@@ -604,7 +646,7 @@ function DashboardContent() {
           </div>
 
           {/* 3. CHATBOT CARD */}
-          <div className="order-3 lg:col-span-2 w-full">
+          <div className="order-1 lg:col-span-2 w-full">
             <div className={`p-6 sm:p-8 relative flex flex-col items-center gap-6 ${
               isKidMode 
                 ? 'card-toy text-center' 
@@ -821,7 +863,7 @@ function DashboardContent() {
           </div>
 
           {/* 5. BADGES CARD */}
-          <div className="order-5 lg:col-span-1 w-full">
+          <div className="order-3 lg:col-span-2 w-full">
             <div className={`p-6 ${
               isKidMode 
                 ? 'card-toy text-left' 
