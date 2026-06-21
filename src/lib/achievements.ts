@@ -1,5 +1,6 @@
 // src/lib/achievements.ts
 import { supabase } from './supabase';
+import { calculateNextStreak } from './streak';
 
 export type AchievementCategory = 
   | 'progress' 
@@ -633,12 +634,17 @@ export async function checkAndUnlockAchievements(
           // Apply rewards: credit XP if applicable
           let newXp = (xpStats.total_xp || 0) + template.reward.xp;
           let newLevel = Math.floor(newXp / 500) + 1;
+          const currentStreak = xpStats.streak || 1;
+          const lastActiveAt = xpStats.last_active_at || new Date().toISOString();
+          const { nextStreak } = calculateNextStreak(currentStreak, lastActiveAt, userId);
           
           await supabase
             .from('xp')
             .update({ 
               total_xp: newXp, 
-              current_level: newLevel 
+              current_level: newLevel,
+              streak: nextStreak,
+              last_active_at: new Date().toISOString()
             })
             .eq('user_id', userId);
         }

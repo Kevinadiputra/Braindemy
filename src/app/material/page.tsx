@@ -8,6 +8,7 @@ import {
   Star, ShieldAlert, BookOpen
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { calculateNextStreak } from '@/lib/streak';
 import { generateMaterial } from '@/lib/gemini';
 import ProtectedRoute, { useAuth } from '@/components/ProtectedRoute';
 import Header from '@/components/Header';
@@ -136,11 +137,20 @@ function MaterialContent() {
         if (xpData) {
           const nextXp = xpData.total_xp + 10;
           const nextLevel = Math.floor(nextXp / 500) + 1;
+          const currentStreak = xpData.streak || 1;
+          const { nextStreak } = calculateNextStreak(currentStreak, xpData.last_active_at, user.id);
           
           await supabase
             .from('xp')
-            .update({ total_xp: nextXp, current_level: nextLevel })
+            .update({ 
+              total_xp: nextXp, 
+              current_level: nextLevel,
+              streak: nextStreak,
+              last_active_at: new Date().toISOString()
+            })
             .eq('user_id', user.id);
+
+          await refreshUserData(); // Sync frontend profile context state
         }
       } catch (e) {
         console.error('XP increment error:', e);
@@ -270,11 +280,14 @@ function MaterialContent() {
 
       let nextXp = 50;
       let nextLevel = 1;
-      let currentStreak = 1;
+      let nextStreakValue = 1;
       if (xpData) {
         nextXp = xpData.total_xp + 50;
         nextLevel = Math.floor(nextXp / 500) + 1;
-        currentStreak = xpData.streak;
+        
+        const currentStreak = xpData.streak || 1;
+        const { nextStreak } = calculateNextStreak(currentStreak, xpData.last_active_at, user.id);
+        nextStreakValue = nextStreak;
       }
 
       // 3. Update XP in database
@@ -284,7 +297,7 @@ function MaterialContent() {
           user_id: user.id,
           total_xp: nextXp, 
           current_level: nextLevel,
-          streak: currentStreak,
+          streak: nextStreakValue,
           last_active_at: new Date().toISOString()
         }, { onConflict: 'user_id' });
 

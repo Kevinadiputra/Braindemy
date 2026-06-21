@@ -8,6 +8,7 @@ import {
   HelpCircle, Star, RefreshCw, Sparkles, BookOpen, ShieldAlert, User
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { updateDailyStreak } from '@/lib/streak';
 import ProtectedRoute, { useAuth } from '@/components/ProtectedRoute';
 import Header from '@/components/Header';
 import { playSynthSound } from '@/components/SoundHelper';
@@ -100,6 +101,10 @@ function RoadmapContent() {
     const fetchProgress = async () => {
       if (!user) return;
       try {
+        // Trigger daily streak check/update when opening learning roadmap
+        await updateDailyStreak(user.id);
+        await refreshUserData(); // Ensure local context has updated streak right away!
+
         const { data, error } = await supabase
           .from('progress')
           .select('lesson_id, status')
@@ -130,7 +135,6 @@ function RoadmapContent() {
     };
 
     fetchProgress();
-    refreshUserData(); // Refresh profile caches on mount
 
     // Realtime progress channel sync
     const progressChannel = supabase
