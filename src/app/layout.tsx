@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Outfit, Space_Grotesk } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const fredoka = Fredoka({
@@ -37,6 +38,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#F8FAFC] text-[#0F172A]">
         {children}
+        <Analytics />
       </body>
     </html>
   );
