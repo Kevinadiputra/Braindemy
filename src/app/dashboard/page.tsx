@@ -34,6 +34,7 @@ function DashboardContent() {
   const [errorMessage, setErrorMessage] = useState('');
   const [achievementsCount, setAchievementsCount] = useState(0);
   const [unlockedBadges, setUnlockedBadges] = useState<string[]>([]);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   
   // Scholar Mode certification mockup list
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
@@ -271,10 +272,10 @@ function DashboardContent() {
 
   const getDynamicGreeting = () => {
     if (currentStreak > 3) {
-      return '🔥 Kamu sedang membangun kebiasaan belajar yang hebat!';
+      return 'Kamu sedang membangun kebiasaan belajar yang hebat!';
     }
     const name = profile?.full_name?.split(' ')[0] || (isKidMode ? 'Penjelajah' : 'Academic');
-    return `👋 Halo ${name}! Selamat datang kembali di petualangan belajarmu.`;
+    return `Halo ${name}! Selamat datang kembali di petualangan belajarmu.`;
   };
 
   const roadmapCount = (profile?.current_roadmap?.history?.length || 0) + (profile?.current_roadmap ? 1 : 0);
@@ -370,112 +371,150 @@ function DashboardContent() {
           </div>
         )}
 
-        {/* REDESIGNED HERO SECTION (FULL WIDTH) */}
+        {/* REDESIGNED HERO SECTION (PROFESSIONAL & MINIMALIST) */}
         <div className="mb-8 w-full">
-          <div className="p-6 sm:p-8 md:p-10 rounded-[32px] border border-[#E2E8F0] shadow-[0_12px_32px_rgba(15,23,42,0.08)] bg-gradient-to-br from-white to-[#F8FAFC] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(15,23,42,0.12)] relative overflow-hidden group">
-            {/* Glow effect */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#7C3AED]/10 to-transparent rounded-full blur-3xl pointer-events-none group-hover:scale-110 transition-transform duration-500" />
+          <div className="p-6 sm:p-10 rounded-[24px] border border-[#E2E8F0] shadow-[0_8px_24px_rgba(15,23,42,0.06)] bg-gradient-to-b from-white to-[#F8FAFC] transition-all duration-300 relative overflow-hidden group">
             
             {profile?.current_roadmap ? (
               /* ACTIVE ROADMAP STATE */
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
                 {/* Left Column (Primary Content) */}
-                <div className="lg:col-span-7 flex flex-col gap-5 text-left">
-                  {/* Dynamic Greeting */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">
-                      {currentStreak > 3 ? '🔥' : '👋'}
-                    </span>
-                    <span className={`text-sm sm:text-base font-extrabold tracking-tight ${isKidMode ? 'text-amber-600 font-fredoka' : 'text-[#7C3AED] font-mono'}`}>
-                      {getDynamicGreeting()}
-                    </span>
-                  </div>
-
-                  {/* Active Roadmap Title */}
+                <div className="lg:col-span-7 flex flex-col justify-between gap-6 text-left">
+                  {/* Greeting */}
                   <div className="space-y-1">
-                    <span className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-slate-500 font-fredoka' : 'text-slate-500 font-mono'}`}>
-                      🚀 Petualangan Aktif
-                    </span>
-                    <h1 className={`text-2xl sm:text-3xl lg:text-[32px] font-black leading-tight tracking-tight text-[#0F172A] ${isKidMode ? 'font-fredoka' : 'font-space-grotesk'}`}>
-                      {profile.current_roadmap.title}
+                    <h1 className="text-[28px] sm:text-[36px] font-[800] leading-tight tracking-tight text-[#0F172A] font-space-grotesk">
+                      Selamat Datang Kembali, {profile?.full_name || 'Kevin Adiputra Mahesa'}
                     </h1>
                   </div>
 
-                  {/* Description */}
-                  <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                    {profile.current_roadmap.description}
-                  </p>
-
-                  {/* Progress Section */}
-                  <div className="space-y-2 mt-1">
-                    <div className="flex items-center justify-between text-xs font-bold text-[#475569]">
-                      <span className={isKidMode ? 'font-fredoka' : 'font-mono'}>Progress Belajar</span>
-                      <span className={isKidMode ? 'font-fredoka' : 'font-mono'}>{completedLessonsCount} dari {totalNodes} chapter selesai ({Math.min(completedPercent, 100)}%)</span>
+                  {/* Active Roadmap - Highlighted Focus Element */}
+                  <div className="p-6 rounded-2xl bg-white border border-[#E2E8F0] shadow-sm relative overflow-hidden flex flex-col gap-4">
+                    {/* Visual accent left line */}
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#7C3AED]" />
+                    
+                    <div className="space-y-1 pl-2">
+                      <span className="text-[12px] font-semibold uppercase tracking-wider text-[#7C3AED] font-mono">
+                        Roadmap Aktif
+                      </span>
+                      <h2 className="text-[22px] sm:text-[28px] font-[700] leading-tight tracking-tight text-[#0F172A] font-space-grotesk">
+                        {profile.current_roadmap.title}
+                      </h2>
                     </div>
-                    {/* Modern Progress Bar */}
-                    <div className="relative w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-[#E2E8F0]">
-                      <div 
-                        className="h-full bg-gradient-to-r from-[#7C3AED] to-[#A78BFA] rounded-full transition-all duration-500 ease-out relative"
-                        style={{ width: `${Math.min(completedPercent, 100)}%` }}
-                      >
-                        {/* Glow effect on progress bar */}
-                        <div className="absolute inset-0 bg-white/20 animate-pulse pointer-events-none" />
+
+                    <p className="text-[14px] sm:text-[16px] font-[500] text-[#475569] leading-relaxed font-outfit pl-2">
+                      {profile.current_roadmap.description}
+                    </p>
+
+                    {/* Progress Section */}
+                    <div className="space-y-3 pl-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[14px] font-[500] text-[#475569] font-outfit">
+                        <span>{completedLessonsCount} dari {totalNodes} chapter telah diselesaikan. Lanjutkan pembelajaran untuk menyelesaikan roadmap ini.</span>
+                        <span className="font-bold text-[#0F172A] shrink-0 font-mono">{Math.min(completedPercent, 100)}% Selesai</span>
+                      </div>
+                      {/* Modern Progress Bar */}
+                      <div className="relative w-full h-2 bg-[#E2E8F0] rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-[#7C3AED] rounded-full transition-all duration-500 ease-out"
+                          style={{ width: `${Math.min(completedPercent, 100)}%` }}
+                        />
                       </div>
                     </div>
                   </div>
 
-                  {/* CTAs */}
-                  <div className="flex flex-col sm:flex-row gap-3 mt-3">
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
                     <button 
                       onClick={handleContinueRoadmap}
-                      className="px-8 py-4 bg-[#7C3AED] hover:bg-[#6D28D9] active:scale-95 text-white font-black text-sm rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] cursor-pointer shadow-lg shadow-[#7C3AED]/20 w-full sm:w-auto"
+                      className="px-8 py-3.5 bg-[#7C3AED] hover:bg-[#6D28D9] active:scale-95 text-white font-bold text-[14px] rounded-xl flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer shadow-sm w-full sm:w-auto hover:scale-[1.02] font-outfit"
                     >
-                      <span>▶ Lanjutkan Belajar</span>
+                      <ArrowRight className="w-4 h-4 shrink-0" />
+                      <span>Lanjutkan Belajar</span>
                     </button>
                     <button 
-                      onClick={() => {
-                        const target = document.getElementById('topic-search');
-                        if (target) {
-                          target.focus();
-                          target.scrollIntoView({ behavior: 'smooth' });
-                        }
-                      }}
-                      className="px-6 py-4 bg-white hover:bg-slate-50 border border-[#E2E8F0] active:scale-95 text-[#0F172A] font-bold text-sm rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.03] cursor-pointer w-full sm:w-auto"
+                      onClick={() => setIsSearchExpanded(!isSearchExpanded)}
+                      className="px-6 py-3.5 bg-white hover:bg-slate-50 border border-[#E2E8F0] active:scale-95 text-[#0F172A] font-bold text-[14px] rounded-xl flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer w-full sm:w-auto hover:scale-[1.02] font-outfit"
                     >
-                      <span>➕ Buat Petualangan Baru</span>
+                      <BookOpen className="w-4 h-4 shrink-0 text-[#475569]" />
+                      <span>Buat Roadmap Baru</span>
                     </button>
                   </div>
+
+                  {/* Inline New Roadmap Generator */}
+                  {isSearchExpanded && (
+                    <div className="p-5 rounded-2xl border border-[#E2E8F0] bg-white space-y-4 animate-fade-in">
+                      <div className="space-y-1">
+                        <h4 className="text-[14px] font-bold text-[#0F172A] font-space-grotesk">Buat Roadmap Baru</h4>
+                        <p className="text-[12px] font-medium text-[#475569] font-outfit">Masukkan topik baru di bawah untuk mengganti atau menambah koleksi roadmap belajar Anda.</p>
+                      </div>
+                      <div className="flex flex-col sm:relative gap-3 sm:gap-0 w-full">
+                        <input 
+                          type="text"
+                          value={topicInput}
+                          onChange={(e) => setTopicInput(e.target.value)}
+                          placeholder="Contoh: Python, Machine Learning, Sistem Tata Surya"
+                          disabled={isGenerating}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleGenerate();
+                          }}
+                          className="w-full px-5 sm:pl-5 sm:pr-40 py-3.5 rounded-xl outline-none text-[15px] border border-[#E2E8F0] bg-white text-[#0F172A] focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20 shadow-sm font-outfit"
+                        />
+                        
+                        <button 
+                          onClick={() => handleGenerate()}
+                          disabled={isGenerating || !topicInput.trim()}
+                          className="w-full sm:w-auto sm:absolute sm:right-2 sm:top-2 px-6 py-2 bg-[#7C3AED] hover:bg-[#6D28D9] text-white rounded-lg font-bold text-[13px] flex items-center justify-center gap-1.5 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 h-9"
+                        >
+                          {isGenerating ? (
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                              <span>Buat Roadmap</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                {/* Right Column (Statistics) */}
-                <div className="lg:col-span-5 w-full">
+                {/* Right Column (Statistics Grid) */}
+                <div className="lg:col-span-5 w-full flex flex-col justify-center">
                   <div className="grid grid-cols-2 gap-4">
                     {/* Streak Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🔥</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Streak</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentStreak} Hari</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <Flame className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Streak</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{currentStreak} Hari</span>
                     </div>
 
                     {/* XP Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🏆</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">XP</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentXp} XP</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Total XP</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{currentXp} XP</span>
                     </div>
 
                     {/* Level Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">⭐</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Level</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentLevel}</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Level</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">Level {currentLevel}</span>
                     </div>
 
                     {/* Roadmap Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🗺️</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Roadmap</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{roadmapCount} Aktif</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Roadmap</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{roadmapCount} Roadmap Aktif</span>
                     </div>
                   </div>
                 </div>
@@ -484,83 +523,84 @@ function DashboardContent() {
               /* EMPTY STATE */
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
                 {/* Left Column: Greeting and Generator */}
-                <div className="lg:col-span-7 flex flex-col gap-4 text-left">
+                <div className="lg:col-span-7 flex flex-col gap-6 text-left">
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🚀</span>
-                      <h1 className={`text-2xl sm:text-3xl lg:text-[32px] font-black leading-tight tracking-tight text-[#0F172A] ${isKidMode ? 'font-fredoka' : 'font-space-grotesk'}`}>
-                        Mulai Petualangan Belajarmu
-                      </h1>
-                    </div>
-                    <p className="text-sm sm:text-base text-[#475569] leading-relaxed">
-                      Ketik topik apa saja yang ingin kamu pelajari, dan Braindemy akan membuat roadmap personal untukmu.
+                    <h1 className="text-[32px] sm:text-[36px] font-[800] leading-tight tracking-tight text-[#0F172A] font-space-grotesk">
+                      Mulai Perjalanan Belajarmu
+                    </h1>
+                    <p className="text-[16px] font-[500] text-[#475569] leading-relaxed font-outfit">
+                      Masukkan topik yang ingin dipelajari dan Braindemy akan membuat roadmap pembelajaran yang dipersonalisasi.
                     </p>
                   </div>
 
                   {/* Inline Search Bar */}
-                  <div className="flex flex-col sm:relative gap-3 sm:gap-0 w-full mt-2">
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none hidden sm:inline">
-                      ✨
-                    </span>
+                  <div className="flex flex-col sm:relative gap-3 sm:gap-0 w-full">
                     <input 
                       type="text"
                       value={topicInput}
                       onChange={(e) => setTopicInput(e.target.value)}
-                      placeholder="Contoh: Gunung Berapi, Python, Tata Surya, Pecahan"
+                      placeholder="Contoh: Python, Machine Learning, Sistem Tata Surya"
                       disabled={isGenerating}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') handleGenerate();
                       }}
-                      className={`w-full px-5 sm:pl-12 sm:pr-40 py-4 rounded-2xl outline-none text-base border border-[#E2E8F0] bg-white text-[#0F172A] focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/10 shadow-sm ${
-                        isKidMode ? 'font-fredoka' : 'font-outfit'
-                      }`}
+                      className="w-full px-5 sm:pl-5 sm:pr-40 py-4 rounded-xl outline-none text-[16px] border border-[#E2E8F0] bg-white text-[#0F172A] focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20 shadow-sm font-outfit"
                     />
                     
                     <button 
                       onClick={() => handleGenerate()}
                       disabled={isGenerating || !topicInput.trim()}
-                      className="w-full sm:w-auto sm:absolute sm:right-2 sm:top-2 px-6 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-1.5 transition-all duration-300 hover:scale-[1.03] disabled:opacity-50 h-11"
+                      className="w-full sm:w-auto sm:absolute sm:right-2 sm:top-2 px-6 py-2.5 bg-[#7C3AED] hover:bg-[#6D28D9] text-white rounded-lg font-bold text-[14px] flex items-center justify-center gap-1.5 transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 h-11"
                     >
                       {isGenerating ? (
                         <RefreshCw className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          <span>✨ Buat Petualangan</span>
+                          <Sparkles className="w-4 h-4 shrink-0" />
+                          <span>Buat Roadmap</span>
                         </>
                       )}
                     </button>
                   </div>
                 </div>
 
-                {/* Right Column: Statistics */}
-                <div className="lg:col-span-5 w-full">
+                {/* Right Column (Statistics Grid) */}
+                <div className="lg:col-span-5 w-full flex flex-col justify-center">
                   <div className="grid grid-cols-2 gap-4">
                     {/* Streak Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🔥</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Streak</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentStreak} Hari</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <Flame className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Streak</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{currentStreak} Hari</span>
                     </div>
 
                     {/* XP Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🏆</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">XP</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentXp} XP</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Total XP</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{currentXp} XP</span>
                     </div>
 
                     {/* Level Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">⭐</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Level</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{currentLevel}</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Level</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">Level {currentLevel}</span>
                     </div>
 
                     {/* Roadmap Card */}
-                    <div className="p-5 rounded-3xl border border-[#E2E8F0] bg-white flex flex-col items-start gap-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
-                      <span className="text-2xl">🗺️</span>
-                      <span className="text-xs font-bold text-[#475569] uppercase tracking-wider">Roadmap</span>
-                      <span className="text-xl sm:text-2xl font-black text-[#0F172A]">{roadmapCount} Aktif</span>
+                    <div className="p-5 sm:p-6 rounded-2xl border border-[#E2E8F0] bg-white flex flex-col gap-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-[#7C3AED]/30">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="w-4 h-4 text-[#7C3AED]" />
+                        <span className="text-[12px] font-bold text-[#475569] uppercase tracking-wider font-mono">Roadmap</span>
+                      </div>
+                      <span className="text-[20px] sm:text-[24px] font-extrabold text-[#0F172A] font-space-grotesk">{roadmapCount} Roadmap Aktif</span>
                     </div>
                   </div>
                 </div>
@@ -619,7 +659,7 @@ function DashboardContent() {
                     </div>
                   )}
                   <p className={`text-xs font-bold ${isKidMode ? 'text-[#7C3AED] font-fredoka' : 'text-[#475569] font-mono'}`}>
-                    {isKidMode ? 'Sekolah Dasar (SD) 🪐' : 'Akademisi Mahasiswa 🎓'}
+                    {isKidMode ? 'Sekolah Dasar (SD)' : 'Akademisi Mahasiswa'}
                   </p>
                 </div>
               </div>
@@ -678,7 +718,7 @@ function DashboardContent() {
                   }`}>
                     <div className="space-y-1 text-center sm:text-left min-w-0">
                       <h4 className={`text-xs font-black uppercase tracking-wider ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#7C3AED] font-mono'}`}>
-                        {isKidMode ? '🚀 Petualangan Aktif!' : '🚀 Active Roadmap'}
+                        {isKidMode ? 'Petualangan Aktif!' : 'Active Roadmap'}
                       </h4>
                       <p className={`text-base font-extrabold truncate ${isKidMode ? 'text-slate-800 font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                         {profile.current_roadmap.title}
@@ -705,8 +745,8 @@ function DashboardContent() {
                   <div className="text-center space-y-1">
                     <h3 className={`text-xl font-black ${isKidMode ? 'text-[#0F172A] font-fredoka' : 'text-[#0F172A] font-space-grotesk'}`}>
                       {profile?.current_roadmap 
-                        ? '➕ Buat Roadmap Baru' 
-                        : '🤖 Apa yang ingin kamu pelajari hari ini?'}
+                        ? 'Buat Roadmap Baru' 
+                        : 'Apa yang ingin kamu pelajari hari ini?'}
                     </h3>
                     <p className="text-sm text-[#475569]">
                       {profile?.current_roadmap 
@@ -716,8 +756,8 @@ function DashboardContent() {
                   </div>
 
                   <div className="flex flex-col sm:relative gap-3 sm:gap-0 group w-full">
-                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-lg z-10 pointer-events-none hidden sm:inline">
-                      ✨
+                    <span className="absolute left-5 top-1/2 -translate-y-1/2 text-[#475569] z-10 pointer-events-none hidden sm:inline">
+                      <Sparkles className="w-4 h-4 shrink-0" />
                     </span>
                     <input 
                       id="topic-search"
@@ -749,8 +789,8 @@ function DashboardContent() {
                         <RefreshCw className="w-4 h-4 animate-spin" />
                       ) : (
                         <>
-                          <span>🚀 Buat Petualangan</span>
-                          <Sparkles className="w-4 h-4" />
+                          <span>Buat Roadmap</span>
+                          <Sparkles className="w-4 h-4 shrink-0" />
                         </>
                       )}
                     </button>
@@ -759,7 +799,7 @@ function DashboardContent() {
                   {/* Suggestions inside */}
                   <div className="w-full pt-2">
                     <p className="text-xs font-black uppercase tracking-wider mb-3 text-[#475569]">
-                      {isKidMode ? '💡 Rekomendasi Peta Terpopuler:' : '💡 Recommended Academic Curriculums:'}
+                      {isKidMode ? 'Rekomendasi Peta Terpopuler:' : 'Recommended Academic Curriculums:'}
                     </p>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -787,7 +827,7 @@ function DashboardContent() {
                   {profile?.current_roadmap?.history && profile.current_roadmap.history.length > 0 && (
                     <div className="w-full pt-6 border-t border-[#E2E8F0] text-left">
                       <p className="text-xs font-black uppercase tracking-wider mb-3 text-[#475569]">
-                        📚 Riwayat Petualanganmu:
+                        Riwayat Petualanganmu:
                       </p>
                       <div className="space-y-2">
                         {profile.current_roadmap.history.map((histItem: any, idx: number) => (
