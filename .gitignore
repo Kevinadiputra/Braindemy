@@ -52,4 +52,10 @@ client id.txt
 /*.png
 /5#
 
+# AI Agent files and local environment example
+/CLAUDE.md
+/AGENTS.md
+/.env.example
+
+
 
