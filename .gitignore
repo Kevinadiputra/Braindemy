@@ -45,3 +45,11 @@ yarn-error.log*
 next-env.d.ts
 client id.txt
 
+# Loose root files, notes, credentials, and images
+/*.txt
+/*.jpg
+/*.jpeg
+/*.png
+/5#
+
+
